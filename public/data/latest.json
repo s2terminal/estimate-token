@@ -1,17 +1,17 @@
 {
  "schemaVersion": 1,
  "snapshot": "2026-10-11",
- "generatedAt": "2026-10-11T09:01:16.070Z",
+ "generatedAt": "2026-10-11T11:44:09.040Z",
  "baseline": "2026-10-11",
  "sources": {
   "litellm": {
-   "commit": "unknown",
-   "fetchedAt": "2026-10-11T09:01:16.116Z",
+   "commit": "2a01fe6e5ca2ed67472ca0ed2909e66811ff8d35",
+   "fetchedAt": "2026-10-11T11:42:20.962Z",
    "bytes": 2750280
   },
   "openrouter": {
-   "fetchedAt": "2026-10-11T09:01:16.116Z",
-   "bytes": 765890
+   "fetchedAt": "2026-10-11T11:42:20.962Z",
+   "bytes": 765894
   },
   "fx": {
    "pair": "USDJPY",
@@ -74,6 +74,31 @@
     }
    ],
    "contextWindow": 400000
+  },
+  {
+   "id": "chatgpt-image-latest@openai:global",
+   "family": "chatgpt-image-latest",
+   "name": "Chatgpt Image Latest",
+   "vendor": "OpenAI",
+   "platform": "openai",
+   "region": "global",
+   "category": "image",
+   "firstSeen": "2026-10-11",
+   "status": "active",
+   "prices": [
+    {
+     "tier": "standard",
+     "minPromptTokens": 0,
+     "imageOutput": 32
+    }
+   ],
+   "sources": [
+    {
+     "litellm": "chatgpt-image-latest",
+     "url": "https://developers.openai.com/api/docs/pricing"
+    }
+   ],
+   "deprecationDate": "2026-12-01"
   },
   {
    "id": "claude-3-5-haiku@bedrock:eu",
@@ -17606,6 +17631,326 @@
    "contextWindow": 400000
   },
   {
+   "id": "gpt-image-1-mini@azure:global",
+   "family": "gpt-image-1-mini",
+   "name": "GPT Image 1 Mini",
+   "vendor": "OpenAI",
+   "platform": "azure",
+   "region": "global",
+   "category": "image",
+   "firstSeen": "2026-10-11",
+   "status": "active",
+   "prices": [
+    {
+     "tier": "standard",
+     "minPromptTokens": 0,
+     "imageOutput": 8
+    }
+   ],
+   "sources": [
+    {
+     "litellm": "azure/gpt-image-1-mini",
+     "url": "https://azure.microsoft.com/en-us/pricing/details/azure-openai/"
+    }
+   ],
+   "deprecationDate": "2027-04-07"
+  },
+  {
+   "id": "gpt-image-1-mini@openai:global",
+   "family": "gpt-image-1-mini",
+   "name": "GPT Image 1 Mini",
+   "vendor": "OpenAI",
+   "platform": "openai",
+   "region": "global",
+   "category": "image",
+   "firstSeen": "2026-10-11",
+   "status": "active",
+   "prices": [
+    {
+     "tier": "standard",
+     "minPromptTokens": 0,
+     "imageOutput": 8
+    }
+   ],
+   "sources": [
+    {
+     "litellm": "gpt-image-1-mini",
+     "url": "https://developers.openai.com/api/docs/pricing"
+    }
+   ],
+   "deprecationDate": "2026-12-01"
+  },
+  {
+   "id": "gpt-image-1.5@azure:global",
+   "family": "gpt-image-1.5",
+   "name": "GPT Image 1.5",
+   "vendor": "OpenAI",
+   "platform": "azure",
+   "region": "global",
+   "category": "image",
+   "firstSeen": "2026-10-11",
+   "status": "active",
+   "prices": [
+    {
+     "tier": "standard",
+     "minPromptTokens": 0,
+     "imageOutput": 32
+    }
+   ],
+   "sources": [
+    {
+     "litellm": "azure/gpt-image-1.5",
+     "aliases": [
+      "azure/gpt-image-1.5-2025-12-16"
+     ],
+     "url": "https://azure.microsoft.com/en-us/pricing/details/azure-openai/"
+    }
+   ],
+   "deprecationDate": "2026-12-16"
+  },
+  {
+   "id": "gpt-image-1.5@openai:global",
+   "family": "gpt-image-1.5",
+   "name": "GPT Image 1.5",
+   "vendor": "OpenAI",
+   "platform": "openai",
+   "region": "global",
+   "category": "image",
+   "firstSeen": "2026-10-11",
+   "status": "active",
+   "prices": [
+    {
+     "tier": "standard",
+     "minPromptTokens": 0,
+     "imageOutput": 32
+    }
+   ],
+   "sources": [
+    {
+     "litellm": "gpt-image-1.5",
+     "aliases": [
+      "gpt-image-1.5-2025-12-16"
+     ],
+     "url": "https://developers.openai.com/api/docs/pricing"
+    }
+   ],
+   "deprecationDate": "2026-12-01",
+   "featured": true
+  },
+  {
+   "id": "gpt-image-1@azure:global",
+   "family": "gpt-image-1",
+   "name": "GPT Image 1",
+   "vendor": "OpenAI",
+   "platform": "azure",
+   "region": "global",
+   "category": "image",
+   "firstSeen": "2026-10-11",
+   "status": "active",
+   "prices": [
+    {
+     "tier": "standard",
+     "minPromptTokens": 0,
+     "imageOutput": 40
+    }
+   ],
+   "sources": [
+    {
+     "litellm": "azure/gpt-image-1",
+     "url": "https://azure.microsoft.com/en-us/pricing/details/azure-openai/"
+    }
+   ],
+   "deprecationDate": "2026-10-23"
+  },
+  {
+   "id": "gpt-image-1@openai:global",
+   "family": "gpt-image-1",
+   "name": "GPT Image 1",
+   "vendor": "OpenAI",
+   "platform": "openai",
+   "region": "global",
+   "category": "image",
+   "firstSeen": "2026-10-11",
+   "status": "active",
+   "prices": [
+    {
+     "tier": "standard",
+     "minPromptTokens": 0,
+     "imageOutput": 40
+    }
+   ],
+   "sources": [
+    {
+     "litellm": "gpt-image-1",
+     "url": "https://developers.openai.com/api/docs/pricing"
+    }
+   ],
+   "deprecationDate": "2026-10-23"
+  },
+  {
+   "id": "gpt-image-2.5-flare@azure:global",
+   "family": "gpt-image-2.5-flare",
+   "name": "GPT Image 2.5 Flare",
+   "vendor": "OpenAI",
+   "platform": "azure",
+   "region": "global",
+   "category": "image",
+   "firstSeen": "2026-10-11",
+   "status": "active",
+   "prices": [
+    {
+     "tier": "standard",
+     "minPromptTokens": 0,
+     "imageOutput": 30
+    }
+   ],
+   "sources": [
+    {
+     "litellm": "azure/gpt-image-2.5-flare",
+     "url": "https://azure.microsoft.com/en-us/pricing/details/azure-openai/"
+    }
+   ],
+   "deprecationDate": "2027-09-09"
+  },
+  {
+   "id": "gpt-image-2.5-flare@openai:global",
+   "family": "gpt-image-2.5-flare",
+   "name": "GPT Image 2.5 Flare",
+   "vendor": "OpenAI",
+   "platform": "openai",
+   "region": "global",
+   "category": "image",
+   "firstSeen": "2026-10-11",
+   "status": "active",
+   "prices": [
+    {
+     "tier": "standard",
+     "minPromptTokens": 0,
+     "imageOutput": 30
+    }
+   ],
+   "sources": [
+    {
+     "litellm": "gpt-image-2.5-flare",
+     "aliases": [
+      "gpt-image-2.5-flare-2026-09-08"
+     ],
+     "url": "https://developers.openai.com/api/docs/pricing"
+    }
+   ],
+   "featured": true
+  },
+  {
+   "id": "gpt-image-2.5-sunburst@azure:global",
+   "family": "gpt-image-2.5-sunburst",
+   "name": "GPT Image 2.5 Sunburst",
+   "vendor": "OpenAI",
+   "platform": "azure",
+   "region": "global",
+   "category": "image",
+   "firstSeen": "2026-10-11",
+   "status": "active",
+   "prices": [
+    {
+     "tier": "standard",
+     "minPromptTokens": 0,
+     "imageOutput": 30
+    }
+   ],
+   "sources": [
+    {
+     "litellm": "azure/gpt-image-2.5-sunburst",
+     "url": "https://azure.microsoft.com/en-us/pricing/details/azure-openai/"
+    }
+   ],
+   "deprecationDate": "2027-09-09"
+  },
+  {
+   "id": "gpt-image-2.5-sunburst@openai:global",
+   "family": "gpt-image-2.5-sunburst",
+   "name": "GPT Image 2.5 Sunburst",
+   "vendor": "OpenAI",
+   "platform": "openai",
+   "region": "global",
+   "category": "image",
+   "firstSeen": "2026-10-11",
+   "status": "active",
+   "prices": [
+    {
+     "tier": "standard",
+     "minPromptTokens": 0,
+     "imageOutput": 30
+    }
+   ],
+   "sources": [
+    {
+     "litellm": "gpt-image-2.5-sunburst",
+     "aliases": [
+      "gpt-image-2.5-sunburst-2026-09-08"
+     ],
+     "url": "https://developers.openai.com/api/docs/pricing"
+    }
+   ],
+   "featured": true
+  },
+  {
+   "id": "gpt-image-2@azure:global",
+   "family": "gpt-image-2",
+   "name": "GPT Image 2",
+   "vendor": "OpenAI",
+   "platform": "azure",
+   "region": "global",
+   "category": "image",
+   "firstSeen": "2026-10-11",
+   "status": "active",
+   "prices": [
+    {
+     "tier": "standard",
+     "minPromptTokens": 0,
+     "imageOutput": 30
+    }
+   ],
+   "sources": [
+    {
+     "litellm": "azure/gpt-image-2",
+     "aliases": [
+      "azure_ai/gpt-image-2",
+      "azure/gpt-image-2-2026-04-21"
+     ],
+     "url": "https://azure.microsoft.com/en-us/pricing/details/azure-openai/"
+    }
+   ],
+   "deprecationDate": "2027-10-21"
+  },
+  {
+   "id": "gpt-image-2@openai:global",
+   "family": "gpt-image-2",
+   "name": "GPT Image 2",
+   "vendor": "OpenAI",
+   "platform": "openai",
+   "region": "global",
+   "category": "image",
+   "firstSeen": "2026-10-11",
+   "status": "active",
+   "prices": [
+    {
+     "tier": "standard",
+     "minPromptTokens": 0,
+     "imageOutput": 30
+    }
+   ],
+   "sources": [
+    {
+     "litellm": "gpt-image-2",
+     "aliases": [
+      "gpt-image-2-2026-04-21"
+     ],
+     "url": "https://developers.openai.com/api/docs/pricing"
+    }
+   ],
+   "featured": true
+  },
+  {
    "id": "gpt-oss-120b-1@bedrock:regional",
    "family": "gpt-oss-120b-1",
    "name": "GPT Oss 120b 1",
@@ -21354,6 +21699,56 @@
     }
    ],
    "contextWindow": 256000
+  },
+  {
+   "id": "mai-image-2.6-flash@azure:global",
+   "family": "mai-image-2.6-flash",
+   "name": "Mai Image 2.6 Flash",
+   "vendor": "その他",
+   "platform": "azure",
+   "region": "global",
+   "category": "image",
+   "firstSeen": "2026-10-11",
+   "status": "active",
+   "prices": [
+    {
+     "tier": "standard",
+     "minPromptTokens": 0,
+     "imageOutput": 19
+    }
+   ],
+   "sources": [
+    {
+     "litellm": "azure_ai/MAI-Image-2.6-Flash",
+     "url": "https://prices.azure.com/api/retail/prices?$filter=serviceName%20eq%20'Foundry%20Models'%20and%20armRegionName%20eq%20'eastus'%20and%20priceType%20eq%20'Consumption'"
+    }
+   ],
+   "contextWindow": 32000
+  },
+  {
+   "id": "mai-image-2.6@azure:global",
+   "family": "mai-image-2.6",
+   "name": "Mai Image 2.6",
+   "vendor": "その他",
+   "platform": "azure",
+   "region": "global",
+   "category": "image",
+   "firstSeen": "2026-10-11",
+   "status": "active",
+   "prices": [
+    {
+     "tier": "standard",
+     "minPromptTokens": 0,
+     "imageOutput": 38
+    }
+   ],
+   "sources": [
+    {
+     "litellm": "azure_ai/MAI-Image-2.6",
+     "url": "https://prices.azure.com/api/retail/prices?$filter=serviceName%20eq%20'Foundry%20Models'%20and%20armRegionName%20eq%20'eastus'%20and%20priceType%20eq%20'Consumption'"
+    }
+   ],
+   "contextWindow": 32000
   },
   {
    "id": "mai-thinking-1@azure:global",

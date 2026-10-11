@@ -29,6 +29,15 @@ describe("permalink", () => {
     expect(d.state.sel.img).toEqual(base.sel.img);
   });
 
+  it("OpenAIの幅・高さ・画質を共有し、旧e2リンクは既定の条件で復元する", () => {
+    const s = structuredClone(base);
+    s.t = "img";
+    s.img = { n: 100, r: "4K", w: 3840, h: 2160, q: "max" };
+    expect(decodeState(encodeState(s), base)!.state.img).toEqual(s.img);
+    const old = "e2" + b64urlEncode(JSON.stringify({ img: { n: 500, r: "2K" } }));
+    expect(decodeState(old, base)!.state.img).toEqual({ n: 500, r: "2K", w: 1024, h: 1024, q: "medium" });
+  });
+
   it("旧版(e1)のリンクも入力値を読める", () => {
     const e1 = {
       v: 1, s: "2026-10-10", t: "dec", fx: 158, cur: "USD", unit: "1K", p: true, d: "2026-10-10", cm: "ratio",

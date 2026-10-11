@@ -23,7 +23,7 @@ export function diffData(prev: PriceData | null, next: PriceData): DiffSummary {
       continue;
     }
     const a = base(p), b = base(m);
-    for (const f of ["input", "output", "perImage"] as const) {
+    for (const f of ["input", "output", "perImage", "imageOutput"] as const) {
       const x = a?.[f], y = b?.[f];
       if (x && y && x !== y) (y > x ? out.up : out.down).push(`${m.id} ${f}: ${x} → ${y}(${fmtPct(((y - x) / x) * 100)})`);
     }

@@ -99,7 +99,10 @@ export function buildRules(e: LiteLLMEntry, category: Category): PriceRule[] {
       if (m && typeof v === "number") byRes[m[1]] = round6(v);
     }
     if (Object.keys(byRes).length) rule.perImageByRes = byRes;
-    return rule.perImage != null || rule.perImageByRes ? [rule] : [];
+    // 既存の1枚単価を優先。両方を持つGeminiなどにOpenAIの換算を適用しない。
+    if (rule.perImage == null && !rule.perImageByRes && typeof e.output_cost_per_image_token === "number")
+      rule.imageOutput = perMillion(e.output_cost_per_image_token);
+    return rule.perImage != null || rule.perImageByRes || rule.imageOutput != null ? [rule] : [];
   }
 
   const rules = new Map<string, PriceRule>();
