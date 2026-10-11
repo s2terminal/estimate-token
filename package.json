@@ -1,0 +1,26 @@
+{
+  "name": "estimate-token",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "ざっくり生成AI: 生成AIの利用料を円でざっくり比べる静的Webアプリ",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "pipeline": "tsx pipeline/run.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.5",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.4",
+    "vitest": "^5.0.3",
+    "yaml": "^2.9.1"
+  }
+}

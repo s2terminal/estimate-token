@@ -67,8 +67,8 @@
 | `prices[]` | 価格ルール。`tier`(standard / batch / flex / priority)、`minPromptTokens`(長文価格の開始点、0が通常)、`input` `output` `cacheRead` `cacheWrite` `cacheWrite1h`、画像は `perImage` と `perImageByRes` | `{tier:"batch", minPromptTokens:0, input:1, output:5}` |
 | `validFrom` / `validTo` / `promo` | 期間限定価格用。MVPでは常に空(手書き層が入ったら使う) | — |
 | `contextWindow` / `deprecationDate` | LiteLLMの `max_input_tokens` / `deprecation_date` | 922000 / 2028-03-11 |
-| `firstSeen` / `status` | 初めて取り込んだ日、`active` `deprecated` `price_pending` | 2026-09-29 / `active` |
-| `sources[]` | 元のキーと照合結果(LiteLLMキー、OpenRouter id、差異%) | `[{litellm:"azure/us/gpt-6.1-sol"}]` |
+| `firstSeen` / `status` / `needsReview` | 初めて取り込んだ日、`active` `deprecated`、別ソースとの照合で差が大きいか | 2026-09-29 / `active` / なし |
+| `sources[]` | 元のキー(LiteLLMキー、まとめた別名、公式価格ページURL) | `[{litellm:"azure/us/gpt-6.1-sol"}]` |
 
 ファイル全体は次の形にする。`snapshot`は価格データの取得日で、画面の「価格データ更新日」に表示する。
 
@@ -93,7 +93,7 @@
         { "tier": "standard", "minPromptTokens": 272000, "input": 4, "cacheRead": 0.2, "cacheWrite": 5, "output": 15 },
         { "tier": "batch", "minPromptTokens": 0, "input": 1, "cacheRead": 0.05, "cacheWrite": 1.25, "output": 5 }
       ],
-      "sources": [{ "litellm": "gpt-6.1-sol", "openrouter": "openai/gpt-6.1-sol", "diffPct": 0 }]
+      "sources": [{ "litellm": "gpt-6.1-sol" }]
     }
   ]
 }
@@ -108,7 +108,7 @@
 1. **取得(fetch)**: LiteLLMの価格JSONの最新コミットSHAをGitHub APIで調べ、そのSHAのファイルを取得する(再現できるように)。OpenRouterとFrankfurterも取得し、生データを `raw/` に置く(コミットはしない、Actionsのartifactに14日保存)。
 2. **選別(select)**: `config/catalog.yaml` の規則で対象エントリを選ぶ。規則は「`litellm_provider` が許可リストにある」「`mode` が chat / responses / image\_generation」「`deprecation_date` が過ぎていない」。規則に合う新モデルは設定変更なしで自動的に入る。
 3. **正規化(normalize)**: キーの形から platform と region を切り出す(下の表)。日付付きの別名(`azure/gpt-6-astra-2026-09-03` など)と、同じ価格の重複エントリは1行にまとめる。単価を×1,000,000して価格ルールにする。
-4. **照合(cross-check)**: 直販モデルをOpenRouterの同名モデルと突き合わせ、差異%を `sources[]` に記録する。OpenRouterにだけある主要ベンダーのモデルは `price_pending` で入れ、価格はOpenRouter値を参考表示する。
+4. **照合(cross-check)**: 直販モデルをOpenRouterの同名モデルと突き合わせ、差が大きいものに `needsReview: true` を付ける。OpenRouterにだけある主要ベンダーのモデルは、名前だけを差分レポートに「新モデル候補」として出す(公開データには入れない。下の「利用条件」を参照)。
 5. **検証と差分(validate / diff)**: 次節の品質ゲート。前日の `latest.json` との差分をMarkdownにまとめる(新モデル、値下げ、値上げ、廃止)。
 6. **公開(publish)**: 中身のハッシュが変わった日だけ `data/latest.json` を上書きして main にコミットする。過去の価格は書き残さない(必要ならgit履歴で追える)。main への push で Pages のデプロイが走る。
 
@@ -157,7 +157,7 @@ jobs:
 | 大きな値変わり | 同じ価格ルールで±50%超の変化 | 止める |
 | 中くらいの値変わり | ±10〜50% | 公開する。差分をIssueに記録 |
 | 照合の不一致 | 直販モデルのLiteLLM値とOpenRouter値の差が20%超 | 公開する。画面に「要確認」を出し、Issueに記録 |
-| 新モデル | 規則に合う新キー | 公開する(`firstSeen` を記録)。価格が取れないものは `price_pending` |
+| 新モデル | 規則に合う新キー | 公開する(`firstSeen` を記録)。LiteLLMにないものはレポートに名前だけ出す |
 | 為替の異常 | USD/JPYが前日比±5%超、または取得失敗 | 為替だけ前日値を使い、価格は公開する |
 
 **通知**: 止めた日はPR、公開した日の値変わり・不一致は1本のIssue(「価格更新ログ」)へのコメントで知らせる。GitHubの通知設定だけで受け取れるので、Slack連携は後回し。ワークフロー自体が3日連続で失敗したときも同じIssueに書く。
@@ -249,8 +249,8 @@ zakkuri-genai/
 | --- | --- | --- |
 | ソース間の価格の食い違い | 同じモデルでもLiteLLM内で値が割れる。例: Gemini 3.1 Flash Imageの1枚単価は `gemini/` が$0.045、Vertex AI側が$0.0672 | platform別の行として両方出す。公式ページとの照合は手書き層の時に検討 |
 | 期間限定価格が取れない | LiteLLMもOpenRouterも現在値だけ。期間終了後に両ソースが更新されるまでは古い値が残る | MVPでは「各ソースの現在値」と明記。期間は手書き層で補う |
-| LiteLLMの反映遅れ | 新モデルがLiteLLMに載るまでの数日は取れない | OpenRouterだけにある主要ベンダーの新モデルを `price_pending` で先に載せる |
+| LiteLLMの反映遅れ | 新モデルがLiteLLMに載るまでの数日は取れない | OpenRouterだけにある主要ベンダーの新モデルを差分レポートで知らせる(OpenRouterの規約上、値は公開しない) |
 | キーの命名規則の変化 | Bedrockには `bedrock` / `bedrock_converse` / `bedrock_mantle` など複数のprovider値がある | 解析できないキーは捨てず「未分類」として差分レポートに出し、`catalog.yaml` を直す |
-| 利用条件 | LiteLLMはリポジトリのMITライセンス。OpenRouter APIの利用規約と再配布の可否は未確認 | 実装前に規約を確認。不可ならOpenRouterは「検知と照合のみ、値は公開しない」に絞る |
+| 利用条件 | LiteLLMはリポジトリのMITライセンス。OpenRouterの利用規約(2026-08-31版)は第7条でサイト・サービス上の情報のコピーや譲渡を、第12条で明示の許可がない Materials(情報・データを含む)の利用を禁じている | **決定**: OpenRouterは「検知と照合のみ」に絞る。価格・id・差異%は `latest.json`、Issue/PRのレポート、Actionsのartifact、テストのフィクスチャのいずれにも出さない。照合で差が大きいモデルは `needsReview: true` だけを持つ。LiteLLM未収録のモデルはレポートに名前だけ出し、LiteLLMに載るまで公開しない |
 | 為替の基準 | FrankfurterはECBの参照レートで、日本の銀行のTTMとはずれる | 「ざっくり」なので許容。画面で手入力で上書きできるようにする |
 | ホスティング先 | GitHub Pages(公開リポジトリ前提)でよいか | 社内限定にするなら Cloudflare Pages + Access などを検討 |

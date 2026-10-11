@@ -1,0 +1,75 @@
+# 対象エントリの選別規則とキーの解析規則。
+# 規則に合う新モデルは設定変更なしで自動的に取り込まれる。
+
+# LiteLLM の litellm_provider → platform
+providers:
+  openai: openai
+  anthropic: anthropic
+  gemini: gemini-api
+  vertex_ai: vertex-ai
+  vertex_ai-language-models: vertex-ai
+  vertex_ai-anthropic_models: vertex-ai
+  vertex_ai-mistral_models: vertex-ai
+  vertex_ai-llama_models: vertex-ai
+  vertex_ai-deepseek_models: vertex-ai
+  vertex_ai-openai_models: vertex-ai
+  vertex_ai-qwen_models: vertex-ai
+  bedrock: bedrock
+  bedrock_converse: bedrock
+  azure: azure
+  azure_ai: azure
+
+modes: [chat, responses, image_generation]
+
+# 一致したキーは捨てる(画質・サイズ別の画像キー、Bedrockの予約購入、ファインチューニングなど)
+excludeKeyPatterns:
+  - "(^|/)(low|medium|high|hd|standard|max)/"
+  - "\\d+-x-\\d+/"
+  - "commitment"
+  - "^ft:"
+  - "(^|/)(us-gov-|cn-|ap-|eu-|us-|ca-|sa-|me-|af-)[a-z]+-\\d/.*commitment"
+  - "-search-preview"
+  - "realtime"
+  - "audio"
+  - "tts"
+  - "transcribe"
+
+# 系列名 → 開発元(上から順に評価)
+vendors:
+  - { pattern: "^(claude|anthropic)", vendor: Anthropic }
+  - { pattern: "^(gpt|o\\d|chatgpt|dall-e|codex|davinci|babbage)", vendor: OpenAI }
+  - { pattern: "^(gemini|gemma|imagen|nano-banana|learnlm)", vendor: Google }
+  - { pattern: "^(nova|titan|amazon)", vendor: Amazon }
+  - { pattern: "^(mistral|mixtral|codestral|ministral|magistral|pixtral|devstral)", vendor: Mistral }
+  - { pattern: "^(llama|meta)", vendor: Meta }
+  - { pattern: "^deepseek", vendor: DeepSeek }
+  - { pattern: "^(qwen)", vendor: Alibaba }
+  - { pattern: "^(command|cohere)", vendor: Cohere }
+  - { pattern: "^(jamba|j2)", vendor: AI21 }
+  - { pattern: "^(grok)", vendor: xAI }
+  - { pattern: "^(stable|sd3|stability)", vendor: Stability AI }
+
+# 自動生成の表示名を上書きしたいとき(系列名 → 表示名)
+names:
+  gemini-nano-banana-2.1: Nano Banana 2.1
+
+# 初期表示で選ばれるモデル(id)。各ベンダーの最上位・バランス・低コストなど
+featured:
+  - gpt-6-astra@openai:global
+  - gpt-6.1-sol@openai:global
+  - gpt-6-luna@openai:global
+  - claude-opus-5-5@anthropic:global
+  - claude-sonnet-5-5@anthropic:global
+  - claude-haiku-5-5@anthropic:global
+  - gemini-3.8-flash@gemini-api:global
+  - gemini-3.7-flash@gemini-api:global
+  - gemini-3.5-flash-lite@gemini-api:global
+  - gemini-3.8-flash@vertex-ai:global
+  - claude-sonnet-5@bedrock:jp
+  - gpt-6.1-sol@azure:us
+  # 画像
+  - gemini-nano-banana-2.1@gemini-api:global
+  - gemini-3.1-flash-image@gemini-api:global
+  - gemini-3.1-flash-image@vertex-ai:global
+  - gemini-3-pro-image@gemini-api:global
+  - gemini-3.1-flash-lite-image@gemini-api:global

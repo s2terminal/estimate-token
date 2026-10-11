@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+    <title>ざっくり生成AI</title>
+    <meta name="description" content="使い方を入れると、生成AIの月額を円でざっくり比べられます。" />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><circle cx='32' cy='32' r='28' fill='none' stroke='%23B5352B' stroke-width='5'/><text x='32' y='42' font-size='26' text-anchor='middle' fill='%23B5352B' font-weight='700'>概</text></svg>" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=IBM+Plex+Mono:wght@400;600&family=Zen+Kaku+Gothic+New:wght@700;900&display=swap" />
+  </head>
+  <body>
+    <div class="wrap">
+      <header class="top">
+        <div class="brand">
+          <div class="seal" aria-hidden="true">概算</div>
+          <div>
+            <h1>ざっくり生成AI</h1>
+            <p class="lede">使い方を入れると、生成AIの月額を円でざっくり比べられます。</p>
+          </div>
+        </div>
+        <div class="snap">
+          <span class="chip">価格データ更新日 <b id="snapId">—</b></span>
+          <span class="chip">1 USD = <b id="fxChip">—</b> 円<span id="fxDate"></span></span>
+          <span class="chip">税抜</span>
+        </div>
+      </header>
+
+      <div id="loadError" class="panel notes" hidden></div>
+
+      <div class="grid" id="app" hidden>
+        <form class="panel form" id="form" autocomplete="off">
+          <div class="tabs" role="tablist" aria-label="モデルの種類">
+            <button type="button" role="tab" data-tab="llm">言語モデル</button>
+            <button type="button" role="tab" data-tab="img">画像生成</button>
+          </div>
+
+          <fieldset id="fs-llm">
+            <legend>使い方(1か月あたり)</legend>
+            <div class="presets" id="presets" aria-label="よくある使い方"></div>
+            <div class="field"><label for="llmN">リクエスト数<small>回/月</small></label><input type="number" id="llmN" min="0" step="1000" /></div>
+            <div class="field"><label for="llmIn">平均入力<small>tokens/回(プロンプト+文脈)</small></label><input type="number" id="llmIn" min="0" step="100" /></div>
+            <div class="field"><label for="llmOut">平均出力<small>tokens/回(思考トークン込み)</small></label><input type="number" id="llmOut" min="0" step="100" /></div>
+            <div class="field">
+              <label for="llmTier">料金プラン</label>
+              <select id="llmTier">
+                <option value="standard">Standard(同期)</option>
+                <option value="batch">Batch(非同期)</option>
+                <option value="flex">Flex</option>
+                <option value="priority">Priority</option>
+              </select>
+            </div>
+            <label class="check"><input type="checkbox" id="llmCache" /><span>コンテキストキャッシュを考慮<small>入力のうちキャッシュから読む割合を指定</small></span></label>
+            <div class="field" id="hitRow"><label for="llmHit">キャッシュヒット率<small>入力tokensに対する%</small></label><input type="number" id="llmHit" min="0" max="100" step="5" /></div>
+          </fieldset>
+
+          <fieldset id="fs-img" hidden>
+            <legend>使い方(1か月あたり)</legend>
+            <div class="field"><label for="imgN">生成枚数<small>枚/月</small></label><input type="number" id="imgN" min="0" step="100" /></div>
+            <div class="field">
+              <label>解像度<small>解像度別の価格がないモデルは共通単価</small></label>
+              <div class="seg" id="imgRes"><button type="button" data-v="1K">1K</button><button type="button" data-v="2K">2K</button><button type="button" data-v="4K">4K</button></div>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>価格の条件と表示</legend>
+            <div class="field">
+              <label for="fx">為替<small>円/USD(<button type="button" class="mini" id="fxReset">取得値に戻す</button>)</small></label>
+              <input type="number" id="fx" min="1" step="1" />
+            </div>
+            <div class="field"><label>表示通貨</label><div class="seg" id="cur"><button type="button" data-v="JPY">円</button><button type="button" data-v="USD">USD</button></div></div>
+            <div class="field"><label>単価の単位<small>tokensあたり</small></label><div class="seg" id="unit"><button type="button" data-v="1K">1K</button><button type="button" data-v="1M">1M</button></div></div>
+          </fieldset>
+
+          <details class="models" id="modelsBox">
+            <summary>比較するモデル <span class="mmeta" id="selCount"></span></summary>
+            <div class="mfilter">
+              <input type="search" id="mSearch" placeholder="モデル名で検索(例: sonnet, gpt-6)" aria-label="モデルを検索" />
+              <div class="mselects">
+                <select id="fVendor" aria-label="開発元"></select>
+                <select id="fPlatform" aria-label="プラットフォーム"></select>
+                <select id="fRegion" aria-label="リージョン"></select>
+              </div>
+              <p class="mmeta" id="mHint"></p>
+            </div>
+            <div class="mactions"><button type="button" class="mini" id="selShown">表示中をすべて選ぶ</button><button type="button" class="mini" id="selNone">すべて外す</button></div>
+            <div class="mlist" id="mlist"></div>
+          </details>
+        </form>
+
+        <section class="results" aria-live="polite">
+          <div class="panel summary" id="summary"></div>
+
+          <div class="panel chartpanel" id="chartPanel">
+            <div class="charthead">
+              <h2 id="chartTitle">価格差グラフ</h2>
+              <div class="chartctl">
+                <div class="seg" id="cmode" aria-label="グラフの表し方">
+                  <button type="button" data-v="mix">月額(内訳)</button>
+                  <button type="button" data-v="ratio">最安との倍率</button>
+                  <button type="button" data-v="log">対数目盛</button>
+                </div>
+              </div>
+            </div>
+            <div class="legend" id="legend"></div>
+            <div id="chartBox" role="img" aria-label="モデル別の月額を比べる横棒グラフ"></div>
+            <p class="chartnote" id="chartNote"></p>
+            <div id="chartTip" hidden></div>
+          </div>
+
+          <div class="panel">
+            <div class="sectionhead"><h2 id="resTitle">月額の比較</h2><p id="resSub"></p></div>
+            <div class="tablebox"><table id="resTable"><thead></thead><tbody></tbody></table></div>
+            <div class="pending" id="pending"></div>
+          </div>
+
+          <div class="panel share">
+            <div class="sectionhead" style="padding: 0"><h2>共有</h2><p>リンクには入力した数値と選んだモデルだけが入ります。開いた時点の最新価格で再計算されます</p></div>
+            <div class="linkrow"><input type="text" id="permalink" readonly aria-label="共有リンク" /><button type="button" class="btn" id="copyLink">リンクをコピー</button></div>
+            <div id="toast" role="status"></div>
+          </div>
+
+          <div class="panel">
+            <div class="sectionhead"><h2>単価一覧</h2><p id="unitSub"></p></div>
+            <div class="tablebox"><table id="unitTable"><thead></thead><tbody></tbody></table></div>
+            <div class="notes">
+              <p><strong>価格は自動取得した各ソースの現在値です。</strong>LiteLLM の価格JSONの値を表示し(別ソースとの照合で差が大きいものは「要確認」)、為替は Frankfurter(ECB参照レート)を毎日取得しています。期間限定価格の終了日は反映されません。稟議に使う前に各社の公式価格ページで確認してください。</p>
+              <p>キャッシュの書込み料・保存料、ツール呼び出し料、消費税は含みません。月額 = (通常入力 × 入力単価 + キャッシュ読取 × キャッシュ単価 + 出力 × 出力単価) × 回数 ÷ 1,000,000。</p>
+              <p id="srcNote"></p>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

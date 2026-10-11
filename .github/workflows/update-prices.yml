@@ -1,0 +1,94 @@
+name: Update prices
+on:
+  schedule: [{ cron: "17 21 * * *" }] # 06:17 JST
+  workflow_dispatch:
+    inputs:
+      force_stop:
+        description: "品質ゲートで止めた扱いにする(PR作成の動作確認用)"
+        type: boolean
+        default: false
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+concurrency:
+  group: update-prices
+  cancel-in-progress: false
+env:
+  LOG_ISSUE_TITLE: 価格更新ログ
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+
+      - id: pipeline
+        name: Pipeline (fetch → select → normalize → cross-check → validate → diff)
+        run: npm run pipeline -- ${{ inputs.force_stop && '--force-stop' || '' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - run: npm test
+
+      # OpenRouter の生データは規約上再配布しないため artifact に含めない
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: raw-${{ github.run_id }}
+          path: |
+            raw/litellm.json
+            raw/litellm.meta.json
+            raw/fx.json
+            out/
+          retention-days: 14
+
+      - name: Publish (gate passed → commit to main)
+        if: steps.pipeline.outputs.status == 'pass' && steps.pipeline.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/data/latest.json
+          git commit -m "chore(data): 価格データを更新 ${{ steps.pipeline.outputs.snapshot }}"
+          git push origin HEAD:main
+
+      - name: Hold (gate stopped → open a PR)
+        if: steps.pipeline.outputs.status == 'stop' && steps.pipeline.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          branch="prices/${{ steps.pipeline.outputs.snapshot }}-${{ github.run_id }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$branch"
+          git add public/data/latest.json
+          git commit -m "chore(data): 価格データの更新(要確認) ${{ steps.pipeline.outputs.snapshot }}"
+          git push origin "$branch"
+          gh pr create --base main --head "$branch" \
+            --title "価格データの更新を止めました(${{ steps.pipeline.outputs.snapshot }})" \
+            --body-file out/report.md
+
+      - name: Log notes to issue
+        if: steps.pipeline.outputs.status == 'pass' && steps.pipeline.outputs.notes == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          num=$(gh issue list --state open --search "in:title $LOG_ISSUE_TITLE" --json number,title \
+            --jq "map(select(.title == \"$LOG_ISSUE_TITLE\")) | .[0].number // empty")
+          if [ -z "$num" ]; then
+            gh issue create --title "$LOG_ISSUE_TITLE" --body "日次の価格更新で記録すべきこと(値変わり・照合の不一致など)をここにコメントします。"
+            num=$(gh issue list --state open --search "in:title $LOG_ISSUE_TITLE" --json number --jq '.[0].number')
+          fi
+          gh issue comment "$num" --body-file out/report.md
+
+      - name: Log failure to issue
+        if: failure()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          num=$(gh issue list --state open --search "in:title $LOG_ISSUE_TITLE" --json number,title \
+            --jq "map(select(.title == \"$LOG_ISSUE_TITLE\")) | .[0].number // empty")
+          [ -n "$num" ] && gh issue comment "$num" --body "日次更新が失敗しました: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" || true
