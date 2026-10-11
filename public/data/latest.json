@@ -1,17 +1,17 @@
 {
  "schemaVersion": 1,
  "snapshot": "2026-10-12",
- "generatedAt": "2026-10-11T21:27:04.562Z",
+ "generatedAt": "2026-10-11T23:47:54.392Z",
  "baseline": "2026-10-11",
  "sources": {
   "litellm": {
-   "commit": "8ccb111de4cefd79be0cbbda054050d7243da5de",
-   "fetchedAt": "2026-10-11T21:27:05.226Z",
-   "bytes": 2750284
+   "commit": "ac98cabae5ffd386ee11d41487f915fc9fd27848",
+   "fetchedAt": "2026-10-11T23:47:55.038Z",
+   "bytes": 2756051
   },
   "openrouter": {
-   "fetchedAt": "2026-10-11T21:27:05.305Z",
-   "bytes": 766197
+   "fetchedAt": "2026-10-11T23:47:55.172Z",
+   "bytes": 766189
   },
   "fx": {
    "pair": "USDJPY",
@@ -18819,7 +18819,7 @@
    "sources": [
     {
      "litellm": "ai21.jamba-1-5-large-v1:0",
-     "url": "https://aws.amazon.com/bedrock/pricing/"
+     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-ai21-labs-jamba-1-5-large.md"
     }
    ],
    "contextWindow": 256000,
@@ -18846,7 +18846,7 @@
    "sources": [
     {
      "litellm": "ai21.jamba-1-5-mini-v1:0",
-     "url": "https://aws.amazon.com/bedrock/pricing/"
+     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-ai21-labs-jamba-1-5-mini.md"
     }
    ],
    "contextWindow": 256000,
@@ -20107,10 +20107,11 @@
    "sources": [
     {
      "litellm": "meta.llama3-1-70b-instruct-v1:0",
-     "url": "https://b0.p.awsstatic.com/pricing/2.0/meteredUnitMaps/bedrock/USD/current/bedrock.json"
+     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-meta-llama-3-1-70b-instruct.md"
     }
    ],
-   "contextWindow": 128000
+   "contextWindow": 128000,
+   "deprecationDate": "2027-03-30"
   },
   {
    "id": "llama3-1-70b-instruct@bedrock:us",
@@ -20133,10 +20134,11 @@
    "sources": [
     {
      "litellm": "us.meta.llama3-1-70b-instruct-v1:0",
-     "url": "https://b0.p.awsstatic.com/pricing/2.0/meteredUnitMaps/bedrock/USD/current/bedrock.json"
+     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-meta-llama-3-1-70b-instruct.md"
     }
    ],
-   "contextWindow": 128000
+   "contextWindow": 128000,
+   "deprecationDate": "2027-03-30"
   },
   {
    "id": "llama3-1-8b-instruct@bedrock:regional",
@@ -20158,10 +20160,12 @@
    ],
    "sources": [
     {
-     "litellm": "meta.llama3-1-8b-instruct-v1:0"
+     "litellm": "meta.llama3-1-8b-instruct-v1:0",
+     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-meta-llama-3-1-8b-instruct.md"
     }
    ],
-   "contextWindow": 128000
+   "contextWindow": 128000,
+   "deprecationDate": "2027-03-30"
   },
   {
    "id": "llama3-1-8b-instruct@bedrock:us",
@@ -20183,10 +20187,12 @@
    ],
    "sources": [
     {
-     "litellm": "us.meta.llama3-1-8b-instruct-v1:0"
+     "litellm": "us.meta.llama3-1-8b-instruct-v1:0",
+     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-meta-llama-3-1-8b-instruct.md"
     }
    ],
-   "contextWindow": 128000
+   "contextWindow": 128000,
+   "deprecationDate": "2027-03-30"
   },
   {
    "id": "llama3-2-11b-instruct@bedrock:regional",
@@ -20462,10 +20468,12 @@
    ],
    "sources": [
     {
-     "litellm": "meta.llama3-3-70b-instruct-v1:0"
+     "litellm": "meta.llama3-3-70b-instruct-v1:0",
+     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-meta-llama-3-3-70b-instruct.md"
     }
    ],
-   "contextWindow": 128000
+   "contextWindow": 128000,
+   "deprecationDate": "2027-03-30"
   },
   {
    "id": "llama3-3-70b-instruct@bedrock:us",
@@ -20487,10 +20495,12 @@
    ],
    "sources": [
     {
-     "litellm": "us.meta.llama3-3-70b-instruct-v1:0"
+     "litellm": "us.meta.llama3-3-70b-instruct-v1:0",
+     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-meta-llama-3-3-70b-instruct.md"
     }
    ],
-   "contextWindow": 128000
+   "contextWindow": 128000,
+   "deprecationDate": "2027-03-30"
   },
   {
    "id": "llama3-405b-instruct@vertex-ai:global",
@@ -20538,10 +20548,12 @@
    ],
    "sources": [
     {
-     "litellm": "bedrock/ap-south-1/meta.llama3-70b-instruct-v1:0"
+     "litellm": "bedrock/ap-south-1/meta.llama3-70b-instruct-v1:0",
+     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-meta-llama-3-70b-instruct.md"
     }
    ],
-   "contextWindow": 8192
+   "contextWindow": 8192,
+   "deprecationDate": "2027-03-30"
   },
   {
    "id": "llama3-70b-instruct@bedrock:ca-central-1",
@@ -20563,10 +20575,12 @@
    ],
    "sources": [
     {
-     "litellm": "bedrock/ca-central-1/meta.llama3-70b-instruct-v1:0"
+     "litellm": "bedrock/ca-central-1/meta.llama3-70b-instruct-v1:0",
+     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-meta-llama-3-70b-instruct.md"
     }
    ],
-   "contextWindow": 8192
+   "contextWindow": 8192,
+   "deprecationDate": "2027-03-30"
   },
   {
    "id": "llama3-70b-instruct@bedrock:eu-west-1",
@@ -20588,10 +20602,12 @@
    ],
    "sources": [
     {
-     "litellm": "bedrock/eu-west-1/meta.llama3-70b-instruct-v1:0"
+     "litellm": "bedrock/eu-west-1/meta.llama3-70b-instruct-v1:0",
+     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-meta-llama-3-70b-instruct.md"
     }
    ],
-   "contextWindow": 8192
+   "contextWindow": 8192,
+   "deprecationDate": "2027-03-30"
   },
   {
    "id": "llama3-70b-instruct@bedrock:eu-west-2",
@@ -20613,10 +20629,12 @@
    ],
    "sources": [
     {
-     "litellm": "bedrock/eu-west-2/meta.llama3-70b-instruct-v1:0"
+     "litellm": "bedrock/eu-west-2/meta.llama3-70b-instruct-v1:0",
+     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-meta-llama-3-70b-instruct.md"
     }
    ],
-   "contextWindow": 8192
+   "contextWindow": 8192,
+   "deprecationDate": "2027-03-30"
   },
   {
    "id": "llama3-70b-instruct@bedrock:regional",
@@ -20638,10 +20656,12 @@
    ],
    "sources": [
     {
-     "litellm": "meta.llama3-70b-instruct-v1:0"
+     "litellm": "meta.llama3-70b-instruct-v1:0",
+     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-meta-llama-3-70b-instruct.md"
     }
    ],
-   "contextWindow": 8192
+   "contextWindow": 8192,
+   "deprecationDate": "2027-03-30"
   },
   {
    "id": "llama3-70b-instruct@bedrock:sa-east-1",
@@ -20663,10 +20683,12 @@
    ],
    "sources": [
     {
-     "litellm": "bedrock/sa-east-1/meta.llama3-70b-instruct-v1:0"
+     "litellm": "bedrock/sa-east-1/meta.llama3-70b-instruct-v1:0",
+     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-meta-llama-3-70b-instruct.md"
     }
    ],
-   "contextWindow": 8192
+   "contextWindow": 8192,
+   "deprecationDate": "2027-03-30"
   },
   {
    "id": "llama3-70b-instruct@bedrock:us-east-1",
@@ -20688,10 +20710,12 @@
    ],
    "sources": [
     {
-     "litellm": "bedrock/us-east-1/meta.llama3-70b-instruct-v1:0"
+     "litellm": "bedrock/us-east-1/meta.llama3-70b-instruct-v1:0",
+     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-meta-llama-3-70b-instruct.md"
     }
    ],
-   "contextWindow": 8192
+   "contextWindow": 8192,
+   "deprecationDate": "2027-03-30"
   },
   {
    "id": "llama3-70b-instruct@bedrock:us-gov-east-1",
@@ -20763,10 +20787,12 @@
    ],
    "sources": [
     {
-     "litellm": "bedrock/us-west-1/meta.llama3-70b-instruct-v1:0"
+     "litellm": "bedrock/us-west-1/meta.llama3-70b-instruct-v1:0",
+     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-meta-llama-3-70b-instruct.md"
     }
    ],
-   "contextWindow": 8192
+   "contextWindow": 8192,
+   "deprecationDate": "2027-03-30"
   },
   {
    "id": "llama3-70b-instruct@vertex-ai:global",
@@ -20814,10 +20840,12 @@
    ],
    "sources": [
     {
-     "litellm": "bedrock/ap-south-1/meta.llama3-8b-instruct-v1:0"
+     "litellm": "bedrock/ap-south-1/meta.llama3-8b-instruct-v1:0",
+     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-meta-llama-3-8b-instruct.md"
     }
    ],
-   "contextWindow": 8192
+   "contextWindow": 8192,
+   "deprecationDate": "2027-03-30"
   },
   {
    "id": "llama3-8b-instruct@bedrock:ca-central-1",
@@ -20839,10 +20867,12 @@
    ],
    "sources": [
     {
-     "litellm": "bedrock/ca-central-1/meta.llama3-8b-instruct-v1:0"
+     "litellm": "bedrock/ca-central-1/meta.llama3-8b-instruct-v1:0",
+     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-meta-llama-3-8b-instruct.md"
     }
    ],
-   "contextWindow": 8192
+   "contextWindow": 8192,
+   "deprecationDate": "2027-03-30"
   },
   {
    "id": "llama3-8b-instruct@bedrock:eu-west-1",
@@ -20864,10 +20894,12 @@
    ],
    "sources": [
     {
-     "litellm": "bedrock/eu-west-1/meta.llama3-8b-instruct-v1:0"
+     "litellm": "bedrock/eu-west-1/meta.llama3-8b-instruct-v1:0",
+     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-meta-llama-3-8b-instruct.md"
     }
    ],
-   "contextWindow": 8192
+   "contextWindow": 8192,
+   "deprecationDate": "2027-03-30"
   },
   {
    "id": "llama3-8b-instruct@bedrock:eu-west-2",
@@ -20889,10 +20921,12 @@
    ],
    "sources": [
     {
-     "litellm": "bedrock/eu-west-2/meta.llama3-8b-instruct-v1:0"
+     "litellm": "bedrock/eu-west-2/meta.llama3-8b-instruct-v1:0",
+     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-meta-llama-3-8b-instruct.md"
     }
    ],
-   "contextWindow": 8192
+   "contextWindow": 8192,
+   "deprecationDate": "2027-03-30"
   },
   {
    "id": "llama3-8b-instruct@bedrock:regional",
@@ -20914,10 +20948,12 @@
    ],
    "sources": [
     {
-     "litellm": "meta.llama3-8b-instruct-v1:0"
+     "litellm": "meta.llama3-8b-instruct-v1:0",
+     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-meta-llama-3-8b-instruct.md"
     }
    ],
-   "contextWindow": 8192
+   "contextWindow": 8192,
+   "deprecationDate": "2027-03-30"
   },
   {
    "id": "llama3-8b-instruct@bedrock:sa-east-1",
@@ -20939,10 +20975,12 @@
    ],
    "sources": [
     {
-     "litellm": "bedrock/sa-east-1/meta.llama3-8b-instruct-v1:0"
+     "litellm": "bedrock/sa-east-1/meta.llama3-8b-instruct-v1:0",
+     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-meta-llama-3-8b-instruct.md"
     }
    ],
-   "contextWindow": 8192
+   "contextWindow": 8192,
+   "deprecationDate": "2027-03-30"
   },
   {
    "id": "llama3-8b-instruct@bedrock:us-east-1",
@@ -20964,10 +21002,12 @@
    ],
    "sources": [
     {
-     "litellm": "bedrock/us-east-1/meta.llama3-8b-instruct-v1:0"
+     "litellm": "bedrock/us-east-1/meta.llama3-8b-instruct-v1:0",
+     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-meta-llama-3-8b-instruct.md"
     }
    ],
-   "contextWindow": 8192
+   "contextWindow": 8192,
+   "deprecationDate": "2027-03-30"
   },
   {
    "id": "llama3-8b-instruct@bedrock:us-gov-east-1",
@@ -21039,10 +21079,12 @@
    ],
    "sources": [
     {
-     "litellm": "bedrock/us-west-1/meta.llama3-8b-instruct-v1:0"
+     "litellm": "bedrock/us-west-1/meta.llama3-8b-instruct-v1:0",
+     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-meta-llama-3-8b-instruct.md"
     }
    ],
-   "contextWindow": 8192
+   "contextWindow": 8192,
+   "deprecationDate": "2027-03-30"
   },
   {
    "id": "llama3-8b-instruct@vertex-ai:global",
@@ -21096,10 +21138,12 @@
    ],
    "sources": [
     {
-     "litellm": "meta.llama4-maverick-17b-instruct-v1:0"
+     "litellm": "meta.llama4-maverick-17b-instruct-v1:0",
+     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-meta-llama-4-maverick-17b-instruct.md"
     }
    ],
-   "contextWindow": 128000
+   "contextWindow": 1000000,
+   "deprecationDate": "2027-03-30"
   },
   {
    "id": "llama4-maverick-17b-instruct@bedrock:us",
@@ -21127,10 +21171,12 @@
    ],
    "sources": [
     {
-     "litellm": "us.meta.llama4-maverick-17b-instruct-v1:0"
+     "litellm": "us.meta.llama4-maverick-17b-instruct-v1:0",
+     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-meta-llama-4-maverick-17b-instruct.md"
     }
    ],
-   "contextWindow": 128000
+   "contextWindow": 1000000,
+   "deprecationDate": "2027-03-30"
   },
   {
    "id": "llama4-scout-17b-instruct@bedrock:regional",
@@ -21158,10 +21204,12 @@
    ],
    "sources": [
     {
-     "litellm": "meta.llama4-scout-17b-instruct-v1:0"
+     "litellm": "meta.llama4-scout-17b-instruct-v1:0",
+     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-meta-llama-4-scout-17b-instruct.md"
     }
    ],
-   "contextWindow": 128000
+   "contextWindow": 10000000,
+   "deprecationDate": "2027-03-30"
   },
   {
    "id": "llama4-scout-17b-instruct@bedrock:us",
@@ -21189,10 +21237,12 @@
    ],
    "sources": [
     {
-     "litellm": "us.meta.llama4-scout-17b-instruct-v1:0"
+     "litellm": "us.meta.llama4-scout-17b-instruct-v1:0",
+     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-meta-llama-4-scout-17b-instruct.md"
     }
    ],
-   "contextWindow": 128000
+   "contextWindow": 10000000,
+   "deprecationDate": "2027-03-30"
   },
   {
    "id": "lyria-3-clip-preview@gemini-api:global",
@@ -22462,10 +22512,12 @@
    ],
    "sources": [
     {
-     "litellm": "bedrock/eu-west-3/mistral.mistral-7b-instruct-v0:2"
+     "litellm": "bedrock/eu-west-3/mistral.mistral-7b-instruct-v0:2",
+     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-mistral-ai-mistral-7b-instruct.md"
     }
    ],
-   "contextWindow": 32000
+   "contextWindow": 32000,
+   "deprecationDate": "2027-03-30"
   },
   {
    "id": "mistral-7b-instruct@bedrock:regional",
@@ -22488,10 +22540,11 @@
    "sources": [
     {
      "litellm": "mistral.mistral-7b-instruct-v0:2",
-     "url": "https://aws.amazon.com/bedrock/pricing/"
+     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-mistral-ai-mistral-7b-instruct.md"
     }
    ],
-   "contextWindow": 32000
+   "contextWindow": 32000,
+   "deprecationDate": "2027-03-30"
   },
   {
    "id": "mistral-7b-instruct@bedrock:us-east-1",
@@ -22513,10 +22566,12 @@
    ],
    "sources": [
     {
-     "litellm": "bedrock/us-east-1/mistral.mistral-7b-instruct-v0:2"
+     "litellm": "bedrock/us-east-1/mistral.mistral-7b-instruct-v0:2",
+     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-mistral-ai-mistral-7b-instruct.md"
     }
    ],
-   "contextWindow": 32000
+   "contextWindow": 32000,
+   "deprecationDate": "2027-03-30"
   },
   {
    "id": "mistral-7b-instruct@bedrock:us-west-2",
@@ -22538,10 +22593,12 @@
    ],
    "sources": [
     {
-     "litellm": "bedrock/us-west-2/mistral.mistral-7b-instruct-v0:2"
+     "litellm": "bedrock/us-west-2/mistral.mistral-7b-instruct-v0:2",
+     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-mistral-ai-mistral-7b-instruct.md"
     }
    ],
-   "contextWindow": 32000
+   "contextWindow": 32000,
+   "deprecationDate": "2027-03-30"
   },
   {
    "id": "mistral-large-2402@azure:global",
@@ -22589,7 +22646,7 @@
    "sources": [
     {
      "litellm": "bedrock/eu-west-3/mistral.mistral-large-2402-v1:0",
-     "url": "https://aws.amazon.com/bedrock/pricing/"
+     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-mistral-ai-mistral-large.md"
     }
    ],
    "contextWindow": 32000
@@ -22615,7 +22672,7 @@
    "sources": [
     {
      "litellm": "mistral.mistral-large-2402-v1:0",
-     "url": "https://aws.amazon.com/bedrock/pricing/"
+     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-mistral-ai-mistral-large.md"
     }
    ],
    "contextWindow": 32000
@@ -22641,7 +22698,7 @@
    "sources": [
     {
      "litellm": "bedrock/us-east-1/mistral.mistral-large-2402-v1:0",
-     "url": "https://aws.amazon.com/bedrock/pricing/"
+     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-mistral-ai-mistral-large.md"
     }
    ],
    "contextWindow": 32000
@@ -22667,7 +22724,7 @@
    "sources": [
     {
      "litellm": "bedrock/us-west-2/mistral.mistral-large-2402-v1:0",
-     "url": "https://aws.amazon.com/bedrock/pricing/"
+     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-mistral-ai-mistral-large.md"
     }
    ],
    "contextWindow": 32000
@@ -22975,7 +23032,7 @@
    "sources": [
     {
      "litellm": "mistral.mistral-small-2402-v1:0",
-     "url": "https://aws.amazon.com/bedrock/pricing/"
+     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-mistral-ai-mistral-small.md"
     }
    ],
    "contextWindow": 32000
@@ -23054,10 +23111,12 @@
    ],
    "sources": [
     {
-     "litellm": "bedrock/eu-west-3/mistral.mixtral-8x7b-instruct-v0:1"
+     "litellm": "bedrock/eu-west-3/mistral.mixtral-8x7b-instruct-v0:1",
+     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-mistral-ai-mixtral-8x7b-instruct.md"
     }
    ],
-   "contextWindow": 32000
+   "contextWindow": 32000,
+   "deprecationDate": "2027-03-30"
   },
   {
    "id": "mixtral-8x7b-instruct@bedrock:regional",
@@ -23080,10 +23139,11 @@
    "sources": [
     {
      "litellm": "mistral.mixtral-8x7b-instruct-v0:1",
-     "url": "https://aws.amazon.com/bedrock/pricing/"
+     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-mistral-ai-mixtral-8x7b-instruct.md"
     }
    ],
-   "contextWindow": 32000
+   "contextWindow": 32000,
+   "deprecationDate": "2027-03-30"
   },
   {
    "id": "mixtral-8x7b-instruct@bedrock:us-east-1",
@@ -23105,10 +23165,12 @@
    ],
    "sources": [
     {
-     "litellm": "bedrock/us-east-1/mistral.mixtral-8x7b-instruct-v0:1"
+     "litellm": "bedrock/us-east-1/mistral.mixtral-8x7b-instruct-v0:1",
+     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-mistral-ai-mixtral-8x7b-instruct.md"
     }
    ],
-   "contextWindow": 32000
+   "contextWindow": 32000,
+   "deprecationDate": "2027-03-30"
   },
   {
    "id": "mixtral-8x7b-instruct@bedrock:us-west-2",
@@ -23130,10 +23192,12 @@
    ],
    "sources": [
     {
-     "litellm": "bedrock/us-west-2/mistral.mixtral-8x7b-instruct-v0:1"
+     "litellm": "bedrock/us-west-2/mistral.mixtral-8x7b-instruct-v0:1",
+     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-mistral-ai-mixtral-8x7b-instruct.md"
     }
    ],
-   "contextWindow": 32000
+   "contextWindow": 32000,
+   "deprecationDate": "2027-03-30"
   },
   {
    "id": "model_router@azure:global",
@@ -25450,10 +25514,10 @@
    "sources": [
     {
      "litellm": "writer.palmyra-x5-v1:0",
-     "url": "https://aws.amazon.com/bedrock/pricing/"
+     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-writer-palmyra-x5.md"
     }
    ],
-   "contextWindow": 1000000
+   "contextWindow": 128000
   },
   {
    "id": "palmyra-x5@bedrock:us",
@@ -25476,10 +25540,10 @@
    "sources": [
     {
      "litellm": "us.writer.palmyra-x5-v1:0",
-     "url": "https://aws.amazon.com/bedrock/pricing/"
+     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-writer-palmyra-x5.md"
     }
    ],
-   "contextWindow": 1000000
+   "contextWindow": 128000
   },
   {
    "id": "pegasus-1-2@bedrock:eu",
@@ -25796,7 +25860,8 @@
    ],
    "sources": [
     {
-     "litellm": "eu.mistral.pixtral-large-2502-v1:0"
+     "litellm": "eu.mistral.pixtral-large-2502-v1:0",
+     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-mistral-ai-pixtral-large.md"
     }
    ],
    "contextWindow": 128000
@@ -25848,7 +25913,7 @@
    "sources": [
     {
      "litellm": "us.mistral.pixtral-large-2502-v1:0",
-     "url": "https://aws.amazon.com/bedrock/pricing/"
+     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-mistral-ai-pixtral-large.md"
     }
    ],
    "contextWindow": 128000
