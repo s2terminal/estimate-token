@@ -1,0 +1,789 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>ざっくり生成AIHTML</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=IBM+Plex+Mono:wght@400;600&family=Zen+Kaku+Gothic+New:wght@700;900&display=swap">
+<style>
+/* Layout: 左に「前提を入れる帳票」、右に「月額の比較表」。稟議書の別紙のように前提→結果→根拠の順で読む */
+:root{
+  --bg:#F2F4F6; --surface:#FFFFFF; --ink:#15212B; --muted:#5A6772; --line:#D8DEE3;
+  --accent:#1D5C87; --accent-soft:#E2EDF5; --bar:#2F7DAE;
+  --promo:#8F5600; --promo-soft:#FAEDD6; --warn:#A23A2C; --warn-soft:#F8E4E0; --seal:#B5352B;
+  --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; /* グラフの系列色: 入力 / 出力 / キャッシュ読取 */
+  --f-display:"Zen Kaku Gothic New","Hiragino Sans","Yu Gothic",sans-serif;
+  --f-body:"BIZ UDPGothic","Hiragino Sans","Yu Gothic","Meiryo",sans-serif;
+  --f-num:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --r:6px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0E151B; --surface:#152029; --ink:#E5EBF0; --muted:#94A2AD; --line:#283642;
+  --accent:#7FB7DE; --accent-soft:#1A2E3D; --bar:#4E98C9;
+  --promo:#E7B061; --promo-soft:#36290F; --warn:#F18C7C; --warn-soft:#3A1E1A; --seal:#E26D60; --s1:#3987e5; --s2:#d95926; --s3:#199e70; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0E151B; --surface:#152029; --ink:#E5EBF0; --muted:#94A2AD; --line:#283642;
+  --accent:#7FB7DE; --accent-soft:#1A2E3D; --bar:#4E98C9;
+  --promo:#E7B061; --promo-soft:#36290F; --warn:#F18C7C; --warn-soft:#3A1E1A; --seal:#E26D60; --s1:#3987e5; --s2:#d95926; --s3:#199e70; color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+#resTable td:nth-child(2),#unitTable td:first-child{min-width:150px}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:14px;line-height:1.6}
+.wrap{max-width:1240px;margin:0 auto;padding-inline:20px;padding-block:24px 48px}
+header.top{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;padding-bottom:18px;border-bottom:2px solid var(--ink);margin-bottom:20px}
+.brand{display:flex;align-items:center;gap:14px}
+.seal{width:52px;height:52px;border:2.5px solid var(--seal);border-radius:50%;color:var(--seal);display:grid;place-items:center;font-family:var(--f-display);font-weight:900;font-size:15px;line-height:1;transform:rotate(-8deg);flex:none;letter-spacing:.02em}
+h1{font-family:var(--f-display);font-weight:900;font-size:30px;margin:0;letter-spacing:.02em;text-wrap:balance}
+.lede{margin:2px 0 0;color:var(--muted);font-size:13px}
+.snap{display:flex;gap:8px;flex-wrap:wrap;font-size:12px}
+.chip{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--muted);white-space:nowrap;font-size:12px}
+.chip b{color:var(--ink);font-family:var(--f-num);font-weight:600}
+.grid{display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);gap:20px;align-items:start}
+@media (max-width:900px){.grid{grid-template-columns:minmax(0,1fr)}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r)}
+.form{padding:16px;display:flex;flex-direction:column;gap:16px}
+@media (min-width:901px){.form{position:sticky;top:calc(env(safe-area-inset-top,0px) + 12px)}}
+.tabs{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.tabs button{appearance:none;border:0;background:transparent;color:var(--muted);font:inherit;font-weight:700;padding:8px 4px;cursor:pointer;border-left:1px solid var(--line)}
+.tabs button:first-child{border-left:0}
+.tabs button[aria-selected="true"]{background:var(--accent);color:var(--surface)}
+.tabs button:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+fieldset{border:0;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+legend{font-size:11px;letter-spacing:.12em;color:var(--muted);font-weight:700;padding:0;margin-bottom:6px}
+.field{display:grid;grid-template-columns:1fr 128px;align-items:center;gap:8px}
+.field label{font-size:13px}
+.field small{display:block;color:var(--muted);font-size:11px;line-height:1.3}
+input[type=number],input[type=date],select,input[type=text]{width:100%;font:inherit;font-family:var(--f-num);font-size:13px;padding:6px 8px;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--ink);text-align:right}
+select{text-align:left;font-family:var(--f-body)}
+input[type=date]{text-align:left}
+.seg{display:inline-grid;grid-auto-flow:column;border:1px solid var(--line);border-radius:4px;overflow:hidden}
+.seg button{appearance:none;border:0;border-left:1px solid var(--line);background:var(--bg);color:var(--muted);font:inherit;font-size:12px;padding:5px 10px;cursor:pointer;font-family:var(--f-num)}
+.seg button:first-child{border-left:0}
+.seg button[aria-pressed="true"]{background:var(--accent-soft);color:var(--accent);font-weight:600}
+.check{display:flex;align-items:flex-start;gap:8px;font-size:13px;cursor:pointer}
+.check input{margin-top:4px;accent-color:var(--accent)}
+.check small{display:block;color:var(--muted);font-size:11px}
+.presets{display:flex;flex-wrap:wrap;gap:6px}
+.presets button{appearance:none;font:inherit;font-size:12px;padding:4px 10px;border-radius:999px;border:1px dashed var(--accent);background:transparent;color:var(--accent);cursor:pointer}
+.presets button:hover{background:var(--accent-soft)}
+details.models summary{cursor:pointer;font-size:13px;font-weight:700;list-style:none;display:flex;justify-content:space-between;align-items:center}
+details.models summary::-webkit-details-marker{display:none}
+details.models summary::after{content:"▾";color:var(--muted)}
+details.models[open] summary::after{content:"▴"}
+.mlist{display:flex;flex-direction:column;gap:2px;margin-top:8px;max-height:320px;overflow:auto;padding-right:4px}
+.mgroup{font-size:11px;color:var(--muted);letter-spacing:.08em;margin-top:6px;font-weight:700}
+.mlist label{display:flex;gap:8px;align-items:center;font-size:13px;padding:2px 0;cursor:pointer}
+.mlist label span.sub{color:var(--muted);font-size:11px}
+.mlist input{accent-color:var(--accent)}
+.mini{appearance:none;border:0;background:none;color:var(--accent);font:inherit;font-size:12px;cursor:pointer;padding:0;text-decoration:underline}
+.results{display:flex;flex-direction:column;gap:16px;min-width:0}
+.summary{padding:16px 18px;display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px}
+.kpi .lab{font-size:11px;color:var(--muted);letter-spacing:.08em}
+.kpi .val{font-family:var(--f-num);font-weight:600;font-size:24px;line-height:1.25;font-variant-numeric:tabular-nums}
+.kpi .sub{font-size:12px;color:var(--muted)}
+.kpi .who{font-size:12px;font-weight:700}
+.premise{padding:10px 18px;border-top:1px dashed var(--line);font-size:12px;color:var(--muted);grid-column:1/-1;margin:0 -18px -16px}
+.tablebox{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+th,td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}
+thead th{font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.06em;background:var(--surface);position:sticky;top:0;white-space:nowrap}
+td.num,th.num{text-align:right;font-family:var(--f-num);white-space:nowrap}
+td.rank{font-family:var(--f-num);color:var(--muted);width:32px}
+.mname{font-weight:700}
+.mmeta{font-size:11px;color:var(--muted)}
+.cost{font-size:15px;font-weight:600;color:var(--ink)}
+.barcell{min-width:110px;width:22%}
+.bar{height:8px;border-radius:2px;background:var(--bar)}
+.bar.zero{background:var(--line)}
+.flags{display:flex;flex-wrap:wrap;gap:4px;margin-top:3px}
+.flag{font-size:10.5px;padding:0 6px;border-radius:3px;background:var(--accent-soft);color:var(--accent);white-space:nowrap}
+.flag.promo{background:var(--promo-soft);color:var(--promo)}
+.flag.warn{background:var(--warn-soft);color:var(--warn)}
+tr.na td{color:var(--muted)}
+.sectionhead{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:14px 18px 6px;flex-wrap:wrap}
+.sectionhead h2{font-family:var(--f-display);font-size:16px;margin:0}
+.sectionhead p{margin:0;font-size:12px;color:var(--muted)}
+.share{padding:14px 18px;display:flex;flex-direction:column;gap:10px}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+.btn{appearance:none;font:inherit;font-size:13px;font-weight:700;padding:7px 14px;border-radius:4px;border:1px solid var(--accent);background:var(--accent);color:var(--surface);cursor:pointer}
+.btn.ghost{background:transparent;color:var(--accent)}
+.btn:hover{filter:brightness(1.08)}
+.linkrow{display:flex;gap:8px;align-items:center}
+.linkrow input{text-align:left;font-size:12px;color:var(--muted)}
+#toast{font-size:12px;color:var(--accent);min-height:1.2em}
+#fallback{width:100%;min-height:140px;font-family:var(--f-num);font-size:12px;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:4px;padding:8px}
+.notes{padding:14px 18px;font-size:12px;color:var(--muted);display:flex;flex-direction:column;gap:6px}
+.notes p{margin:0;max-width:75ch}
+.notes strong{color:var(--warn)}
+.pending{padding:0 18px 14px;font-size:12px;color:var(--muted)}
+.pending ul{margin:4px 0 0;padding-left:18px}
+.chartpanel{position:relative}
+.charthead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:14px 18px 4px}
+.charthead h2{font-family:var(--f-display);font-size:16px;margin:0}
+.chartctl{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.chartctl .seg button{font-family:var(--f-body)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;padding:2px 18px 0;font-size:12px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:10px;height:10px;border-radius:2px;display:inline-block}
+#chartBox{padding:0 18px 6px;min-width:0}
+#chartBox svg{display:block;width:100%;height:auto;overflow:visible}
+.c-grid{stroke:var(--line);stroke-width:1}
+.c-tick{fill:var(--muted);font-family:var(--f-num);font-size:11px}
+.c-name{fill:var(--ink);font-family:var(--f-body);font-size:12.5px;font-weight:700}
+.c-sub{fill:var(--muted);font-family:var(--f-body);font-size:11px;font-weight:400}
+.c-val{fill:var(--ink);font-family:var(--f-num);font-size:12px;font-weight:600}
+.c-hit{fill:transparent;cursor:default}
+.c-row:hover .c-hit,.c-row:focus .c-hit{fill:var(--accent-soft);opacity:.55}
+.c-row:focus{outline:none}
+.chartnote{padding:0 18px 14px;font-size:11.5px;color:var(--muted);margin:0}
+#chartTip{position:absolute;pointer-events:none;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:8px 10px;font-size:12px;box-shadow:0 4px 14px rgba(0,0,0,.12);min-width:180px;z-index:5}
+#chartTip .t{font-weight:700}
+#chartTip .r{display:flex;justify-content:space-between;gap:14px;font-family:var(--f-num)}
+#chartTip .r span:first-child{font-family:var(--f-body);color:var(--muted)}
+#chartTip i{width:8px;height:8px;border-radius:2px;display:inline-block;margin-right:5px}
+@media (max-width:520px){h1{font-size:24px}.field{grid-template-columns:1fr 110px}.kpi .val{font-size:20px}}
+@media (prefers-reduced-motion:no-preference){.bar{transition:width .25s ease}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <div class="seal" aria-hidden="true">概算</div>
+      <div>
+        <h1>ざっくり生成AI</h1>
+        <p class="lede">使い方を入れると、生成AIの月額を円でざっくり比べられます。</p>
+      </div>
+    </div>
+    <div class="snap">
+      <span class="chip">価格スナップショット <b id="snapId">—</b></span>
+      <span class="chip">1 USD = <b id="fxChip">—</b> 円</span>
+      <span class="chip">税抜</span>
+    </div>
+  </header>
+
+  <div class="grid">
+    <form class="panel form" id="form" autocomplete="off">
+      <div class="tabs" role="tablist" aria-label="モデルの種類">
+        <button type="button" role="tab" id="tab-llm" data-tab="llm">言語モデル</button>
+        <button type="button" role="tab" id="tab-img" data-tab="img">画像生成</button>
+        <button type="button" role="tab" id="tab-dec" data-tab="dec">意思決定</button>
+      </div>
+
+      <fieldset id="fs-llm">
+        <legend>使い方(1か月あたり)</legend>
+        <div class="presets" aria-label="よくある使い方">
+          <button type="button" data-preset="chat">社内チャットボット</button>
+          <button type="button" data-preset="rag">RAG検索</button>
+          <button type="button" data-preset="batch">大量要約バッチ</button>
+        </div>
+        <div class="field"><label for="llmN">リクエスト数<small>回/月</small></label><input type="number" id="llmN" min="0" step="1000"></div>
+        <div class="field"><label for="llmIn">平均入力<small>tokens/回(プロンプト+文脈)</small></label><input type="number" id="llmIn" min="0" step="100"></div>
+        <div class="field"><label for="llmOut">平均出力<small>tokens/回(思考トークン込み)</small></label><input type="number" id="llmOut" min="0" step="100"></div>
+        <div class="field"><label for="llmTier">料金プラン</label>
+          <select id="llmTier"><option value="standard">Standard(同期)</option><option value="batch">Batch(非同期)</option></select></div>
+        <label class="check"><input type="checkbox" id="llmCache"><span>コンテキストキャッシュを考慮<small>入力のうちキャッシュから読む割合を指定</small></span></label>
+        <div class="field" id="hitRow"><label for="llmHit">キャッシュヒット率<small>入力tokensに対する%</small></label><input type="number" id="llmHit" min="0" max="100" step="5"></div>
+      </fieldset>
+
+      <fieldset id="fs-img" hidden>
+        <legend>使い方(1か月あたり)</legend>
+        <div class="field"><label for="imgN">生成枚数<small>枚/月</small></label><input type="number" id="imgN" min="0" step="100"></div>
+        <div class="field"><label>解像度</label><div class="seg" id="imgRes"><button type="button" data-v="1K">1K</button><button type="button" data-v="2K">2K</button><button type="button" data-v="4K">4K</button></div></div>
+      </fieldset>
+
+      <fieldset id="fs-dec" hidden>
+        <legend>使い方(1か月あたり)</legend>
+        <div class="field"><label for="decN">判断回数<small>回/月</small></label><input type="number" id="decN" min="0" step="1000"></div>
+        <div class="field"><label for="decIn">平均入力<small>tokens/回(状態+質問)</small></label><input type="number" id="decIn" min="0" step="50"></div>
+      </fieldset>
+
+      <fieldset>
+        <legend>価格の条件と表示</legend>
+        <label class="check"><input type="checkbox" id="promo"><span>期間限定価格を適用<small>外すと、終了後の通常価格で計算します</small></span></label>
+        <div class="field"><label for="asOf">試算基準日<small>期間限定価格の判定日</small></label><input type="date" id="asOf"></div>
+        <div class="field"><label for="fx">為替<small>円/USD(ざっくりでOK)</small></label><input type="number" id="fx" min="1" step="1"></div>
+        <div class="field"><label>表示通貨</label><div class="seg" id="cur"><button type="button" data-v="JPY">円</button><button type="button" data-v="USD">USD</button></div></div>
+        <div class="field"><label>単価の単位<small>tokensあたり</small></label><div class="seg" id="unit"><button type="button" data-v="1K">1K</button><button type="button" data-v="1M">1M</button></div></div>
+      </fieldset>
+
+      <details class="models" id="modelsBox">
+        <summary>比較するモデル <span class="mmeta" id="selCount"></span></summary>
+        <div style="display:flex;gap:12px;margin-top:6px"><button type="button" class="mini" id="selAll">すべて選ぶ</button><button type="button" class="mini" id="selNone">すべて外す</button></div>
+        <div class="mlist" id="mlist"></div>
+      </details>
+    </form>
+
+    <section class="results" aria-live="polite">
+      <div class="panel summary" id="summary"></div>
+
+      <div class="panel chartpanel" id="chartPanel">
+        <div class="charthead">
+          <h2 id="chartTitle">価格差グラフ</h2>
+          <div class="chartctl">
+            <div class="seg" id="cmode" aria-label="グラフの表し方">
+              <button type="button" data-v="mix">月額(内訳)</button>
+              <button type="button" data-v="ratio">最安との倍率</button>
+              <button type="button" data-v="log">対数目盛</button>
+            </div>
+            <button type="button" class="btn ghost" id="saveChart">グラフを画像で保存</button>
+          </div>
+        </div>
+        <div class="legend" id="legend"></div>
+        <div id="chartBox" role="img" aria-label="モデル別の月額を比べる横棒グラフ"></div>
+        <p class="chartnote" id="chartNote"></p>
+        <div id="chartTip" hidden></div>
+      </div>
+
+      <div class="panel">
+        <div class="sectionhead"><h2 id="resTitle">月額の比較</h2><p id="resSub"></p></div>
+        <div class="tablebox"><table id="resTable"><thead></thead><tbody></tbody></table></div>
+        <div class="pending" id="pending"></div>
+      </div>
+
+      <div class="panel share">
+        <div class="sectionhead" style="padding:0"><h2>共有・稟議に貼る</h2><p>リンクには入力した数値と価格スナップショット日だけが入ります</p></div>
+        <div class="linkrow"><input type="text" id="permalink" readonly aria-label="共有リンク"><button type="button" class="btn" id="copyLink">リンクをコピー</button></div>
+        <div class="btns">
+          <button type="button" class="btn ghost" id="copyMd">稟議用テキストをコピー</button>
+          <button type="button" class="btn ghost" id="copyTsv">表をコピー(Excel貼付用)</button>
+          <button type="button" class="btn ghost" id="saveCsv">CSVを保存</button>
+          <button type="button" class="btn ghost" id="savePng">画像(PNG)を保存</button>
+          <button type="button" class="btn ghost" id="saveMd">テキスト(.md)を保存</button>
+        </div>
+        <div id="toast" role="status"></div>
+        <textarea id="fallback" hidden readonly aria-label="コピー用テキスト"></textarea>
+      </div>
+
+      <div class="panel">
+        <div class="sectionhead"><h2>単価一覧</h2><p id="unitSub"></p></div>
+        <div class="tablebox"><table id="unitTable"><thead></thead><tbody></tbody></table></div>
+        <div class="notes">
+          <p><strong>プロトタイプ用のサンプル価格です。</strong>数値は2026年10月10日時点のAI調査レポート(ChatGPT・Claude・Gemini)から集めたもので、各社の公式価格ページとの照合はまだです。稟議に使う前に公式ページで確認してください。</p>
+          <p>キャッシュの書込み料・保存料、ツール呼び出し料、消費税は含みません。月額 = (通常入力 × 入力単価 + キャッシュ読取 × キャッシュ単価 + 出力 × 出力単価) × 回数 ÷ 1,000,000。</p>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<script>
+/* ===== 価格データ(スナップショット) =====
+   1モデル = 提供元×プラットフォーム×リージョン。単価は USD / 1M tokens(画像は USD / 枚)。
+   rules: tier(standard|batch)、from/to(有効期間)、promo(期間限定)、long(長文プロンプト時の別価格) */
+const DATA = {
+  snapshot: "2026-10-10",
+  fx: 158,
+  models: [
+    // ---- 言語モデル ----
+    {id:"oa-astra", cat:"llm", provider:"OpenAI", platform:"OpenAI API", region:"", name:"GPT-6 Astra", cls:"最上位", src:"ChatGPT調査",
+      rules:[{tier:"standard", in:10, cin:1, out:50}]},
+    {id:"oa-sol", cat:"llm", provider:"OpenAI", platform:"OpenAI API", region:"", name:"GPT-6.1 Sol", cls:"バランス", src:"ChatGPT調査",
+      rules:[{tier:"standard", in:2, cin:0.10, out:10}]},
+    {id:"oa-luna", cat:"llm", provider:"OpenAI", platform:"OpenAI API", region:"", name:"GPT-6 Luna", cls:"低コスト", src:"ChatGPT調査",
+      rules:[{tier:"standard", in:0.10, cin:0.01, out:0.50}]},
+    {id:"an-sonnet", cat:"llm", provider:"Anthropic", platform:"Claude API", region:"", name:"Claude Sonnet 5.5", cls:"バランス", src:"ChatGPT調査",
+      rules:[{tier:"standard", in:2, cin:0.10, out:10},{tier:"batch", in:1, out:5}]},
+    {id:"an-haiku", cat:"llm", provider:"Anthropic", platform:"Claude API", region:"", name:"Claude Haiku 5.5", cls:"低コスト", src:"ChatGPT調査",
+      rules:[{tier:"standard", in:0.10, cin:0.01, out:0.50, long:{over:100000, in:0.50, out:2.50}}]},
+    {id:"an-opus", cat:"llm", provider:"Anthropic", platform:"Claude API", region:"", name:"Claude Opus 5.5", cls:"最上位", src:"未取得", rules:[]},
+    {id:"gm-37flash", cat:"llm", provider:"Google", platform:"Gemini API", region:"", name:"Gemini 3.7 Flash", cls:"バランス", src:"ChatGPT調査",
+      rules:[
+        {tier:"standard", promo:true, to:"2026-12-31", in:0.75, cin:0.075, out:3.75},
+        {tier:"standard", from:"2027-01-01", in:1.50, cin:0.15, out:7.50},
+        {tier:"batch", promo:true, to:"2026-12-31", in:0.375, out:1.875}]},
+    {id:"gm-35lite", cat:"llm", provider:"Google", platform:"Gemini API", region:"", name:"Gemini 3.5 Flash-Lite", cls:"低コスト", src:"ChatGPT調査",
+      rules:[{tier:"standard", in:0.30, cin:0.03, out:2.50}]},
+    {id:"vx-38flash-g", cat:"llm", provider:"Google", platform:"Vertex AI", region:"global", name:"Gemini 3.8 Flash", cls:"バランス", src:"ChatGPT調査",
+      rules:[
+        {tier:"standard", promo:true, to:"2026-12-31", in:0.75, cin:0.075, out:3.75},
+        {tier:"standard", from:"2027-01-01", in:1.50, out:7.50}]},
+    {id:"vx-38flash-r", cat:"llm", provider:"Google", platform:"Vertex AI", region:"リージョン指定", name:"Gemini 3.8 Flash", cls:"バランス", src:"ChatGPT調査",
+      rules:[{tier:"standard", promo:true, to:"2026-12-31", in:0.825, out:4.125}]},
+    {id:"aws-mistral3", cat:"llm", provider:"Mistral", platform:"Amazon Bedrock", region:"東京", name:"Mistral Large 3", cls:"バランス", src:"ChatGPT調査",
+      rules:[{tier:"standard", in:0.61, out:1.82}]},
+    {id:"aws-nova2lite", cat:"llm", provider:"Amazon", platform:"Amazon Bedrock", region:"", name:"Amazon Nova 2 Lite", cls:"低コスト", src:"未取得", rules:[]},
+    {id:"aws-sonnet", cat:"llm", provider:"Anthropic", platform:"Amazon Bedrock", region:"", name:"Claude Sonnet 5.5", cls:"バランス", src:"未取得", rules:[]},
+    {id:"az-sol", cat:"llm", provider:"OpenAI", platform:"Azure", region:"Data Zone", name:"GPT-6.1 Sol", cls:"バランス", src:"ChatGPT調査",
+      rules:[{tier:"standard", in:2.20, cin:0.11, out:11}]},
+    {id:"az-56sol", cat:"llm", provider:"OpenAI", platform:"Azure", region:"", name:"GPT-5.6 Sol", cls:"バランス", src:"ChatGPT調査",
+      rules:[{tier:"standard", promo:true, from:"2026-09-01", to:"2026-11-30", in:4, out:20}]},
+    // ---- 画像生成(USD/枚) ----
+    {id:"gm-nb21", cat:"img", provider:"Google", platform:"Gemini API", region:"", name:"Nano Banana 2.1", src:"ChatGPT調査",
+      img:{"1K":0.0336, "2K":0.0504, "4K":0.113}},
+    {id:"gm-31fli", cat:"img", provider:"Google", platform:"Gemini API", region:"", name:"Gemini 3.1 Flash Lite Image", src:"ChatGPT調査",
+      img:{"1K":0.0336}},
+    {id:"gm-31fi", cat:"img", provider:"Google", platform:"Gemini API", region:"", name:"Gemini 3.1 Flash Image", src:"ChatGPT調査",
+      img:{"1K":0.067, "2K":0.101, "4K":0.151}},
+    {id:"gm-3pi", cat:"img", provider:"Google", platform:"Gemini API", region:"", name:"Gemini 3 Pro Image", src:"ChatGPT調査",
+      img:{"1K":0.134, "2K":0.134, "4K":0.24}},
+    {id:"oa-img25", cat:"img", provider:"OpenAI", platform:"OpenAI API", region:"", name:"gpt-image-2.5", src:"未取得", img:{},
+      pendingWhy:"画像トークン課金。解像度→トークン数の換算ルールが未実装"},
+    {id:"aws-canvas", cat:"img", provider:"Amazon", platform:"Amazon Bedrock", region:"", name:"Amazon Nova Canvas", src:"未取得", img:{}},
+    // ---- 意思決定モデル ----
+    {id:"ts-jev", cat:"dec", provider:"TypeSafe AI", platform:"TypeSafe API", region:"", name:"Jev 1.13", src:"ChatGPT・Claude調査",
+      rules:[{tier:"standard", in:0.042, out:0}]},
+    {id:"oa-decisions", cat:"dec", provider:"OpenAI", platform:"Decisions API", region:"", name:"gpt-6-luna(/v1/decisions)", src:"ChatGPT調査",
+      rules:[{tier:"standard", in:0.10, out:0}]}
+  ]
+};
+
+/* ===== 状態 ===== */
+const PRESETS = {
+  chat:  {n:10000, i:2000, o:500, c:false, h:0, tier:"standard"},
+  rag:   {n:10000, i:10000, o:1500, c:true, h:60, tier:"standard"},
+  batch: {n:100000, i:4000, o:300, c:false, h:0, tier:"batch"}
+};
+const pricedIds = cat => DATA.models.filter(m => m.cat===cat && isPriced(m)).map(m => m.id);
+function isPriced(m){ return m.cat==="img" ? Object.keys(m.img||{}).length>0 : (m.rules||[]).length>0; }
+const defaultState = () => ({
+  v:1, s:DATA.snapshot, t:"llm", fx:DATA.fx, cur:"JPY", unit:"1M", p:true, d:DATA.snapshot, cm:"mix",
+  llm:{...PRESETS.chat}, img:{n:1000, r:"1K"}, dec:{n:100000, i:500},
+  sel:{llm:pricedIds("llm"), img:pricedIds("img"), dec:pricedIds("dec")}
+});
+let S = defaultState();
+
+/* 公開後に設定する、この Artifact 自身の URL(自前ホスティング時は空でよい) */
+const ARTIFACT_URL = "https://claude.ai/artifact/6au58aqG9wydMcvnRFKfWC";
+
+/* ===== 価格ルールの選択 ===== */
+function inRange(r, d){ return (!r.from || r.from<=d) && (!r.to || d<=r.to); }
+function pickRule(m, tier){
+  const flags=[]; let cands=(m.rules||[]).filter(r=>r.tier===tier);
+  if(!cands.length && tier!=="standard"){ cands=(m.rules||[]).filter(r=>r.tier==="standard"); if(cands.length) flags.push({t:"Batchなし→Standard", k:"warn"}); }
+  if(!cands.length) return {r:null, flags, why:"価格未取得"};
+  let r;
+  if(S.p){
+    r = cands.find(x=>inRange(x,S.d));
+    if(!r){ const fut=cands.filter(x=>x.from && x.from>S.d).sort((a,b)=>a.from<b.from?-1:1)[0]; if(fut){ r=fut; flags.push({t:fut.from+"〜の価格", k:""}); } }
+  } else {
+    const reg=cands.filter(x=>!x.promo);
+    r = reg.find(x=>inRange(x,S.d));
+    if(!r){ const fut=reg.filter(x=>x.from && x.from>S.d).sort((a,b)=>a.from<b.from?-1:1)[0]; if(fut){ r=fut; flags.push({t:"期間限定終了後の価格", k:""}); } }
+    if(!r) return {r:null, flags, why:"期間限定後の通常価格が未取得"};
+  }
+  if(!r) return {r:null, flags, why:"基準日に有効な価格なし"};
+  if(r.promo) flags.push({t:"期間限定 〜"+r.to.slice(5).replace("-","/"), k:"promo"});
+  return {r, flags};
+}
+
+/* ===== 計算 ===== */
+function calc(m){
+  if(m.cat==="img"){
+    const p=(m.img||{})[S.img.r];
+    if(p==null) return {m, na:true, why: m.pendingWhy || (Object.keys(m.img||{}).length? S.img.r+"の価格未取得":"価格未取得"), flags:[]};
+    return {m, usd:S.img.n*p, perImage:p, flags:[], parts:[{k:"total", v:S.img.n*p}]};
+  }
+  const tier = m.cat==="llm" ? S.llm.tier : "standard";
+  const pk = pickRule(m, tier);
+  if(!pk.r) return {m, na:true, why:pk.why, flags:pk.flags};
+  const r=pk.r, flags=[...pk.flags];
+  if(m.cat==="dec"){
+    const usd = S.dec.n*S.dec.i*r.in/1e6;
+    return {m, usd, pin:r.in, pout:r.out, flags, parts:[{k:"total", v:usd}]};
+  }
+  let pin=r.in, pout=r.out, pcin=r.cin;
+  if(r.long && S.llm.i>r.long.over){ pin=r.long.in; pout=r.long.out; pcin=null; flags.push({t:"長文価格(>"+(r.long.over/1000)+"K)", k:"warn"}); }
+  let tin=S.llm.i, tr=0;
+  if(S.llm.c && S.llm.h>0){
+    if(pcin!=null){ tr=tin*S.llm.h/100; } else flags.push({t:"キャッシュ単価なし", k:"warn"});
+  }
+  const ui=S.llm.n*(tin-tr)*pin/1e6, uc=S.llm.n*tr*(pcin||0)/1e6, uo=S.llm.n*S.llm.o*pout/1e6;
+  const usd = ui+uc+uo;
+  return {m, usd, pin, pout, pcin, flags, parts:[{k:"in",v:ui},{k:"cache",v:uc},{k:"out",v:uo}]};
+}
+
+/* ===== 表示用フォーマット ===== */
+const nf0=new Intl.NumberFormat("ja-JP",{maximumFractionDigits:0});
+function sig(x, digits=3){ if(x===0) return "0"; const a=Math.abs(x); if(a>=1000) return nf0.format(x); return Number(x.toPrecision(digits)).toLocaleString("ja-JP",{maximumFractionDigits:8}); }
+function money(usd, cur=S.cur){
+  if(cur==="JPY"){ const y=usd*S.fx; return (y>=100? nf0.format(Math.round(y)) : y>=1? y.toFixed(1) : sig(y,2))+" 円"; }
+  return "$"+(usd>=100? usd.toLocaleString("en-US",{maximumFractionDigits:0}) : usd>=1? usd.toFixed(2) : sig(usd,3));
+}
+function unitPrice(per1M){ if(per1M==null) return "—"; const v = S.unit==="1K"? per1M/1000 : per1M; return S.cur==="JPY"? sig(v*S.fx,3)+" 円" : "$"+sig(v,3); }
+function unitLabel(){ return S.unit==="1K"? "/1K tokens" : "/1M tokens"; }
+function where(m){ return [m.platform, m.region].filter(Boolean).join(" · "); }
+function esc(s){ return String(s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+const TABNAME={llm:"言語モデル", img:"画像生成", dec:"意思決定"};
+
+/* ===== 結果の組み立て ===== */
+function results(){
+  const sel=new Set(S.sel[S.t]);
+  const rows=DATA.models.filter(m=>m.cat===S.t && sel.has(m.id)).map(calc);
+  const ok=rows.filter(x=>!x.na).sort((a,b)=>a.usd-b.usd);
+  const na=rows.filter(x=>x.na);
+  return {ok, na};
+}
+function premiseText(){
+  if(S.t==="llm"){ const L=S.llm; return `月 ${nf0.format(L.n)} 回 × 入力 ${nf0.format(L.i)} / 出力 ${nf0.format(L.o)} tokens/回 ・ ${L.tier==="batch"?"Batch":"Standard"} ・ キャッシュ ${L.c? L.h+"%":"なし"}`; }
+  if(S.t==="img") return `月 ${nf0.format(S.img.n)} 枚 ・ 解像度 ${S.img.r}`;
+  return `月 ${nf0.format(S.dec.n)} 回 × 入力 ${nf0.format(S.dec.i)} tokens/回`;
+}
+function conditionText(){ return `為替 1 USD = ${S.fx} 円 ・ 期間限定価格 ${S.p?"適用":"不適用"} ・ 基準日 ${S.d} ・ 税抜`; }
+
+/* ===== 描画 ===== */
+const $=id=>document.getElementById(id);
+function render(){
+  $("snapId").textContent=S.s; $("fxChip").textContent=S.fx;
+  document.querySelectorAll(".tabs button").forEach(b=>b.setAttribute("aria-selected", String(b.dataset.tab===S.t)));
+  ["llm","img","dec"].forEach(k=>$("fs-"+k).hidden = S.t!==k);
+  $("hitRow").hidden=!S.llm.c;
+  segSet("imgRes",S.img.r); segSet("cur",S.cur); segSet("unit",S.unit);
+  const {ok,na}=results();
+  renderSummary(ok);
+  renderTable(ok,na);
+  segSet("cmode",S.cm); renderChart(ok);
+  renderUnitTable();
+  $("permalink").value=permalink();
+  $("selCount").textContent=`${S.sel[S.t].length}件を選択中`;
+}
+function segSet(id,v){ document.querySelectorAll("#"+id+" button").forEach(b=>b.setAttribute("aria-pressed", String(b.dataset.v===v))); }
+function syncInputs(){
+  $("llmN").value=S.llm.n; $("llmIn").value=S.llm.i; $("llmOut").value=S.llm.o; $("llmTier").value=S.llm.tier;
+  $("llmCache").checked=S.llm.c; $("llmHit").value=S.llm.h;
+  $("imgN").value=S.img.n; $("decN").value=S.dec.n; $("decIn").value=S.dec.i;
+  $("promo").checked=S.p; $("asOf").value=S.d; $("fx").value=S.fx;
+}
+function renderSummary(ok){
+  const box=$("summary");
+  if(!ok.length){ box.innerHTML=`<div class="kpi"><div class="lab">比較するモデルを選んでください</div><div class="sub">左下の「比較するモデル」から追加できます。</div></div>`; return; }
+  const lo=ok[0], hi=ok[ok.length-1];
+  const k=(lab,x)=>`<div class="kpi"><div class="lab">${lab}</div><div class="val">${money(x.usd)}<span class="sub"> /月</span></div><div class="who">${esc(x.m.name)}</div><div class="sub">${esc(where(x.m))} ・ 年 ${money(x.usd*12)}</div></div>`;
+  let html=k("いちばん安い",lo);
+  if(ok.length>1) html+=k("いちばん高い",hi)+`<div class="kpi"><div class="lab">価格差</div><div class="val">${lo.usd>0? sig(hi.usd/lo.usd,2)+" 倍":"—"}</div><div class="sub">${ok.length}モデルを比較</div></div>`;
+  html+=`<div class="premise">前提: ${esc(premiseText())} ・ ${esc(conditionText())}</div>`;
+  box.innerHTML=html;
+}
+function renderTable(ok,na){
+  const t=$("resTable"), max=Math.max(...ok.map(x=>x.usd),0)||1;
+  $("resTitle").textContent=TABNAME[S.t]+"の月額比較";
+  $("resSub").textContent="安い順。価格の比較であって、性能の順位ではありません";
+  let head;
+  if(S.t==="img") head=`<tr><th>#</th><th>モデル</th><th class="num">1枚あたり</th><th class="num">月額</th><th class="num">年額</th><th></th></tr>`;
+  else head=`<tr><th>#</th><th>モデル</th><th class="num">入力${unitLabel()}</th><th class="num">出力${unitLabel()}</th><th class="num">月額</th><th class="num">年額</th><th></th></tr>`;
+  t.tHead.innerHTML=head;
+  const rowsHtml=ok.map((x,i)=>{
+    const flags=x.flags.map(f=>`<span class="flag ${f.k}">${esc(f.t)}</span>`).join("");
+    const cls=x.m.cls? `<span class="flag">${esc(x.m.cls)}</span>`:"";
+    const name=`<div class="mname">${esc(x.m.name)}</div><div class="mmeta">${esc(x.m.provider)} ・ ${esc(where(x.m))}</div><div class="flags">${cls}${flags}</div>`;
+    const w=Math.max(x.usd/max*100, x.usd>0?1.5:0);
+    const bar=`<td class="barcell"><div class="bar ${x.usd===0?"zero":""}" style="width:${w}%"></div></td>`;
+    if(S.t==="img") return `<tr><td class="rank">${i+1}</td><td>${name}</td><td class="num">${money(x.perImage)}</td><td class="num cost">${money(x.usd)}</td><td class="num">${money(x.usd*12)}</td>${bar}</tr>`;
+    return `<tr><td class="rank">${i+1}</td><td>${name}</td><td class="num">${unitPrice(x.pin)}</td><td class="num">${unitPrice(x.pout)}</td><td class="num cost">${money(x.usd)}</td><td class="num">${money(x.usd*12)}</td>${bar}</tr>`;
+  }).join("");
+  t.tBodies[0].innerHTML=rowsHtml || `<tr class="na"><td colspan="7">モデルが選ばれていません。</td></tr>`;
+  $("pending").innerHTML = na.length? `計算できなかったモデル:<ul>${na.map(x=>`<li>${esc(x.m.name)}(${esc(where(x.m))}): ${esc(x.why)}</li>`).join("")}</ul>` : "";
+}
+function renderUnitTable(){
+  const t=$("unitTable"); const ms=DATA.models.filter(m=>m.cat===S.t);
+  if(S.t==="img"){
+    $("unitSub").textContent=`1枚あたり(${S.cur==="JPY"?"円":"USD"})`;
+    t.tHead.innerHTML=`<tr><th>モデル</th><th>提供環境</th><th class="num">1K</th><th class="num">2K</th><th class="num">4K</th><th>出典</th></tr>`;
+    t.tBodies[0].innerHTML=ms.map(m=>`<tr><td class="mname">${esc(m.name)}</td><td class="mmeta">${esc(where(m))}</td>${["1K","2K","4K"].map(r=>`<td class="num">${m.img&&m.img[r]!=null? money(m.img[r]) : "—"}</td>`).join("")}<td class="mmeta">${esc(m.src)}</td></tr>`).join("");
+    return;
+  }
+  $("unitSub").textContent=`${unitLabel()}、${S.cur==="JPY"?"円":"USD"}。期間ごとの価格もすべて表示`;
+  t.tHead.innerHTML=`<tr><th>モデル</th><th>提供環境</th><th>プラン・期間</th><th class="num">入力</th><th class="num">キャッシュ読取</th><th class="num">出力</th><th>出典</th></tr>`;
+  const rows=[];
+  ms.forEach(m=>{
+    if(!(m.rules||[]).length){ rows.push(`<tr class="na"><td class="mname">${esc(m.name)}</td><td class="mmeta">${esc(where(m))}</td><td colspan="4">価格未取得</td><td class="mmeta">—</td></tr>`); return; }
+    m.rules.forEach(r=>{
+      const period = r.from&&r.to? `${r.from}〜${r.to}` : r.to? `〜${r.to}` : r.from? `${r.from}〜` : "";
+      const label = `${r.tier==="batch"?"Batch":"Standard"}${period? " ・ "+period:""}${r.promo?" ・ 期間限定":""}`;
+      rows.push(`<tr><td class="mname">${esc(m.name)}</td><td class="mmeta">${esc(where(m))}</td><td class="mmeta">${esc(label)}</td><td class="num">${unitPrice(r.in)}</td><td class="num">${unitPrice(r.cin)}</td><td class="num">${unitPrice(r.out)}</td><td class="mmeta">${esc(m.src)}</td></tr>`);
+      if(r.long) rows.push(`<tr><td class="mname">${esc(m.name)}</td><td class="mmeta">${esc(where(m))}</td><td class="mmeta">プロンプト ${r.long.over/1000}K超</td><td class="num">${unitPrice(r.long.in)}</td><td class="num">—</td><td class="num">${unitPrice(r.long.out)}</td><td class="mmeta">${esc(m.src)}</td></tr>`);
+    });
+  });
+  t.tBodies[0].innerHTML=rows.join("");
+}
+function renderModelList(){
+  const ms=DATA.models.filter(m=>m.cat===S.t); const sel=new Set(S.sel[S.t]);
+  const groups={}; ms.forEach(m=>(groups[m.platform]=groups[m.platform]||[]).push(m));
+  $("mlist").innerHTML=Object.entries(groups).map(([g,list])=>`<div class="mgroup">${esc(g)}</div>`+list.map(m=>
+    `<label><input type="checkbox" id="m-${m.id}" data-id="${m.id}" ${sel.has(m.id)?"checked":""}>${esc(m.name)} <span class="sub">${esc(m.region||"")}${isPriced(m)?"":" 価格未取得"}</span></label>`).join("")).join("");
+}
+
+/* ===== パーマリンク(状態を URL の # に圧縮) ===== */
+function b64urlEncode(str){ const bytes=new TextEncoder().encode(str); let bin=""; bytes.forEach(b=>bin+=String.fromCharCode(b)); return btoa(bin).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,""); }
+function b64urlDecode(s){ s=s.replace(/-/g,"+").replace(/_/g,"/"); while(s.length%4) s+="="; const bin=atob(s); return new TextDecoder().decode(Uint8Array.from(bin,c=>c.charCodeAt(0))); }
+function permalink(){
+  const base = (window.claude && ARTIFACT_URL) ? ARTIFACT_URL : location.href.split("#")[0];
+  return base+"#e1"+b64urlEncode(JSON.stringify({...S, sel:{[S.t]:S.sel[S.t]}}));
+}
+function loadFromHash(){
+  const h=location.hash.slice(1); if(!h.startsWith("e1")) return;
+  try{
+    const o=JSON.parse(b64urlDecode(h.slice(2))); const d=defaultState();
+    S={...d, ...o, llm:{...d.llm,...o.llm}, img:{...d.img,...o.img}, dec:{...d.dec,...o.dec}, sel:{...d.sel,...(o.sel||{})}};
+    if(o.s && o.s!==DATA.snapshot) toast(`このリンクは ${o.s} の価格で作られました。現在のデータ(${DATA.snapshot})で計算しています`);
+  }catch(e){ toast("リンクを読み込めませんでした。初期値で表示しています"); }
+}
+
+/* ===== 出力 ===== */
+function tableRows(){
+  const {ok}=results();
+  return ok.map((x,i)=>({rank:i+1, name:x.m.name, provider:x.m.provider, where:where(x.m),
+    pin:x.pin, pout:x.pout, per:x.perImage, usd:x.usd, jpy:x.usd*S.fx, notes:[x.m.cls,...x.flags.map(f=>f.t)].filter(Boolean).join(" / ")}));
+}
+function markdown(){
+  const rows=tableRows(), cur=S.cur;
+  const head = S.t==="img"
+    ? `| # | モデル | 提供環境 | 1枚あたり | 月額 | 年額 | 備考 |\n|---|---|---|---:|---:|---:|---|`
+    : `| # | モデル | 提供環境 | 入力${unitLabel()} | 出力${unitLabel()} | 月額 | 年額 | 備考 |\n|---|---|---|---:|---:|---:|---:|---|`;
+  const body=rows.map(r=> S.t==="img"
+    ? `| ${r.rank} | ${r.name} | ${r.provider} ・ ${r.where} | ${money(r.per)} | ${money(r.usd)} | ${money(r.usd*12)} | ${r.notes} |`
+    : `| ${r.rank} | ${r.name} | ${r.provider} ・ ${r.where} | ${unitPrice(r.pin)} | ${unitPrice(r.pout)} | ${money(r.usd)} | ${money(r.usd*12)} | ${r.notes} |`).join("\n");
+  return `## 生成AI 利用コスト概算(${TABNAME[S.t]})\n\n`+
+    `- 価格スナップショット: ${S.s}\n- 前提: ${premiseText()}\n- 条件: ${conditionText()}\n\n${head}\n${body}\n\n`+
+    `- 価格の比較であり、性能の順位ではありません。キャッシュ書込み・保存料、ツール呼び出し料は含みません。\n`+
+    `- 価格はサンプル値(公式価格ページ未照合)です。\n- 再現リンク: ${permalink()}\n`;
+}
+function tsvOrCsv(sep){
+  const rows=tableRows();
+  const q=v=> sep===","? `"${String(v).replace(/"/g,'""')}"` : String(v);
+  const head = S.t==="img"
+    ? ["順位","モデル","提供元","提供環境","1枚あたり(USD)","月額(USD)","月額(円)","年額(円)","備考"]
+    : ["順位","モデル","提供元","提供環境",`入力単価(USD${unitLabel()})`,`出力単価(USD${unitLabel()})`,"月額(USD)","月額(円)","年額(円)","備考"];
+  const k=S.unit==="1K"?1000:1;
+  const lines=rows.map(r=> (S.t==="img"
+    ? [r.rank,r.name,r.provider,r.where,r.per,r.usd.toFixed(4),Math.round(r.jpy),Math.round(r.jpy*12),r.notes]
+    : [r.rank,r.name,r.provider,r.where,r.pin/k,r.pout/k,r.usd.toFixed(4),Math.round(r.jpy),Math.round(r.jpy*12),r.notes]).map(q).join(sep));
+  const meta=[[`価格スナップショット ${S.s}`],[premiseText()],[conditionText()],[]].map(a=>a.map(q).join(sep));
+  return [...meta, head.map(q).join(sep), ...lines].join("\r\n");
+}
+function fileBase(){ return `zakkuri-genai_${S.t}_${S.s}`; }
+
+function toast(msg){ $("toast").textContent=msg; clearTimeout(toast._t); toast._t=setTimeout(()=>{$("toast").textContent="";},5000); }
+function copyText(text, label){
+  const fb=$("fallback");
+  const showFallback=()=>{ fb.hidden=false; fb.value=text; fb.focus(); fb.select(); toast("自動でコピーできませんでした。下の欄を選択してコピーしてください"); };
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(()=>{ fb.hidden=true; toast(label+"をコピーしました"); }, showFallback);
+  } else showFallback();
+}
+let downloadsP=null;
+function getDownloads(){ if(!downloadsP) downloadsP = (window.claude && window.claude.use) ? window.claude.use("downloads").catch(()=>null) : Promise.resolve(null); return downloadsP; }
+async function saveFile(filename, data){
+  const dl=await getDownloads();
+  if(dl){
+    try{ await dl.save({filename, data}); toast(filename+" を保存しました"); }
+    catch(e){ if(e && e.code==="declined") toast("保存をキャンセルしました"); else if(e && e.code==="rate_limited") toast("保存の確認が開いています。少し待ってからもう一度押してください"); else toast("この画面では保存できません。コピー機能を使ってください"); }
+    return;
+  }
+  const blob = data instanceof Blob ? data : new Blob([data],{type:"text/plain;charset=utf-8"});
+  const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=filename; document.body.appendChild(a); a.click();
+  setTimeout(()=>{URL.revokeObjectURL(a.href); a.remove();},1000); toast(filename+" を保存しました");
+}
+
+/* PNG: 稟議書に貼りやすい白地の表を Canvas で描く */
+function drawPng(){
+  const rows=tableRows(); const W=1400, pad=48, rowH=46, top=210;
+  const H=top+rowH*(rows.length+1)+150;
+  const c=document.createElement("canvas"); const dpr=2; c.width=W*dpr; c.height=H*dpr;
+  const g=c.getContext("2d"); g.scale(dpr,dpr);
+  const F=(w,s,fam)=>`${w} ${s}px ${fam}`; const body='"BIZ UDPGothic","Hiragino Sans","Yu Gothic",sans-serif', num='"IBM Plex Mono",Menlo,monospace';
+  g.fillStyle="#FFFFFF"; g.fillRect(0,0,W,H);
+  g.strokeStyle="#B5352B"; g.lineWidth=2.5; g.beginPath(); g.arc(pad+26,pad+26,24,0,Math.PI*2); g.stroke();
+  g.fillStyle="#B5352B"; g.font=F(700,14,body); g.textAlign="center"; g.fillText("概算",pad+26,pad+31); g.textAlign="left";
+  g.fillStyle="#15212B"; g.font=F(700,28,body); g.fillText(`生成AI 利用コスト概算(${TABNAME[S.t]})`, pad+66, pad+36);
+  g.font=F(400,16,body); g.fillStyle="#5A6772";
+  g.fillText(`前提: ${premiseText()}`, pad, pad+90);
+  g.fillText(`条件: ${conditionText()} ・ 価格スナップショット ${S.s}`, pad, pad+116);
+  g.fillStyle="#15212B"; g.fillRect(pad, top-38, W-pad*2, 2);
+  const cols = S.t==="img"
+    ? [["#",pad,"l"],["モデル",pad+40,"l"],["提供環境",pad+360,"l"],["1枚あたり",pad+820,"r"],["月額",pad+1010,"r"],["年額",pad+1180,"r"]]
+    : [["#",pad,"l"],["モデル",pad+40,"l"],["提供環境",pad+320,"l"],[`入力${unitLabel()}`,pad+760,"r"],[`出力${unitLabel()}`,pad+920,"r"],["月額",pad+1090,"r"],["年額",pad+1270,"r"]];
+  g.font=F(700,13,body); g.fillStyle="#5A6772";
+  cols.forEach(([t,x,a])=>{ g.textAlign=a==="r"?"right":"left"; g.fillText(t,x,top-10); });
+  const max=Math.max(...rows.map(r=>r.usd),0)||1;
+  rows.forEach((r,i)=>{
+    const y=top+rowH*i+30;
+    if(i%2===0){ g.fillStyle="#F2F5F8"; g.fillRect(pad-8,y-28,W-pad*2+16,rowH); }
+    const vals = S.t==="img"
+      ? [String(r.rank), r.name, `${r.provider} ・ ${r.where}`, money(r.per), money(r.usd), money(r.usd*12)]
+      : [String(r.rank), r.name, `${r.provider} ・ ${r.where}`, unitPrice(r.pin), unitPrice(r.pout), money(r.usd), money(r.usd*12)];
+    vals.forEach((v,j)=>{ const [,x,a]=cols[j]; g.textAlign=a==="r"?"right":"left";
+      g.font = j===1? F(700,16,body) : (a==="r"? F(j===vals.length-2?600:400,16,num) : F(400,15,body));
+      g.fillStyle = j===2? "#5A6772" : "#15212B"; g.fillText(v,x,y); });
+    g.fillStyle="#2F7DAE"; g.fillRect(pad+40, y+6, Math.max(r.usd/max*260, r.usd>0?3:0), 4);
+  });
+  g.textAlign="left"; g.font=F(400,13,body); g.fillStyle="#5A6772";
+  const fy=top+rowH*rows.length+50;
+  g.fillText("※ 価格の比較であり、性能の順位ではありません。キャッシュ書込み・保存料、ツール呼び出し料、消費税は含みません。", pad, fy);
+  g.fillText("※ 価格はサンプル値(公式価格ページ未照合)です。稟議前に各社公式ページで確認してください。", pad, fy+22);
+  g.font=F(400,11,num); g.fillText(permalink().slice(0,170)+(permalink().length>170?"…":""), pad, fy+50);
+  return new Promise(res=>c.toBlob(res,"image/png"));
+}
+
+/* ===== 価格差グラフ(横棒・インラインSVG) =====
+   月額(内訳): 線形の積み上げ。倍率: 最安を1とした合計。対数: 合計を10倍刻みの目盛で。 */
+const SERIES={in:{label:"入力",c:"s1"}, cache:{label:"キャッシュ読取",c:"s3"}, out:{label:"出力",c:"s2"}, total:{label:"月額",c:"s1"}};
+const LIGHT={s1:"#2a78d6", s2:"#eb6834", s3:"#1baf7a", ink:"#15212B", muted:"#5A6772", line:"#D8DEE3", bg:"#FFFFFF", seal:"#B5352B"};
+let lastChartRows=[];
+function disp(usd){ return S.cur==="JPY"? usd*S.fx : usd; }
+function compact(v){ // 目盛用の短い表記(表示通貨)
+  const pre=S.cur==="USD"?"$":"", suf=S.cur==="JPY"?"円":"";
+  const a=Math.abs(v); let s;
+  if(S.cur==="JPY" && a>=10000) s=sig(v/10000,3)+"万"; else if(S.cur==="USD" && a>=1000) s=sig(v/1000,3)+"K"; else s=sig(v,3);
+  return pre+s+suf;
+}
+function niceTicks(max,n=4){
+  if(!(max>0)) return [0,1];
+  const raw=max/n, p=Math.pow(10,Math.floor(Math.log10(raw))), e=raw/p;
+  const step=(e>=7.5?10:e>=3.5?5:e>=1.5?2:1)*p, top=Math.ceil(max/step-1e-9)*step, t=[];
+  for(let v=0; v<=top+step*1e-6; v+=step) t.push(+v.toPrecision(12));
+  return t;
+}
+function multiSeries(){ return S.cm==="mix" && S.t==="llm"; }
+function barPath(x,y,w,h,r){ // 右端(データの先端)だけ角丸
+  if(w<=0) return ""; r=Math.min(r,w,h/2);
+  return `M${x},${y}H${x+w-r}Q${x+w},${y} ${x+w},${y+r}V${y+h-r}Q${x+w},${y+h} ${x+w-r},${y+h}H${x}Z`;
+}
+function chartSVG(rows, W, ex){
+  const fill=k=> ex? `fill="${LIGHT[k]}"` : `style="fill:var(--${k})"`;
+  const cls=(c,exAttrs)=> ex? exAttrs : `class="${c}"`;
+  const FB='"BIZ UDPGothic","Hiragino Sans","Yu Gothic",sans-serif', FN='"IBM Plex Mono",Menlo,monospace';
+  const tAttr={grid:`stroke="${LIGHT.line}" stroke-width="1"`, tick:`fill="${LIGHT.muted}" font-family='${FN}' font-size="12"`,
+    name:`fill="${LIGHT.ink}" font-family='${FB}' font-size="14" font-weight="700"`, sub:`fill="${LIGHT.muted}" font-family='${FB}' font-size="12"`,
+    val:`fill="${LIGHT.ink}" font-family='${FN}' font-size="13" font-weight="600"`};
+  const narrow=W<560;
+  const padL=ex?48:0, padR=ex?160:(narrow?78:96), headH=ex?150:0, top=headH+24, rowH=ex?48:44, barH=ex?14:12;
+  const plotW=Math.max(60, W-padL-padR), n=rows.length;
+  const H=top+rowH*n+(ex?96:6);
+  const totals=rows.map(r=>disp(r.total));
+  let X, ticks, tickLab, valLab;
+  if(S.cm==="ratio"){
+    const base=Math.min(...rows.map(r=>r.total).filter(v=>v>0));
+    const rat=rows.map(r=> base>0? r.total/base : 0);
+    ticks=niceTicks(Math.max(...rat,1)); const mx=ticks[ticks.length-1];
+    X=v=>padL+v/mx*plotW; tickLab=t=>"×"+sig(t,3);
+    rows.forEach((r,i)=>r._v=rat[i]); valLab=r=>"×"+(r._v>=10? sig(r._v,3) : r._v.toFixed(r._v<1.995?2:1));
+  } else if(S.cm==="log"){
+    const pos=totals.filter(v=>v>0); const lo=Math.pow(10,Math.floor(Math.log10(Math.min(...pos)))); let hi=Math.pow(10,Math.ceil(Math.log10(Math.max(...pos)))); if(hi<=lo) hi=lo*10;
+    const L=Math.log10(lo), R=Math.log10(hi);
+    X=v=> v>0? padL+(Math.log10(v)-L)/(R-L)*plotW : padL;
+    ticks=[]; for(let e=L;e<=R+1e-9;e++) ticks.push(Math.pow(10,e)); tickLab=compact;
+    rows.forEach((r,i)=>r._v=totals[i]); valLab=r=>money(r.total);
+  } else {
+    ticks=niceTicks(Math.max(...totals)); const mx=ticks[ticks.length-1];
+    X=v=>padL+v/mx*plotW; tickLab=compact;
+    rows.forEach((r,i)=>r._v=totals[i]); valLab=r=>money(r.total);
+  }
+  let s=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">`;
+  if(ex){
+    s+=`<rect width="${W}" height="${H}" fill="${LIGHT.bg}"/>`;
+    s+=`<circle cx="${padL+24}" cy="${44}" r="22" fill="none" stroke="${LIGHT.seal}" stroke-width="2.5"/><text x="${padL+24}" y="49" text-anchor="middle" fill="${LIGHT.seal}" font-family='${FB}' font-size="13" font-weight="700">概算</text>`;
+    s+=`<text x="${padL+60}" y="52" fill="${LIGHT.ink}" font-family='${FB}' font-size="26" font-weight="700">${esc($("chartTitle").textContent)}</text>`;
+    s+=`<text x="${padL}" y="94" ${tAttr.sub.replace('font-size="12"','font-size="14"')}>前提: ${esc(premiseText())}</text>`;
+    s+=`<text x="${padL}" y="116" ${tAttr.sub.replace('font-size="12"','font-size="14"')}>条件: ${esc(conditionText())} ・ 価格スナップショット ${esc(S.s)}</text>`;
+    if(multiSeries()){ let lx=padL; ["in","cache","out"].forEach(k=>{ s+=`<rect x="${lx}" y="128" width="11" height="11" rx="2" ${fill(SERIES[k].c)}/><text x="${lx+17}" y="138" ${tAttr.sub}>${SERIES[k].label}</text>`; lx+=17+SERIES[k].label.length*13+22; }); }
+  }
+  ticks.forEach(t=>{ const x=X(t);
+    s+=`<line x1="${x}" x2="${x}" y1="${top-6}" y2="${top+rowH*n}" ${cls("c-grid",tAttr.grid)}/>`;
+    s+=`<text x="${x}" y="${top-12}" text-anchor="${x>padL+plotW-20?"end":x<padL+20?"start":"middle"}" ${cls("c-tick",tAttr.tick)}>${esc(tickLab(t))}</text>`; });
+  rows.forEach((r,i)=>{
+    const y0=top+i*rowH, by=y0+20;
+    s+=`<g class="c-row" data-i="${i}" tabindex="${ex?-1:0}" aria-label="${esc(r.name)} ${esc(money(r.total))}/月">`;
+    if(!ex) s+=`<rect class="c-hit" x="${padL-6}" y="${y0+1}" width="${W-padL+6}" height="${rowH-2}" rx="4"/>`;
+    s+=`<text x="${padL}" y="${y0+14}" ${cls("c-name",tAttr.name)}>${esc(r.name)}<tspan dx="8" ${cls("c-sub",tAttr.sub)}>${esc(narrow&&!ex? r.plat : r.sub)}</tspan></text>`;
+    const segs = multiSeries()? r.parts.filter(p=>p.v>0) : [{k:"total", v:r.total}];
+    let x=padL;
+    if(S.cm==="mix"){
+      segs.forEach((p,j)=>{ const w=X(disp(p.v))-padL; const last=j===segs.length-1; const gw=last? w : Math.max(0,w-2);
+        if(gw>0) s+= last? `<path d="${barPath(x,by,gw,barH,3)}" ${fill(SERIES[p.k].c)}/>` : `<rect x="${x}" y="${by}" width="${gw}" height="${barH}" ${fill(SERIES[p.k].c)}/>`;
+        x+=w; });
+    } else {
+      const w=Math.max(r._v>0?2:0, X(r._v)-padL); s+=`<path d="${barPath(padL,by,w,barH,3)}" ${fill("s1")}/>`; x=padL+w;
+    }
+    s+=`<text x="${x+6}" y="${by+barH-1}" ${cls("c-val",tAttr.val)}>${esc(valLab(r))}</text>`;
+    s+=`</g>`;
+  });
+  if(ex){
+    const fy=top+rowH*n+40;
+    s+=`<text x="${padL}" y="${fy}" ${tAttr.sub}>${esc(chartNoteText())}</text>`;
+    s+=`<text x="${padL}" y="${fy+22}" ${tAttr.sub}>※ 価格の比較であり、性能の順位ではありません。価格はサンプル値(公式価格ページ未照合)です。税抜。</text>`;
+  }
+  return s+`</svg>`;
+}
+function chartNoteText(){
+  if(S.cm==="ratio") return "最も安いモデルを ×1 とした月額の倍率です。";
+  if(S.cm==="log") return "横軸は対数目盛(1目盛ごとに10倍)です。桁の違うモデルも一緒に比べられます。";
+  return S.t==="llm"? "棒の長さが月額です。色は入力・キャッシュ読取・出力の内訳を表します。" : "棒の長さが月額です。";
+}
+function renderChart(ok){
+  const box=$("chartBox");
+  lastChartRows=ok.map(x=>({name:x.m.name, sub:`${x.m.provider} ・ ${where(x.m)}`, plat:where(x.m), total:x.usd, parts:x.parts||[{k:"total",v:x.usd}]}));
+  $("chartTitle").textContent=`${TABNAME[S.t]}の価格差`;
+  $("chartPanel").hidden=!lastChartRows.length;
+  if(!lastChartRows.length){ box.innerHTML=""; return; }
+  $("legend").innerHTML = multiSeries()? ["in","cache","out"].map(k=>`<span><i style="background:var(--${SERIES[k].c})"></i>${SERIES[k].label}</span>`).join("") : "";
+  $("legend").hidden=!multiSeries();
+  const W=Math.max(300, Math.round(box.clientWidth- (parseFloat(getComputedStyle(box).paddingLeft)||0)*2) || 700);
+  box.innerHTML=chartSVG(lastChartRows, W, false);
+  $("chartNote").textContent=chartNoteText();
+}
+function showTip(i, clientX, clientY){
+  const r=lastChartRows[i]; if(!r) return; const tip=$("chartTip"), panel=$("chartPanel");
+  const base=Math.min(...lastChartRows.map(x=>x.total).filter(v=>v>0));
+  let h=`<div class="t">${esc(r.name)}</div><div class="mmeta">${esc(r.sub)}</div>`;
+  if(S.t==="llm") r.parts.forEach(p=>{ const pct=r.total>0? Math.round(p.v/r.total*100):0; h+=`<div class="r"><span><i style="background:var(--${SERIES[p.k].c})"></i>${SERIES[p.k].label}</span><span>${money(p.v)}(${pct}%)</span></div>`; });
+  h+=`<div class="r"><span>月額</span><span><b>${money(r.total)}</b></span></div><div class="r"><span>年額</span><span>${money(r.total*12)}</span></div>`;
+  if(base>0) h+=`<div class="r"><span>最安との倍率</span><span>×${sig(r.total/base,3)}</span></div>`;
+  tip.innerHTML=h; tip.hidden=false;
+  const pr=panel.getBoundingClientRect(), tw=tip.offsetWidth, th=tip.offsetHeight;
+  let x=clientX-pr.left+14, y=clientY-pr.top+14;
+  if(x+tw>pr.width-8) x=Math.max(8, clientX-pr.left-tw-14);
+  if(y+th>pr.height-8) y=Math.max(8, clientY-pr.top-th-14);
+  tip.style.left=x+"px"; tip.style.top=y+"px";
+}
+$("chartBox").addEventListener("pointermove", e=>{ const g=e.target.closest(".c-row"); if(g) showTip(+g.dataset.i, e.clientX, e.clientY); else $("chartTip").hidden=true; });
+$("chartBox").addEventListener("pointerleave", ()=>{ $("chartTip").hidden=true; });
+$("chartBox").addEventListener("focusin", e=>{ const g=e.target.closest(".c-row"); if(!g) return; const b=g.getBoundingClientRect(); showTip(+g.dataset.i, b.left+b.width*0.4, b.top+b.height); });
+$("chartBox").addEventListener("focusout", ()=>{ $("chartTip").hidden=true; });
+try{ new ResizeObserver(()=>{ if(lastChartRows.length) renderChart(results().ok); }).observe($("chartBox")); }catch(e){}
+async function chartPng(){
+  const W=1400, svg=chartSVG(lastChartRows, W, true);
+  const H=+svg.match(/height="(\d+(?:\.\d+)?)"/)[1];
+  const img=new Image(); img.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(svg);
+  await img.decode();
+  const c=document.createElement("canvas"); c.width=W*2; c.height=H*2; const g=c.getContext("2d");
+  g.scale(2,2); g.drawImage(img,0,0,W,H);
+  return new Promise(res=>c.toBlob(res,"image/png"));
+}
+
+/* ===== イベント ===== */
+function num(id, min=0){ const v=Number($(id).value); return Number.isFinite(v)? Math.max(min,v) : min; }
+$("form").addEventListener("submit", e=>e.preventDefault());
+$("form").addEventListener("input", e=>{
+  const id=e.target.id;
+  if(id.startsWith("m-")) return;
+  S.llm.n=num("llmN"); S.llm.i=num("llmIn"); S.llm.o=num("llmOut"); S.llm.tier=$("llmTier").value;
+  S.llm.c=$("llmCache").checked; S.llm.h=Math.min(100,num("llmHit"));
+  S.img.n=num("imgN"); S.dec.n=num("decN"); S.dec.i=num("decIn");
+  S.p=$("promo").checked; S.d=$("asOf").value||DATA.snapshot; S.fx=num("fx",1);
+  render();
+});
+document.querySelectorAll(".tabs button").forEach(b=>b.addEventListener("click",()=>{ S.t=b.dataset.tab; renderModelList(); render(); }));
+document.querySelectorAll(".presets button").forEach(b=>b.addEventListener("click",()=>{ S.llm={...PRESETS[b.dataset.preset]}; syncInputs(); render(); toast(`「${b.textContent}」の想定を入れました`); }));
+$("saveChart").addEventListener("click", async()=>{ try{ const blob=await chartPng(); if(blob) saveFile(`${fileBase()}_chart-${S.cm}.png`, blob); else toast("グラフ画像を作れませんでした"); }catch(e){ toast("グラフ画像を作れませんでした"); } });
+[["imgRes",v=>S.img.r=v],["cur",v=>S.cur=v],["unit",v=>S.unit=v],["cmode",v=>S.cm=v]].forEach(([id,fn])=>
+  document.querySelectorAll("#"+id+" button").forEach(b=>b.addEventListener("click",()=>{ fn(b.dataset.v); render(); })));
+$("mlist").addEventListener("change", e=>{
+  const id=e.target.dataset.id; if(!id) return;
+  const set=new Set(S.sel[S.t]); e.target.checked? set.add(id) : set.delete(id);
+  S.sel[S.t]=DATA.models.filter(m=>set.has(m.id)).map(m=>m.id); render();
+});
+$("selAll").addEventListener("click",()=>{ S.sel[S.t]=DATA.models.filter(m=>m.cat===S.t).map(m=>m.id); renderModelList(); render(); });
+$("selNone").addEventListener("click",()=>{ S.sel[S.t]=[]; renderModelList(); render(); });
+$("copyLink").addEventListener("click",()=>copyText(permalink(),"共有リンク"));
+$("copyMd").addEventListener("click",()=>copyText(markdown(),"稟議用テキスト"));
+$("copyTsv").addEventListener("click",()=>copyText(tsvOrCsv("\t"),"表"));
+$("saveCsv").addEventListener("click",()=>saveFile(fileBase()+".csv", "﻿"+tsvOrCsv(",")));
+$("saveMd").addEventListener("click",()=>saveFile(fileBase()+".md", markdown()));
+$("savePng").addEventListener("click",async()=>{ if(document.fonts && document.fonts.ready) await document.fonts.ready; const blob=await drawPng(); if(blob) saveFile(fileBase()+".png", blob); else toast("画像を作れませんでした"); });
+
+/* ===== 起動 ===== */
+loadFromHash();
+try{ if(!location.hash && window.innerWidth>900) $("modelsBox").open=true; }catch(e){}
+syncInputs(); renderModelList(); render();
+window.__zakkuri = {S:()=>S, calc, DATA, markdown, permalink};
+</script>
+
+</body></html>
