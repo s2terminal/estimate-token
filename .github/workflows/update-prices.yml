@@ -76,11 +76,13 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          num=$(gh issue list --state open --search "in:title $LOG_ISSUE_TITLE" --json number,title \
-            --jq "map(select(.title == \"$LOG_ISSUE_TITLE\")) | .[0].number // empty")
+          # --search は検索インデックス経由で反映が遅れるため使わず、一覧をタイトル完全一致で絞る
+          num=$(gh issue list --state open --limit 200 --json number,title \
+            --jq "map(select(.title == env.LOG_ISSUE_TITLE)) | .[0].number // empty")
           if [ -z "$num" ]; then
-            gh issue create --title "$LOG_ISSUE_TITLE" --body "日次の価格更新で記録すべきこと(値変わり・照合の不一致など)をここにコメントします。"
-            num=$(gh issue list --state open --search "in:title $LOG_ISSUE_TITLE" --json number --jq '.[0].number')
+            # gh issue create は作った Issue の URL を出力するので、末尾の番号を使う
+            url=$(gh issue create --title "$LOG_ISSUE_TITLE" --body "日次の価格更新で記録すべきこと(値変わり・照合の不一致など)をここにコメントします。")
+            num=${url##*/}
           fi
           gh issue comment "$num" --body-file out/report.md
 
@@ -89,6 +91,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          num=$(gh issue list --state open --search "in:title $LOG_ISSUE_TITLE" --json number,title \
-            --jq "map(select(.title == \"$LOG_ISSUE_TITLE\")) | .[0].number // empty")
+          # --search は検索インデックス経由で反映が遅れるため使わず、一覧をタイトル完全一致で絞る
+          num=$(gh issue list --state open --limit 200 --json number,title \
+            --jq "map(select(.title == env.LOG_ISSUE_TITLE)) | .[0].number // empty")
           [ -n "$num" ] && gh issue comment "$num" --body "日次更新が失敗しました: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" || true
