@@ -1,17 +1,17 @@
 {
  "schemaVersion": 1,
- "snapshot": "2026-10-11",
- "generatedAt": "2026-10-11T09:01:16.070Z",
+ "snapshot": "2026-10-12",
+ "generatedAt": "2026-10-11T21:27:04.562Z",
  "baseline": "2026-10-11",
  "sources": {
   "litellm": {
-   "commit": "unknown",
-   "fetchedAt": "2026-10-11T09:01:16.116Z",
-   "bytes": 2750280
+   "commit": "8ccb111de4cefd79be0cbbda054050d7243da5de",
+   "fetchedAt": "2026-10-11T21:27:05.226Z",
+   "bytes": 2750284
   },
   "openrouter": {
-   "fetchedAt": "2026-10-11T09:01:16.116Z",
-   "bytes": 765890
+   "fetchedAt": "2026-10-11T21:27:05.305Z",
+   "bytes": 766197
   },
   "fx": {
    "pair": "USDJPY",
@@ -10490,7 +10490,7 @@
    "sources": [
     {
      "litellm": "zai.glm-4.7-flash",
-     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-zai-glm-4-7-flash.html"
+     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-zai-glm-4-7-flash.md"
     }
    ],
    "contextWindow": 203000,
@@ -10523,7 +10523,7 @@
    "sources": [
     {
      "litellm": "zai.glm-4.7",
-     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-zai-glm-4-7.html"
+     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-zai-glm-4-7.md"
     }
    ],
    "contextWindow": 203000,
@@ -19453,6 +19453,34 @@
    "sources": [
     {
      "litellm": "azure_ai/kimi-k2.6",
+     "url": "https://prices.azure.com/api/retail/prices?$filter=serviceName%20eq%20'Foundry%20Models'%20and%20armRegionName%20eq%20'eastus'%20and%20priceType%20eq%20'Consumption'"
+    }
+   ],
+   "contextWindow": 262144,
+   "deprecationDate": "2027-04-16"
+  },
+  {
+   "id": "kimi-k2.7-code@azure:global",
+   "family": "kimi-k2.7-code",
+   "name": "Kimi K2.7 Code",
+   "vendor": "その他",
+   "platform": "azure",
+   "region": "global",
+   "category": "llm",
+   "firstSeen": "2026-10-12",
+   "status": "active",
+   "prices": [
+    {
+     "tier": "standard",
+     "minPromptTokens": 0,
+     "cacheRead": 0.19,
+     "input": 0.95,
+     "output": 4
+    }
+   ],
+   "sources": [
+    {
+     "litellm": "azure_ai/kimi-k2.7-code",
      "url": "https://prices.azure.com/api/retail/prices?$filter=serviceName%20eq%20'Foundry%20Models'%20and%20armRegionName%20eq%20'eastus'%20and%20priceType%20eq%20'Consumption'"
     }
    ],
