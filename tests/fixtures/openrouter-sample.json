@@ -1,0 +1,11 @@
+{
+ "_comment": "テスト用に手で作った架空のデータ。OpenRouter の実データは規約上リポジトリに含めない",
+ "data": [
+  { "id": "openai/gpt-6.1-sol", "created": 1790000000, "architecture": { "output_modalities": ["text"] }, "pricing": { "prompt": "0.000002", "completion": "0.00001" } },
+  { "id": "openai/gpt-6.1-sol:batch", "created": 1790000000, "pricing": { "prompt": "0.000001", "completion": "0.000005" } },
+  { "id": "anthropic/claude-sonnet-5.5", "created": 1790000000, "pricing": { "prompt": "0.000002", "completion": "0.00001" } },
+  { "id": "openai/example-new-model", "created": 1790000000, "architecture": { "output_modalities": ["text"] }, "pricing": { "prompt": "0.000001", "completion": "0.000002" } },
+  { "id": "openai/example-old-model", "created": 1700000000, "pricing": { "prompt": "0.000001", "completion": "0.000002" } },
+  { "id": "google/example-image-only", "created": 1790000000, "architecture": { "output_modalities": ["image"] }, "pricing": { "prompt": "0.000001" } }
+ ]
+}

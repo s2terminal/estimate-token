@@ -1,0 +1,15 @@
+# 品質ゲートのしきい値(初期値。運用しながら調整する)
+fetch:
+  minSizeRatio: 0.5        # 取得サイズが前回の50%未満なら止める
+count:
+  maxDropPct: 10           # 対象モデル数が前回から10%以上減ったら止める
+price:
+  stopChangePct: 50        # 同じ価格ルールで±50%超の変化は止める
+  noteChangePct: 10        # ±10〜50%は公開してIssueに記録
+crosscheck:
+  mismatchPct: 20          # 直販モデルのLiteLLM値とOpenRouter値の差が20%超なら「要確認」
+fx:
+  maxChangePct: 5          # USD/JPYが前回比±5%超なら前回値を使う
+newModel:
+  days: 14                 # firstSeen がこの日数以内なら「新着」
+  openrouterRecentDays: 60 # OpenRouterだけにあるモデルを「新モデル候補」としてレポートに出す対象(作成からの日数)
