@@ -4,6 +4,13 @@
 import { resolveImageTokenProfile, type ImageQuality, type ImageTokenConfig } from "../../shared/image-token-config.ts";
 export { IMAGE_QUALITIES, type ImageQuality } from "../../shared/image-token-config.ts";
 
+/** 画面と共有リンクで使う固定の解像度。4Kは対応範囲内の横長サイズ。 */
+export const IMAGE_SIZES: Record<string, { width: number; height: number }> = {
+  "1K": { width: 1024, height: 1024 },
+  "2K": { width: 2048, height: 2048 },
+  "4K": { width: 3840, height: 2160 },
+};
+
 export type ImageTokenEstimate = { tokens: number; why?: never } | { tokens?: never; why: string };
 
 /** 公式計算機と同じ、ちょうど .5 の場合は偶数側に丸める。 */

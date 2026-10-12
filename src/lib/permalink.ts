@@ -1,7 +1,7 @@
 /* 共有リンク: 入力値と選んだモデルの id を JSON にして base64url で # 以降に入れる。
    先頭の版番号で形式を見分ける(e2: 現行、e1: プロトタイプ) */
 import type { Tier } from "../../shared/types.ts";
-import { IMAGE_QUALITIES } from "./image-tokens.ts";
+import { IMAGE_QUALITIES, IMAGE_SIZES } from "./image-tokens.ts";
 import { type State, TIERS, defaultState } from "./state.ts";
 
 export const VERSION = "e2";
@@ -22,7 +22,7 @@ export function b64urlDecode(s: string): string {
 
 /** 状態を # 以降の文字列にする。選択は表示中のタブの分だけ入れる */
 export function encodeState(s: State): string {
-  const o = { t: s.t, fx: s.fx, cur: s.cur, unit: s.unit, cm: s.cm, llm: s.llm, img: s.img, sel: { [s.t]: s.sel[s.t] } };
+  const o = { t: s.t, fx: s.fx, cur: s.cur, unit: s.unit, cm: s.cm, llm: s.llm, img: { n: s.img.n, r: s.img.r, q: s.img.q }, sel: { [s.t]: s.sel[s.t] } };
   return VERSION + b64urlEncode(JSON.stringify(o));
 }
 
@@ -40,7 +40,7 @@ const ids = (v: unknown): string[] | undefined => (Array.isArray(v) ? v.filter((
 
 type Raw = Record<string, any>;
 
-function merge(o: Raw, base: State): Omit<Decoded, "warning"> {
+function merge(o: Raw, base: State): Decoded {
   const L = o.llm ?? {}, I = o.img ?? {};
   const state: State = {
     t: oneOf(o.t, ["llm", "img"] as const, base.t),
@@ -58,7 +58,6 @@ function merge(o: Raw, base: State): Omit<Decoded, "warning"> {
     },
     img: {
       n: num(I.n, base.img.n), r: oneOf(I.r, ["1K", "2K", "4K"] as const, "1K"),
-      w: num(I.w, base.img.w ?? 1024), h: num(I.h, base.img.h ?? 1024),
       q: oneOf(I.q, IMAGE_QUALITIES, base.img.q ?? "medium"),
     },
     sel: { llm: [...base.sel.llm], img: [...base.sel.img] },
@@ -71,7 +70,9 @@ function merge(o: Raw, base: State): Omit<Decoded, "warning"> {
       selTabs.push(t);
     }
   }
-  return { state, selTabs };
+  const size = IMAGE_SIZES[state.img.r];
+  const changedSize = (I.w != null && I.w !== size.width) || (I.h != null && I.h !== size.height);
+  return { state, selTabs, ...(changedSize ? { warning: `幅・高さを指定した旧リンクです。解像度${state.img.r}の固定サイズ(${size.width}×${size.height})で試算します` } : {}) };
 }
 
 /**

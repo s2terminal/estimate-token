@@ -44,7 +44,7 @@ function premiseText() {
     const L = S.llm;
     return `月 ${int(L.n)} 回 × 入力 ${int(L.i)} / 出力 ${int(L.o)} tokens/回 ・ ${TIER_LABEL[L.tier]} ・ キャッシュ ${L.c ? L.h + "%" : "なし"}`;
   }
-  return `月 ${int(S.img.n)} 枚 ・ 解像度 ${S.img.r} ・ OpenAI ${S.img.w ?? 1024}×${S.img.h ?? 1024} / ${S.img.q ?? "medium"}(画像出力のみ)`;
+  return `月 ${int(S.img.n)} 枚 ・ 解像度 ${S.img.r} ・ OpenAI画質 ${S.img.q ?? "medium"}(画像出力のみ)`;
 }
 const conditionText = () => `為替 1 USD = ${fx()} 円 ・ 価格データ ${DATA.snapshot} ・ 税抜`;
 const allFlags = (x: CalcResult) => [...modelFlags(x.m, DATA), ...x.flags];
@@ -85,8 +85,6 @@ function syncInputs() {
   $<HTMLInputElement>("llmCache").checked = S.llm.c;
   set("llmHit", S.llm.h);
   set("imgN", S.img.n);
-  set("imgWidth", S.img.w ?? 1024);
-  set("imgHeight", S.img.h ?? 1024);
   set("imgQuality", S.img.q ?? "medium");
   set("fx", fx());
 }
@@ -157,7 +155,7 @@ function renderUnitTable() {
         const result = calcImage(m, { ...S.img, n: 1 });
         const r = m.prices.find((p) => p.tier === "standard" && p.minPromptTokens === 0) ?? m.prices[0];
         const condition = result.na ? result.why : result.imageTokens != null
-          ? `${S.img.w ?? 1024}×${S.img.h ?? 1024} / ${S.img.q ?? "medium"}` : S.img.r;
+          ? `${S.img.r} / ${S.img.q ?? "medium"}` : S.img.r;
         return `<tr><td class="mname">${esc(m.name)}</td><td class="mmeta">${esc(where(m))}</td><td class="mmeta">${esc(condition)}</td><td class="num">${!result.na && result.imageTokens != null ? int(result.imageTokens) : "—"}</td><td class="num">${!result.na ? money(result.perImage ?? 0) : "—"}</td><td class="num">${r?.imageOutput != null ? money(r.imageOutput) : "—"}</td><td class="mmeta">${srcCell(m)}</td></tr>`;
       })
       .join("");
@@ -287,8 +285,6 @@ function bind() {
       h: Math.min(100, num("llmHit")),
     };
     S.img.n = num("imgN");
-    S.img.w = num("imgWidth");
-    S.img.h = num("imgHeight");
     S.img.q = $<HTMLSelectElement>("imgQuality").value as State["img"]["q"];
     if (el.id === "fx") {
       const v = num("fx", 1);
@@ -321,12 +317,7 @@ function bind() {
     toast(`「${b.textContent}」の想定を入れました`);
   });
   const segs: [string, (v: string) => void][] = [
-    ["imgRes", (v) => {
-      S.img.r = v;
-      const size = v === "4K" ? [3840, 2160] : v === "2K" ? [2048, 2048] : [1024, 1024];
-      [S.img.w, S.img.h] = size;
-      syncInputs();
-    }],
+    ["imgRes", (v) => (S.img.r = v)],
     ["cur", (v) => (S.cur = v as State["cur"])],
     ["unit", (v) => (S.unit = v as State["unit"])],
     ["cmode", (v) => (S.cm = v as State["cm"])],

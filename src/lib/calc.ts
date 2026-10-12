@@ -1,6 +1,6 @@
 /* 月額の計算ロジック。画面から独立した純粋関数にしてテストする */
 import type { Model, PriceRule, Tier } from "../../shared/types.ts";
-import { estimateImageTokens, type ImageQuality } from "./image-tokens.ts";
+import { estimateImageTokens, IMAGE_SIZES, type ImageQuality } from "./image-tokens.ts";
 
 export interface Flag {
   t: string;
@@ -26,9 +26,7 @@ export interface ImageUsage {
   n: number;
   /** 解像度 */
   r: string;
-  /** トークン課金モデルの幅・高さ(px)と画質。旧リンクは1024×1024、medium */
-  w?: number;
-  h?: number;
+  /** トークン課金モデルの画質。旧リンクはmedium */
   q?: ImageQuality;
 }
 
@@ -139,7 +137,9 @@ export function calcImage(m: Model, u: ImageUsage): CalcResult {
   if (!rule) return { na: true, m, why: "価格未取得", flags: [] };
   const flags: Flag[] = [];
   if (rule.imageOutput != null && rule.perImage == null && !rule.perImageByRes) {
-    const w = u.w ?? 1024, h = u.h ?? 1024, q = u.q ?? "medium";
+    const size = Object.hasOwn(IMAGE_SIZES, u.r) ? IMAGE_SIZES[u.r] : undefined;
+    if (!size) return { na: true, m, why: "解像度は1K・2K・4Kから選択してください", flags };
+    const { width: w, height: h } = size, q = u.q ?? "medium";
     const estimate = estimateImageTokens(m.family, w, h, q);
     if (estimate.tokens == null) return { na: true, m, why: estimate.why, flags };
     const p = estimate.tokens * rule.imageOutput / 1e6;
