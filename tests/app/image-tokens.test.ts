@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { estimateImageTokens } from "../src/lib/image-tokens.ts";
+import { estimateImageTokens } from "../../src/lib/image-tokens.ts";
 
 describe("OpenAIの公式換算", () => {
   it.each(["gpt-image-2.5-sunburst", "gpt-image-2.5-flare", "gpt-image-2.5-flare-2026-09-08"])("%s: 公式計算機の1024×1024 / lowは196 tokens", (model) => {

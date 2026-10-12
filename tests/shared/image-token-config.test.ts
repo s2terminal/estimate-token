@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { IMAGE_TOKEN_CONFIG, resolveImageTokenProfile, validateImageTokenConfig } from "../shared/image-token-config.ts";
-import { estimateImageTokens } from "../src/lib/image-tokens.ts";
+import { IMAGE_TOKEN_CONFIG, resolveImageTokenProfile, validateImageTokenConfig } from "../../shared/image-token-config.ts";
+import { estimateImageTokens } from "../../src/lib/image-tokens.ts";
 
 describe("画像換算の設定", () => {
   it("公開設定の出典・係数・参照を検証する", () => {
@@ -36,5 +36,13 @@ describe("画像換算の設定", () => {
     profile.grids.low = NaN;
     expect(validateImageTokenConfig(config)).toHaveLength(2);
     expect(resolveImageTokenProfile("future-image", config).reason).toBeTruthy();
+  });
+
+  it("解像度別設定の不正なトークン数を検知する", () => {
+    const config = structuredClone(IMAGE_TOKEN_CONFIG);
+    const p = config.profiles["gemini-flash-image"];
+    if (p.method !== "resolution") throw new Error("fixture");
+    p.tokensByResolution["4K"] = -1;
+    expect(validateImageTokenConfig(config)).toHaveLength(1);
   });
 });

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { b64urlEncode, decodeState, encodeState } from "../src/lib/permalink.ts";
-import { defaultState } from "../src/lib/state.ts";
+import { b64urlEncode, decodeState, encodeState } from "../../src/lib/permalink.ts";
+import { defaultState } from "../../src/lib/state.ts";
 
 const base = defaultState({ llm: ["a@openai:global"], img: ["b@gemini-api:global"] });
 

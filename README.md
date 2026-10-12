@@ -13,10 +13,12 @@ Geminiの画像生成は公式の解像度別トークン数と画像出力単�
 | `pipeline/` | 価格データの日次更新(fetch → select → normalize → cross-check → validate → diff) |
 | `config/` | 対象の選別規則・表示名・おすすめの系列(`catalog.yaml`)、品質ゲートのしきい値(`gates.yaml`) |
 | `config/image-tokens.json` | 画像トークンの換算プロファイル、モデルとの対応、出典・確認日、未対応の理由 |
-| `shared/types.ts` | 価格データの型(パイプラインと画面で共有) |
-| `src/` | 画面(Vite + TypeScript、フレームワークなし)。計算は `src/lib/calc.ts` |
+| `shared/` | パイプラインと画面で共有する価格データの型・画像換算設定 |
+| `src/main.ts` | 画面の起動・状態管理・イベント処理 |
+| `src/lib/` | 計算・表示形式・モデル検索・共有リンクなどのロジック |
+| `src/ui/` | 試算結果の要約・比較表・単価一覧(`results.ts`)とグラフ(`chart.ts`)の描画 |
 | `public/data/latest.json` | 公開中の価格データ(パイプラインが更新) |
-| `tests/` | Vitest。フィクスチャは実データから切り出して固定 |
+| `tests/` | Vitest。責務別の配置と追加方針は [tests/README.md](tests/README.md) |
 
 ## 開発
 
@@ -26,14 +28,16 @@ npm run dev          # 画面(http://localhost:5173)
 npm test             # テスト
 npm run typecheck
 npm run build        # dist/ に静的ファイルを出力
+npm run check        # CIと同じ検証: テスト → 型チェック → ビルド
 npm run pipeline     # 価格を取得して public/data/latest.json を更新
 npm run pipeline -- --offline     # raw/ に置いた前回の生データで再実行
 npm run pipeline -- --force-stop  # 品質ゲートで止めた扱いにする(動作確認用)
 ```
 
 パイプラインは `out/report.md`(差分と判定)と `out/gate.json` も出力します。
+`build` は型チェックを含み、`check` とCIでも型チェックは1回だけ実行します。
 
-公式ドキュメントの料金計算例を固定期待値として検証するテストは `tests/official-pricing-examples.test.ts`。出典・採用範囲・資料の丸め値の扱いは [docs/official-pricing-examples.md](docs/official-pricing-examples.md) を参照。
+公式ドキュメントの料金計算例を固定期待値として検証するテストは `tests/reference/official-pricing-examples.test.ts`。出典・採用範囲・資料の丸め値の扱いは [docs/official-pricing-examples.md](docs/official-pricing-examples.md) を参照。
 
 ## おすすめの初期選択
 

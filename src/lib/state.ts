@@ -4,6 +4,7 @@ import type { ImageUsage, LlmUsage } from "./calc.ts";
 import type { Currency, Unit } from "./format.ts";
 
 export type Tab = "llm" | "img";
+export const TAB_LABEL: Record<Tab, string> = { llm: "言語モデル", img: "画像生成" };
 export type ChartMode = "mix" | "ratio" | "log";
 
 export interface State {

@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { calcImage } from "../src/lib/calc.ts";
-import { unsupportedImageModels } from "../pipeline/image-tokens.ts";
-import { validateImageTokenConfig, IMAGE_TOKEN_CONFIG } from "../shared/image-token-config.ts";
-import { sampleData } from "./helpers.ts";
+import { calcImage } from "../../src/lib/calc.ts";
+import { unsupportedImageModels } from "../../pipeline/image-tokens.ts";
+import type { Platform } from "../../shared/types.ts";
+import { sampleModel } from "../support/fixtures.ts";
+import { calculated } from "../support/calc.ts";
 
-const models = sampleData().models;
-const get = (family: string, platform = "gemini-api") => models.find((m) => m.family === family && m.platform === platform)!;
+const get = (family: string, platform: Platform = "gemini-api") => sampleModel(`${family}@${platform}:global`);
 
 describe("Geminiの公式解像度別料金", () => {
   it.each([
@@ -19,12 +19,11 @@ describe("Geminiの公式解像度別料金", () => {
     ["gemini-3-pro-image", "2K", 1120, 134.4],
     ["gemini-3-pro-image", "4K", 2000, 240],
     ["gemini-3.1-flash-lite-image", "1K", 1120, 33.6],
-  ])("%s / %s: %s tokens、1000枚=$%s", (family, r, tokens, usd) => {
-    for (const platform of ["gemini-api", "vertex-ai"]) {
-      const result = calcImage(get(family as string, platform), { n: 1000, r: r as string, q: "max" });
-      if (result.na) throw new Error(result.why);
+  ] as const)("%s / %s: %s tokens、1000枚=$%s", (family, r, tokens, usd) => {
+    for (const platform of ["gemini-api", "vertex-ai"] as const) {
+      const result = calculated(calcImage(get(family, platform), { n: 1000, r, q: "max" }));
       expect(result.imageTokens).toBe(tokens);
-      expect(result.usd).toBeCloseTo(usd as number, 10);
+      expect(result.usd).toBeCloseTo(usd, 10);
       expect(result.flags.some((f) => f.t.includes("テキスト出力・検索は別料金"))).toBe(true);
       expect(result.flags.some((f) => f.t.includes("実験的"))).toBe(false);
     }
@@ -79,11 +78,8 @@ describe("Geminiの公式解像度別料金", () => {
     expect(!result.na && result.usd).toBe(10);
   });
 
-  it("解像度別設定の不正なトークン数を検知する", () => {
-    const config = structuredClone(IMAGE_TOKEN_CONFIG);
-    const p = config.profiles["gemini-flash-image"];
-    if (p.method !== "resolution") throw new Error("fixture");
-    p.tokensByResolution["4K"] = -1;
-    expect(validateImageTokenConfig(config)).toHaveLength(1);
+  it("Geminiの解像度別単価にOpenAIの画質が影響しない", () => {
+    const model = get("gemini-3.1-flash-image");
+    expect(calcImage(model, { n: 1000, r: "2K", q: "max" })).toEqual(calcImage(model, { n: 1000, r: "2K", q: "low" }));
   });
 });

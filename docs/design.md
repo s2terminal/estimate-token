@@ -192,37 +192,31 @@ jobs:
 パイプラインと画面を1つのリポジトリに置き、言語はどちらもTypeScript(Node 22)に統一する。価格ルールの型を両方で共有できるのが理由。
 
 ```text
-zakkuri-genai/
-├─ .github/workflows/
-│  ├─ update-prices.yml    # 日次更新(06:17 JST)
-│  ├─ deploy-pages.yml     # main への push で Pages に公開
-│  └─ ci.yml               # PRで型チェック・テスト
-├─ config/
-│  ├─ catalog.yaml         # 対象provider・mode、キーの解析規則、表示名、おすすめの系列
-│  ├─ gates.yaml           # 品質ゲートのしきい値
-│  └─ overrides.yaml       # 手書き層(後回し。MVPでは空)
-├─ pipeline/
-│  ├─ fetch.ts  select.ts  normalize.ts  crosscheck.ts
-│  ├─ validate.ts  diff.ts  publish.ts
-│  └─ schema/prices.schema.json
-├─ src/                     # 画面(Vite)
-│  ├─ lib/calc.ts  lib/permalink.ts  lib/format.ts
-│  ├─ ui/                  # フォーム、比較表、グラフ、単価一覧
-│  └─ main.ts
-├─ shared/types.ts          # 価格ルールの型(パイプラインと画面で共有)
-├─ public/data/
-│  └─ latest.json
+estimate-token/
+├─ .github/workflows/       # 日次更新・Pages公開・CI
+├─ config/                  # 選別・おすすめの規則、品質ゲート、画像換算設定
+├─ pipeline/                # fetch → select → normalize → crosscheck → validate → diff
+│  └─ run.ts                # 日次更新のエントリーポイント
+├─ src/
+│  ├─ lib/                  # 計算・表示形式・モデル検索・共有リンク
+│  ├─ ui/                   # results.ts(要約・比較表・単価一覧)、chart.ts、dom.ts
+│  └─ main.ts               # 起動・状態管理・イベント処理
+├─ shared/                  # 共有する価格型・画像換算設定
+├─ public/data/latest.json  # 公開価格データ
 └─ tests/
-   ├─ fixtures/litellm-sample.json  openrouter-sample.json
-   ├─ normalize.test.ts  gates.test.ts  calc.test.ts  permalink.test.ts
+   ├─ app/  pipeline/  shared/  # 検証対象の責務ごとに配置
+   ├─ integration/          # 画像料金計算・おすすめ初期選択の連携
+   ├─ reference/            # 公式料金例の固定期待値
+   ├─ support/              # テストの共通処理
+   └─ fixtures/             # 固定した取得元データ
 ```
 
-**テストの中身**(Vitest)
+**テストの中身**(Vitest)。追加方針は [tests/README.md](../tests/README.md)。
 
-- `normalize.test.ts`: 実データから切り出したエントリで、platform/regionの解析、日付付き別名の統合、×1,000,000の丸めを確かめる。例: `gpt-6.1-sol` → standardの入力2 / 出力10、272K超の入力4 / 出力15、batchの入力1 / 出力5
-- `gates.test.ts`: 件数急減・単価0化・±50%超の変化で「止める」判定になること
-- `calc.test.ts`: プロトタイプで検算した例(月10,000回、入力2,000/出力500、GPT-6.1 Sol → $90)と、長文価格の境界(272,000 と 272,001)
-- `permalink.test.ts`: 書き出しと読み戻しで状態が一致すること、旧版(`e1`)のリンクも読めること
+- `pipeline/normalize.test.ts`: 実データから切り出したエントリで、platform/regionの解析、日付付き別名の統合、×1,000,000の丸めを確かめる。例: `gpt-6.1-sol` → standardの入力2 / 出力10、272K超の入力4 / 出力15、batchの入力1 / 出力5
+- `pipeline/validate.test.ts`: 件数急減・単価0化・±50%超の変化で「止める」判定になること
+- `app/calc.test.ts`: プロトタイプで検算した例(月10,000回、入力2,000/出力500、GPT-6.1 Sol → $90)と、長文価格の境界(272,000 と 272,001)
+- `app/permalink.test.ts`: 書き出しと読み戻しで状態が一致すること、旧版(`e1`)のリンクも読めること
 
 フィクスチャは実データから数十エントリを抜いて固定し、外部の変化でテストが落ちないようにする。
 
