@@ -1,12 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { diffData, diffMarkdown } from "../pipeline/diff.ts";
-import { unsupportedImageModels } from "../pipeline/image-tokens.ts";
-import { IMAGE_TOKEN_CONFIG } from "../shared/image-token-config.ts";
-import type { Model } from "../shared/types.ts";
-import { sampleData } from "./helpers.ts";
+import { diffData, diffMarkdown } from "../../pipeline/diff.ts";
+import { unsupportedImageModels } from "../../pipeline/image-tokens.ts";
+import { IMAGE_TOKEN_CONFIG } from "../../shared/image-token-config.ts";
+import type { Model } from "../../shared/types.ts";
+import { sampleData, sampleModel } from "../support/fixtures.ts";
 
 const unknown = (family = "gpt-image-future"): Model => ({
-  ...sampleData().models.find((m) => m.family === "gpt-image-2")!,
+  ...sampleModel("gpt-image-2@openai:global"),
   id: `${family}@openai:global`, family, name: family,
 });
 

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
-import type { Model, Platform, PriceRule } from "../shared/types.ts";
-import { calcImage, calcLlm, type CalcResult, type LlmUsage } from "../src/lib/calc.ts";
+import { calculated as ok } from "../support/calc.ts";
+import type { Model, Platform, PriceRule } from "../../shared/types.ts";
+import { calcImage, calcLlm, type LlmUsage } from "../../src/lib/calc.ts";
 
 /** 確認日: 2026-10-12。詳細・採用範囲は docs/official-pricing-examples.md。
  * 公式例の単価を固定し、日次更新される latest.json / LiteLLM には依存しない。
@@ -25,11 +26,6 @@ function model(family: string, platform: Platform, source: string, prices: Price
 }
 
 const usage = (values: Partial<LlmUsage>): LlmUsage => ({ n: 1, i: 0, o: 0, c: false, h: 0, tier: "standard", ...values });
-const ok = (result: CalcResult) => {
-  if (result.na) throw new Error(result.why);
-  return result;
-};
-
 describe("公式計算例: OpenAI のトークン課金 (Cookbook / Cost Breakdown)", () => {
   // OCRの入力は画像を含み得るが、ここでは資料の合計入力tokensを使用する。
   const stages = [

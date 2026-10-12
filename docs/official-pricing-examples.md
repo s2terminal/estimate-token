@@ -1,7 +1,7 @@
 # 公式ドキュメントの料金計算例
 
 確認日: **2026-10-12**。対応するテストは
-[`tests/official-pricing-examples.test.ts`](../tests/official-pricing-examples.test.ts)。
+[`tests/reference/official-pricing-examples.test.ts`](../tests/reference/official-pricing-examples.test.ts)。
 単価・入力条件・期待値を固定し、外部APIへの問い合わせや更新される価格スナップショットに依存しない。
 
 ## テキスト・トークン課金
@@ -73,7 +73,7 @@ Gemini 2.5 Flash Imageの旧例はGemini APIで提供終了扱いのため、現
 資料の式から補った小計や計算値は、上記の表で「計算値」として区別している。
 
 ```sh
-npm test -- tests/official-pricing-examples.test.ts
+npm test -- tests/reference/official-pricing-examples.test.ts
 npm run typecheck
 npm test
 npm run build
