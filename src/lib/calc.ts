@@ -25,6 +25,8 @@ export interface LlmUsage {
 export interface ImageUsage {
   /** 枚/月 */
   n: number;
+  /** 平均入力(プロンプト) tokens/枚。旧リンクは0 */
+  i?: number;
   /** 解像度 */
   r: string;
   /** トークン課金モデルの画質。旧リンクはmedium */
@@ -52,6 +54,7 @@ export interface CalcOk {
   pin?: number;
   pout?: number;
   pcin?: number;
+  /** 1枚あたり(入力込み) */
   perImage?: number;
   imageTokens?: number;
   flags: Flag[];
@@ -132,11 +135,19 @@ export function calcLlm(m: Model, u: LlmUsage, opts?: PriceOptions): CalcResult 
   };
 }
 
-/** 画像生成の月額(USD)。画像出力トークン課金、または解像度別単価 → perImage */
+/** 画像生成の月額(USD)。画像出力トークン課金、または解像度別単価 → perImage。入力単価があればプロンプト分を足す */
 export function calcImage(m: Model, u: ImageUsage): CalcResult {
   const rule = m.prices.find((r) => r.tier === "standard" && r.minPromptTokens === 0) ?? m.prices[0];
   if (!rule) return { na: true, m, why: "価格未取得", flags: [] };
   const flags: Flag[] = [];
+  const done = (out: number, imageTokens?: number): CalcOk => {
+    const tokensIn = u.i ?? 0;
+    let pin = 0;
+    if (rule.input != null) pin = tokensIn * rule.input / 1e6;
+    else if (tokensIn > 0 && imageTokens != null) flags.push({ t: "入力単価なし(入力は含まず)", k: "warn" });
+    const ui = u.n * pin, uo = u.n * out;
+    return { na: false, m, usd: ui + uo, rule, pin: rule.input, perImage: pin + out, imageTokens, flags, parts: [{ k: "in", v: ui }, { k: "out", v: uo }] };
+  };
   const unsupported = configuredImageUnsupportedReason(m.family, undefined, m.platform);
   if (unsupported) return { na: true, m, why: unsupported, flags };
   if (requiresImageConversion(m, rule)) {
@@ -146,22 +157,20 @@ export function calcImage(m: Model, u: ImageUsage): CalcResult {
     if (profile.profile.method === "resolution") {
       const tokens = profile.profile.tokensByResolution[u.r];
       if (tokens == null) return { na: true, m, why: `${u.r}は非対応です(対応解像度: ${Object.keys(profile.profile.tokensByResolution).join("・")})`, flags };
-      const p = tokens * rule.imageOutput / 1e6;
       flags.push({ t: `概算 ${tokens} 画像tokens/枚(${u.r})`, k: "" });
-      flags.push({ t: "画像出力のみ(入力・テキスト出力・検索は別料金)", k: "warn" });
-      return { na: false, m, usd: u.n * p, rule, perImage: p, imageTokens: tokens, flags, parts: [{ k: "total", v: u.n * p }] };
+      flags.push({ t: "テキスト出力・検索は別料金", k: "warn" });
+      return done(tokens * rule.imageOutput / 1e6, tokens);
     }
     const size = Object.hasOwn(IMAGE_SIZES, u.r) ? IMAGE_SIZES[u.r] : undefined;
     if (!size) return { na: true, m, why: "解像度は1K・2K・4Kから選択してください", flags };
     const { width: w, height: h } = size, q = u.q ?? "medium";
     const estimate = estimateImageTokens(m.family, w, h, q);
     if (estimate.tokens == null) return { na: true, m, why: estimate.why, flags };
-    const p = estimate.tokens * rule.imageOutput / 1e6;
     flags.push({ t: `概算 ${estimate.tokens} 画像tokens/枚(${w}×${h}・${q})`, k: "" });
-    flags.push({ t: "画像出力のみ(入力・部分画像は別料金)", k: "warn" });
+    flags.push({ t: "入力画像・部分画像は別料金", k: "warn" });
     if (Math.max(w, h) > 2560 || w * h > 2560 * 1440)
       flags.push({ t: "高解像度は実験的対応", k: "warn" });
-    return { na: false, m, usd: u.n * p, rule, perImage: p, imageTokens: estimate.tokens, flags, parts: [{ k: "total", v: u.n * p }] };
+    return done(estimate.tokens * rule.imageOutput / 1e6, estimate.tokens);
   }
   let p = rule.perImageByRes?.[u.r];
   if (p == null && rule.perImage != null) {
@@ -169,6 +178,5 @@ export function calcImage(m: Model, u: ImageUsage): CalcResult {
     if (rule.perImageByRes) flags.push({ t: `${u.r}の価格なし→共通単価`, k: "warn" });
   }
   if (p == null) return { na: true, m, why: rule.perImageByRes ? `${u.r}の価格未取得` : "1枚あたりの価格未取得", flags };
-  const usd = u.n * p;
-  return { na: false, m, usd, rule, perImage: p, flags, parts: [{ k: "total", v: usd }] };
+  return done(p);
 }

@@ -89,7 +89,8 @@
     {
      "tier": "standard",
      "minPromptTokens": 0,
-     "imageOutput": 32
+     "imageOutput": 32,
+     "input": 5
     }
    ],
    "sources": [
@@ -7961,7 +7962,8 @@
     {
      "tier": "standard",
      "minPromptTokens": 0,
-     "perImage": 0.039
+     "perImage": 0.039,
+     "input": 0
     }
    ],
    "sources": [
@@ -8019,7 +8021,8 @@
      "tier": "standard",
      "minPromptTokens": 0,
      "perImage": 0.039,
-     "imageOutput": 30
+     "imageOutput": 30,
+     "input": 0.3
     }
    ],
    "sources": [
@@ -8046,7 +8049,8 @@
      "tier": "standard",
      "minPromptTokens": 0,
      "perImage": 0.039,
-     "imageOutput": 30
+     "imageOutput": 30,
+     "input": 0.3
     }
    ],
    "sources": [
@@ -8545,7 +8549,8 @@
      "tier": "standard",
      "minPromptTokens": 0,
      "perImage": 0.134,
-     "imageOutput": 120
+     "imageOutput": 120,
+     "input": 2
     }
    ],
    "sources": [
@@ -8574,7 +8579,8 @@
      "tier": "standard",
      "minPromptTokens": 0,
      "perImage": 0.134,
-     "imageOutput": 120
+     "imageOutput": 120,
+     "input": 2
     }
    ],
    "sources": [
@@ -8601,7 +8607,8 @@
      "tier": "standard",
      "minPromptTokens": 0,
      "perImage": 0.134,
-     "imageOutput": 120
+     "imageOutput": 120,
+     "input": 2
     }
    ],
    "sources": [
@@ -8686,7 +8693,8 @@
      "tier": "standard",
      "minPromptTokens": 0,
      "perImage": 0.0672,
-     "imageOutput": 60
+     "imageOutput": 60,
+     "input": 0.5
     }
    ],
    "sources": [
@@ -8715,7 +8723,8 @@
      "tier": "standard",
      "minPromptTokens": 0,
      "perImage": 0.045,
-     "imageOutput": 60
+     "imageOutput": 60,
+     "input": 0.5
     }
    ],
    "sources": [
@@ -8742,7 +8751,8 @@
      "tier": "standard",
      "minPromptTokens": 0,
      "perImage": 0.0672,
-     "imageOutput": 60
+     "imageOutput": 60,
+     "input": 0.5
     }
    ],
    "sources": [
@@ -8773,7 +8783,8 @@
      "tier": "standard",
      "minPromptTokens": 0,
      "perImage": 0.0336,
-     "imageOutput": 30
+     "imageOutput": 30,
+     "input": 0.25
     }
    ],
    "sources": [
@@ -8800,7 +8811,8 @@
      "tier": "standard",
      "minPromptTokens": 0,
      "perImage": 0.0336,
-     "imageOutput": 30
+     "imageOutput": 30,
+     "input": 0.25
     }
    ],
    "sources": [
@@ -9970,7 +9982,8 @@
      "tier": "standard",
      "minPromptTokens": 0,
      "perImage": 0.0336,
-     "imageOutput": 30
+     "imageOutput": 30,
+     "input": 1.5
     }
    ],
    "sources": [
@@ -9997,7 +10010,8 @@
      "tier": "standard",
      "minPromptTokens": 0,
      "perImage": 0.0336,
-     "imageOutput": 30
+     "imageOutput": 30,
+     "input": 1.5
     }
    ],
    "sources": [
@@ -17656,7 +17670,8 @@
     {
      "tier": "standard",
      "minPromptTokens": 0,
-     "imageOutput": 8
+     "imageOutput": 8,
+     "input": 2
     }
    ],
    "sources": [
@@ -17681,7 +17696,8 @@
     {
      "tier": "standard",
      "minPromptTokens": 0,
-     "imageOutput": 8
+     "imageOutput": 8,
+     "input": 2
     }
    ],
    "sources": [
@@ -17706,7 +17722,8 @@
     {
      "tier": "standard",
      "minPromptTokens": 0,
-     "imageOutput": 32
+     "imageOutput": 32,
+     "input": 5
     }
    ],
    "sources": [
@@ -17734,7 +17751,8 @@
     {
      "tier": "standard",
      "minPromptTokens": 0,
-     "imageOutput": 32
+     "imageOutput": 32,
+     "input": 5
     }
    ],
    "sources": [
@@ -17763,7 +17781,8 @@
     {
      "tier": "standard",
      "minPromptTokens": 0,
-     "imageOutput": 40
+     "imageOutput": 40,
+     "input": 5
     }
    ],
    "sources": [
@@ -17788,7 +17807,8 @@
     {
      "tier": "standard",
      "minPromptTokens": 0,
-     "imageOutput": 40
+     "imageOutput": 40,
+     "input": 5
     }
    ],
    "sources": [
@@ -17813,7 +17833,8 @@
     {
      "tier": "standard",
      "minPromptTokens": 0,
-     "imageOutput": 30
+     "imageOutput": 30,
+     "input": 5
     }
    ],
    "sources": [
@@ -17838,7 +17859,8 @@
     {
      "tier": "standard",
      "minPromptTokens": 0,
-     "imageOutput": 30
+     "imageOutput": 30,
+     "input": 5
     }
    ],
    "sources": [
@@ -17866,7 +17888,8 @@
     {
      "tier": "standard",
      "minPromptTokens": 0,
-     "imageOutput": 30
+     "imageOutput": 30,
+     "input": 5
     }
    ],
    "sources": [
@@ -17891,7 +17914,8 @@
     {
      "tier": "standard",
      "minPromptTokens": 0,
-     "imageOutput": 30
+     "imageOutput": 30,
+     "input": 5
     }
    ],
    "sources": [
@@ -17919,7 +17943,8 @@
     {
      "tier": "standard",
      "minPromptTokens": 0,
-     "imageOutput": 30
+     "imageOutput": 30,
+     "input": 5
     }
    ],
    "sources": [
@@ -17948,7 +17973,8 @@
     {
      "tier": "standard",
      "minPromptTokens": 0,
-     "imageOutput": 30
+     "imageOutput": 30,
+     "input": 5
     }
    ],
    "sources": [
@@ -21804,7 +21830,8 @@
     {
      "tier": "standard",
      "minPromptTokens": 0,
-     "imageOutput": 19
+     "imageOutput": 19,
+     "input": 1.75
     }
    ],
    "sources": [
@@ -21829,7 +21856,8 @@
     {
      "tier": "standard",
      "minPromptTokens": 0,
-     "imageOutput": 38
+     "imageOutput": 38,
+     "input": 5
     }
    ],
    "sources": [
@@ -23722,7 +23750,8 @@
      "tier": "standard",
      "minPromptTokens": 0,
      "perImage": 0.134,
-     "imageOutput": 120
+     "imageOutput": 120,
+     "input": 2
     }
    ],
    "sources": [

@@ -25,7 +25,7 @@ describe("Geminiの公式解像度別料金", () => {
       if (result.na) throw new Error(result.why);
       expect(result.imageTokens).toBe(tokens);
       expect(result.usd).toBeCloseTo(usd as number, 10);
-      expect(result.flags.some((f) => f.t.includes("画像出力のみ"))).toBe(true);
+      expect(result.flags.some((f) => f.t.includes("テキスト出力・検索は別料金"))).toBe(true);
       expect(result.flags.some((f) => f.t.includes("実験的"))).toBe(false);
     }
   });
