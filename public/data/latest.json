@@ -1,22 +1,22 @@
 {
  "schemaVersion": 1,
- "snapshot": "2026-10-12",
- "generatedAt": "2026-10-12T03:25:27.591Z",
+ "snapshot": "2026-10-13",
+ "generatedAt": "2026-10-12T21:26:29.259Z",
  "baseline": "2026-10-11",
  "sources": {
   "litellm": {
-   "commit": "ac98cabae5ffd386ee11d41487f915fc9fd27848",
-   "fetchedAt": "2026-10-12T01:01:15.032Z",
-   "bytes": 2756051
+   "commit": "a86ad9ebf82a8ba8f58fa765f61bf38ee231d4f5",
+   "fetchedAt": "2026-10-12T21:26:29.769Z",
+   "bytes": 2768182
   },
   "openrouter": {
-   "fetchedAt": "2026-10-12T01:01:15.032Z",
-   "bytes": 765894
+   "fetchedAt": "2026-10-12T21:26:29.830Z",
+   "bytes": 769321
   },
   "fx": {
    "pair": "USDJPY",
-   "rate": 158.25,
-   "date": "2026-10-09"
+   "rate": 158.6,
+   "date": "2026-10-12"
   }
  },
  "models": [
