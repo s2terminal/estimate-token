@@ -53,27 +53,24 @@ vendors:
 names:
   gemini-nano-banana-2.1: Nano Banana 2.1
 
-# 初期表示で選ばれるモデル(id)。各ベンダーの最上位・バランス・低コストなど
-featured:
-  - gpt-6-astra@openai:global
-  - gpt-6.1-sol@openai:global
-  - gpt-6-luna@openai:global
-  - claude-opus-5-5@anthropic:global
-  - claude-sonnet-5-5@anthropic:global
-  - claude-haiku-5-5@anthropic:global
-  - gemini-3.8-flash@gemini-api:global
-  - gemini-3.7-flash@gemini-api:global
-  - gemini-3.5-flash-lite@gemini-api:global
-  - gemini-3.8-flash@vertex-ai:global
-  - claude-sonnet-5@bedrock:jp
-  - gpt-6.1-sol@azure:us
-  # 画像
-  - gpt-image-2.5-sunburst@openai:global
-  - gpt-image-2.5-flare@openai:global
-  - gpt-image-2@openai:global
-  - gpt-image-1.5@openai:global
-  - gemini-nano-banana-2.1@gemini-api:global
-  - gemini-3.1-flash-image@gemini-api:global
-  - gemini-3.1-flash-image@vertex-ai:global
-  - gemini-3-pro-image@gemini-api:global
-  - gemini-3.1-flash-lite-image@gemini-api:global
+# 初期選択: 同じ用途の系列から最新を1件。提供先・リージョン違いは重複選択しない。
+# release_date が取得できれば新しい日付を優先。不明な場合は数値バージョンで比較。
+# preview / latest / 特化モデルは、規則で明示したもの以外は候補に含めない。
+recommendations:
+  # 言語: 高性能・バランス・低コストの違いは残す
+  - { category: llm, vendor: OpenAI, pattern: '^gpt-[0-9.]+-astra$' }
+  - { category: llm, vendor: OpenAI, pattern: '^gpt-[0-9.]+-sol$' }
+  - { category: llm, vendor: OpenAI, pattern: '^gpt-[0-9.]+-luna$' }
+  - { category: llm, vendor: Anthropic, pattern: '^claude-opus-[0-9-]+$' }
+  - { category: llm, vendor: Anthropic, pattern: '^claude-sonnet-[0-9-]+$' }
+  - { category: llm, vendor: Anthropic, pattern: '^claude-haiku-[0-9-]+$' }
+  - { category: llm, vendor: Google, pattern: '^gemini-[0-9.]+-pro(-preview)?$' }
+  - { category: llm, vendor: Google, pattern: '^gemini-[0-9.]+-flash$' }
+  - { category: llm, vendor: Google, pattern: '^gemini-[0-9.]+-flash-lite$' }
+  # 画像: 後継のSunburstと旧GPT Imageを同じ枠で比較。Flareなど別系列は残す
+  - { category: image, vendor: OpenAI, pattern: '^gpt-image-[0-9.]+(-sunburst)?$' }
+  - { category: image, vendor: OpenAI, pattern: '^gpt-image-[0-9.]+-flare$' }
+  - { category: image, vendor: Google, pattern: '^gemini-nano-banana-[0-9.]+$' }
+  - { category: image, vendor: Google, pattern: '^gemini-[0-9.]+-flash-image$' }
+  - { category: image, vendor: Google, pattern: '^gemini-[0-9.]+-pro-image$' }
+  - { category: image, vendor: Google, pattern: '^gemini-[0-9.]+-flash-lite-image$' }

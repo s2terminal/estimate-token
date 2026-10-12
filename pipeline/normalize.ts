@@ -1,6 +1,7 @@
 import type { Category, Model, Platform, PriceRule, Tier } from "../shared/types.ts";
 import type { Catalog } from "./config.ts";
 import type { LiteLLMEntry } from "./select.ts";
+import { applyRecommendations, releaseDate } from "./recommend.ts";
 
 /** USD/token → USD/1M tokens。浮動小数点の誤差を消すため有効数字6桁で丸める */
 export const perMillion = (v: number): number => Number((v * 1e6).toPrecision(6));
@@ -178,7 +179,6 @@ export function normalize(entries: [string, LiteLLMEntry][], catalog: Catalog): 
     groups.set(id, list);
   }
 
-  const featured = new Set(catalog.featured);
   const models: Model[] = [];
   for (const [id, cands] of groups) {
     // 代表: 日付なし → provider の優先順 → 価格項目が多い → キーが短い
@@ -207,9 +207,11 @@ export function normalize(entries: [string, LiteLLMEntry][], catalog: Catalog): 
     };
     if (typeof main.e.max_input_tokens === "number") m.contextWindow = main.e.max_input_tokens;
     if (main.e.deprecation_date) m.deprecationDate = main.e.deprecation_date;
-    if (featured.has(id)) m.featured = true;
+    const released = releaseDate(main.e.release_date);
+    if (released) m.releaseDate = released;
     models.push(m);
   }
   models.sort((a, b) => a.id.localeCompare(b.id));
+  applyRecommendations(models, catalog.recommendations);
   return { models, unparsed };
 }

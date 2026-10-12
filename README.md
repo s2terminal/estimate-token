@@ -11,7 +11,7 @@ Geminiの画像生成は公式の解像度別トークン数と画像出力単�
 | パス | 内容 |
 | --- | --- |
 | `pipeline/` | 価格データの日次更新(fetch → select → normalize → cross-check → validate → diff) |
-| `config/` | 対象の選別規則・表示名・featured(`catalog.yaml`)、品質ゲートのしきい値(`gates.yaml`) |
+| `config/` | 対象の選別規則・表示名・おすすめの系列(`catalog.yaml`)、品質ゲートのしきい値(`gates.yaml`) |
 | `config/image-tokens.json` | 画像トークンの換算プロファイル、モデルとの対応、出典・確認日、未対応の理由 |
 | `shared/types.ts` | 価格データの型(パイプラインと画面で共有) |
 | `src/` | 画面(Vite + TypeScript、フレームワークなし)。計算は `src/lib/calc.ts` |
@@ -34,6 +34,16 @@ npm run pipeline -- --force-stop  # 品質ゲートで止めた扱いにする(�
 パイプラインは `out/report.md`(差分と判定)と `out/gate.json` も出力します。
 
 公式ドキュメントの料金計算例を固定期待値として検証するテストは `tests/official-pricing-examples.test.ts`。出典・採用範囲・資料の丸め値の扱いは [docs/official-pricing-examples.md](docs/official-pricing-examples.md) を参照。
+
+## おすすめの初期選択
+
+`config/catalog.yaml` の `recommendations` で用途ごとの系列を定義し、各系列から1件を選びます。高性能・バランス・低コストや画像モデルの系列は分け、同じ系列の旧世代は初期選択から外します。Gemini Pro はプレビュー版も候補に含めます。
+
+同一モデルの提供先違いは直販APIを優先し、直販がなければ global、提供先の固定順で1件を選びます。Gemini APIとVertex AI、OpenAI APIとAzureなどを重複選択しません。地域別料金や提供先の違いを比較したい場合は検索・絞り込みから追加できます。共有リンクの選択内容はそのまま復元します。
+
+リリース日時はLiteLLMの明示的な `release_date` が取得できた場合だけ `releaseDate` に保持します。日時が判明している候補同士は新しい日時を優先し、同日時なら数値バージョンで選びます。日時不明の候補はバージョンで最新を選び、日時がある候補の勝者ともバージョンで比較します。これにより、日時が不明な新世代が古い既知日時のモデルに固定されることを防ぎます。2026-10-12の取得元にはリリース日時がないため、現データではバージョンを使用します。`firstSeen`、更新日、モデルIDの日付部分を発売日とみなすことはありません。
+
+標準料金がないモデル、廃止済みモデル、画像の料金換算に未対応のモデルはおすすめから除きます。新しい画像モデルは換算仕様への対応後に候補になります。全モデルの価格データや手動選択は維持します。
 
 ## OpenRouter の扱い
 
