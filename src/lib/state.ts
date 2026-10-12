@@ -34,7 +34,7 @@ export function defaultState(sel: { llm: string[]; img: string[] } = { llm: [], 
     unit: "1M",
     cm: "mix",
     llm: { ...PRESETS.chat.v },
-    img: { n: 1000, i: 100, r: "1K", q: "medium" },
+    img: { n: 1000, i: 1000, r: "1K", q: "medium" },
     sel: { llm: [...sel.llm], img: [...sel.img] },
   };
 }
