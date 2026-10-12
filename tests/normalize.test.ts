@@ -76,14 +76,14 @@ describe("normalize", () => {
   });
 
   it("画像の1枚単価と画像出力トークン単価を保持する", () => {
-    expect(find("gemini-3.1-flash-image@gemini-api:global")!.prices).toEqual([{ tier: "standard", minPromptTokens: 0, perImage: 0.045, imageOutput: 60 }]);
+    expect(find("gemini-3.1-flash-image@gemini-api:global")!.prices).toEqual([{ tier: "standard", minPromptTokens: 0, perImage: 0.045, imageOutput: 60, input: 0.5 }]);
     expect(find("gemini-3.1-flash-image@vertex-ai:global")!.prices[0].perImage).toBe(0.0672);
   });
 
   it("画像トークン課金のOpenAIモデルを落とさず、日付付き別名も統合する", () => {
     const m = find("gpt-image-2@openai:global")!;
     expect(m.category).toBe("image");
-    expect(m.prices).toEqual([{ tier: "standard", minPromptTokens: 0, imageOutput: 30 }]);
+    expect(m.prices).toEqual([{ tier: "standard", minPromptTokens: 0, imageOutput: 30, input: 5 }]);
     expect(m.sources[0].aliases).toContain("gpt-image-2-2026-04-21");
     expect(find("gpt-image-2.5-sunburst@openai:global")!.featured).toBe(true);
     expect(find("gpt-image-1.5@openai:global")!.prices[0].imageOutput).toBe(32);

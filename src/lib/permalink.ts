@@ -22,7 +22,7 @@ export function b64urlDecode(s: string): string {
 
 /** 状態を # 以降の文字列にする。選択は表示中のタブの分だけ入れる */
 export function encodeState(s: State): string {
-  const o = { t: s.t, fx: s.fx, cur: s.cur, unit: s.unit, cm: s.cm, llm: s.llm, img: { n: s.img.n, r: s.img.r, q: s.img.q }, sel: { [s.t]: s.sel[s.t] } };
+  const o = { t: s.t, fx: s.fx, cur: s.cur, unit: s.unit, cm: s.cm, llm: s.llm, img: { n: s.img.n, i: s.img.i, r: s.img.r, q: s.img.q }, sel: { [s.t]: s.sel[s.t] } };
   return VERSION + b64urlEncode(JSON.stringify(o));
 }
 
@@ -57,7 +57,7 @@ function merge(o: Raw, base: State): Decoded {
       tier: oneOf<Tier>(L.tier, TIERS, base.llm.tier),
     },
     img: {
-      n: num(I.n, base.img.n), r: oneOf(I.r, ["1K", "2K", "4K"] as const, "1K"),
+      n: num(I.n, base.img.n), i: num(I.i, base.img.i ?? 0), r: oneOf(I.r, ["1K", "2K", "4K"] as const, "1K"),
       q: oneOf(I.q, IMAGE_QUALITIES, base.img.q ?? "medium"),
     },
     sel: { llm: [...base.sel.llm], img: [...base.sel.img] },

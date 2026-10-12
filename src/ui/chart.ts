@@ -129,7 +129,7 @@ export function chartSVG(rows: ChartRow[], W: number, ctx: ChartCtx): string {
 export function chartNoteText(cm: ChartMode, multi: boolean): string {
   if (cm === "ratio") return "最も安いモデルを ×1 とした月額の倍率です。";
   if (cm === "log") return "横軸は対数目盛(1目盛ごとに10倍)です。桁の違うモデルも一緒に比べられます。";
-  return multi ? "棒の長さが月額です。色は入力・キャッシュ読取・出力の内訳を表します。" : "棒の長さが月額です。";
+  return multi ? "棒の長さが月額です。色は入力・キャッシュ読取・出力などの内訳を表します。" : "棒の長さが月額です。";
 }
 
 export function tooltipHTML(r: ChartRow, rows: ChartRow[], ctx: ChartCtx): string {

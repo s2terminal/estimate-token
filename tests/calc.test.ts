@@ -70,7 +70,29 @@ describe("calcImage", () => {
     const r = ok(calcImage(get("gpt-image-2.5-sunburst@openai:global"), { n: 1000, r: "1K", q: "low" }));
     expect(r.usd).toBeCloseTo(5.88, 10);
     expect(r.imageTokens).toBe(196);
-    expect(r.flags.map((f) => f.t)).toContain("画像出力のみ(入力・部分画像は別料金)");
+    expect(r.flags.map((f) => f.t)).toContain("入力画像・部分画像は別料金");
+  });
+
+  it("入力(プロンプト)tokensを入力単価で足す", () => {
+    // 196 tokens × $30/1M + 500 tokens × $5/1M = $0.00838/枚
+    const r = ok(calcImage(get("gpt-image-2.5-sunburst@openai:global"), { n: 1000, i: 500, r: "1K", q: "low" }));
+    expect(r.usd).toBeCloseTo(8.38, 10);
+    expect(r.perImage).toBeCloseTo(0.00838, 12);
+    expect(r.parts).toEqual([{ k: "in", v: expect.closeTo(2.5, 10) }, { k: "out", v: expect.closeTo(5.88, 10) }]);
+    // Geminiの解像度別換算: 1120 tokens × $60/1M + 500 tokens × $0.5/1M
+    const g = ok(calcImage(get("gemini-3.1-flash-image@gemini-api:global"), { n: 1000, i: 500, r: "1K" }));
+    expect(g.usd).toBeCloseTo(67.45, 10);
+  });
+
+  it("トークン課金で入力単価がなければ入力を含めず注記する。1枚単価だけのモデルは入力を足さない", () => {
+    const m = get("gpt-image-2@openai:global");
+    const r = ok(calcImage({ ...m, prices: [{ tier: "standard", minPromptTokens: 0, imageOutput: 30 }] }, { n: 100, i: 500, r: "1K", q: "low" }));
+    expect(r.usd).toBeCloseTo(100 * 196 * 30 / 1e6, 10);
+    expect(r.flags.map((f) => f.t)).toContain("入力単価なし(入力は含まず)");
+    const flat: Model = { ...get("gemini-3.1-flash-image@gemini-api:global"), family: "flux-1.1-pro", vendor: "その他", prices: [{ tier: "standard", minPromptTokens: 0, perImage: 0.04 }] };
+    const f = ok(calcImage(flat, { n: 10, i: 500, r: "1K" }));
+    expect(f.usd).toBeCloseTo(0.4, 10);
+    expect(f.flags).toEqual([]);
   });
 
   it("画質の指定がなければmedium", () => {

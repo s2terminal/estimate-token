@@ -102,6 +102,8 @@ export function buildRules(e: LiteLLMEntry, category: Category): PriceRule[] {
     // 共通の1枚単価だけでは解像度別価格を表せないため、画像トークン単価も保持する。
     if (typeof e.output_cost_per_image_token === "number")
       rule.imageOutput = perMillion(e.output_cost_per_image_token);
+    // プロンプト(テキスト入力)の単価。画像生成でも入力tokensは別に課金される
+    if (typeof e.input_cost_per_token === "number") rule.input = perMillion(e.input_cost_per_token);
     return rule.perImage != null || rule.perImageByRes || rule.imageOutput != null ? [rule] : [];
   }
 
