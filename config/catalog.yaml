@@ -68,6 +68,10 @@ featured:
   - claude-sonnet-5@bedrock:jp
   - gpt-6.1-sol@azure:us
   # 画像
+  - gpt-image-2.5-sunburst@openai:global
+  - gpt-image-2.5-flare@openai:global
+  - gpt-image-2@openai:global
+  - gpt-image-1.5@openai:global
   - gemini-nano-banana-2.1@gemini-api:global
   - gemini-3.1-flash-image@gemini-api:global
   - gemini-3.1-flash-image@vertex-ai:global

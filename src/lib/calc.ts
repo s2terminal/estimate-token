@@ -1,5 +1,6 @@
 /* 月額の計算ロジック。画面から独立した純粋関数にしてテストする */
 import type { Model, PriceRule, Tier } from "../../shared/types.ts";
+import { estimateImageTokens, type ImageQuality } from "./image-tokens.ts";
 
 export interface Flag {
   t: string;
@@ -25,6 +26,10 @@ export interface ImageUsage {
   n: number;
   /** 解像度 */
   r: string;
+  /** トークン課金モデルの幅・高さ(px)と画質。旧リンクは1024×1024、medium */
+  w?: number;
+  h?: number;
+  q?: ImageQuality;
 }
 
 export interface PriceOptions {
@@ -49,6 +54,7 @@ export interface CalcOk {
   pout?: number;
   pcin?: number;
   perImage?: number;
+  imageTokens?: number;
   flags: Flag[];
   parts: Part[];
 }
@@ -127,11 +133,22 @@ export function calcLlm(m: Model, u: LlmUsage, opts?: PriceOptions): CalcResult 
   };
 }
 
-/** 画像生成の月額(USD)。解像度別単価 → perImage → 計算不可 */
+/** 画像生成の月額(USD)。画像出力トークン課金、または解像度別単価 → perImage */
 export function calcImage(m: Model, u: ImageUsage): CalcResult {
   const rule = m.prices.find((r) => r.tier === "standard" && r.minPromptTokens === 0) ?? m.prices[0];
   if (!rule) return { na: true, m, why: "価格未取得", flags: [] };
   const flags: Flag[] = [];
+  if (rule.imageOutput != null && rule.perImage == null && !rule.perImageByRes) {
+    const w = u.w ?? 1024, h = u.h ?? 1024, q = u.q ?? "medium";
+    const estimate = estimateImageTokens(m.family, w, h, q);
+    if (estimate.tokens == null) return { na: true, m, why: estimate.why, flags };
+    const p = estimate.tokens * rule.imageOutput / 1e6;
+    flags.push({ t: `概算 ${estimate.tokens} 画像tokens/枚(${w}×${h}・${q})`, k: "" });
+    flags.push({ t: "画像出力のみ(入力・部分画像は別料金)", k: "warn" });
+    if (Math.max(w, h) > 2560 || w * h > 2560 * 1440)
+      flags.push({ t: "高解像度は実験的対応", k: "warn" });
+    return { na: false, m, usd: u.n * p, rule, perImage: p, imageTokens: estimate.tokens, flags, parts: [{ k: "total", v: u.n * p }] };
+  }
   let p = rule.perImageByRes?.[u.r];
   if (p == null && rule.perImage != null) {
     p = rule.perImage;

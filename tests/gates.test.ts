@@ -18,6 +18,11 @@ describe("validateSchema", () => {
     target(d).prices[1].output = Number.NaN;
     expect(validateSchema(d).length).toBe(2);
   });
+  it("画像出力トークン単価のNaNを検知する", () => {
+    const d = sampleData();
+    d.models.find((m) => m.family === "gpt-image-2")!.prices[0].imageOutput = NaN;
+    expect(validateSchema(d)).toHaveLength(1);
+  });
 });
 
 describe("evaluateGates", () => {
@@ -45,6 +50,14 @@ describe("evaluateGates", () => {
     const next = clone(prev);
     delete target(next).prices[0].output;
     expect(evaluateGates(prev, next, gates).stop.some((s) => s.startsWith("単価が0になった"))).toBe(true);
+  });
+  it("画像出力トークン単価の大幅変更と欠落も公開を止める", () => {
+    const prev = sampleData(), next = clone(prev);
+    const rule = next.models.find((m) => m.family === "gpt-image-2")!.prices[0];
+    rule.imageOutput = 60;
+    expect(evaluateGates(prev, next, gates).stop.some((s) => s.includes("imageOutput"))).toBe(true);
+    delete rule.imageOutput;
+    expect(evaluateGates(prev, next, gates).stop.some((s) => s.startsWith("単価が0になった") && s.includes("imageOutput"))).toBe(true);
   });
 
   it("±50%超の変化は止める", () => {

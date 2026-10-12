@@ -3,7 +3,7 @@ import type { Gates } from "./config.ts";
 
 const PLATFORMS = ["openai", "anthropic", "gemini-api", "vertex-ai", "bedrock", "azure"];
 const TIERS = ["standard", "batch", "flex", "priority"];
-const PRICE_FIELDS = ["input", "output", "cacheRead", "cacheWrite", "cacheWrite1h", "perImage"] as const;
+const PRICE_FIELDS = ["input", "output", "cacheRead", "cacheWrite", "cacheWrite1h", "perImage", "imageOutput"] as const;
 
 /** 出力データの構造チェック(JSON Schema 相当の最低限) */
 export function validateSchema(d: PriceData): string[] {
@@ -64,7 +64,7 @@ export function evaluateGates(prev: PriceData | null, next: PriceData, gates: Ga
     const rules = new Map(nm.prices.map((r) => [ruleKey(r), r]));
     for (const pr of pm.prices) {
       const nr = rules.get(ruleKey(pr));
-      for (const f of ["input", "output", "perImage"] as const) {
+      for (const f of ["input", "output", "perImage", "imageOutput"] as const) {
         const a = pr[f];
         if (!(a && a > 0)) continue;
         const b = nr?.[f];

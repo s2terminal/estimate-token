@@ -19,6 +19,8 @@ export interface PriceRule {
   perImage?: number;
   /** 解像度別の1枚あたり("1K" "2K" "4K" など) */
   perImageByRes?: Record<string, number>;
+  /** 画像出力トークン単価(USD / 1M image output tokens)。1枚単価とは別 */
+  imageOutput?: number;
   /** 期間限定価格用。MVPでは常に空 */
   validFrom?: string;
   validTo?: string;

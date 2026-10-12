@@ -23,7 +23,7 @@ export function diffData(prev: PriceData | null, next: PriceData): DiffSummary {
       continue;
     }
     const a = base(p), b = base(m);
-    for (const f of ["input", "output", "perImage"] as const) {
+    for (const f of ["input", "output", "perImage", "imageOutput"] as const) {
       const x = a?.[f], y = b?.[f];
       if (x && y && x !== y) (y > x ? out.up : out.down).push(`${m.id} ${f}: ${x} → ${y}(${fmtPct(((y - x) / x) * 100)})`);
     }
@@ -40,7 +40,7 @@ export function diffMarkdown(
   d: DiffSummary,
   gate: GateResult,
   next: PriceData,
-  extra: { mismatches: string[]; candidates: string[]; unparsed: string[] },
+  extra: { mismatches: string[]; candidates: string[]; unparsed: string[]; unsupportedImages: string[] },
 ): string {
   return [
     `## 価格更新 ${next.snapshot}`,
@@ -73,6 +73,9 @@ export function diffMarkdown(
     "",
     "### 解析できなかったキー(catalog.yaml の見直し候補)",
     list(extra.unparsed, 20),
+    "",
+    "### 画像トークン換算が未対応のモデル(config/image-tokens.json の見直し候補)",
+    list(extra.unsupportedImages),
     "",
   ].join("\n");
 }
