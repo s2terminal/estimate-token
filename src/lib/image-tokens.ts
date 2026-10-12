@@ -26,6 +26,7 @@ export function estimateImageTokens(family: string, width: number, height: numbe
   const resolved = resolveImageTokenProfile(family, config);
   if (!resolved.profile) return { why: resolved.reason };
   const profile = resolved.profile;
+  if (profile.method === "resolution") return { why: "このモデルは1K・2K・4Kの解像度から換算します" };
   if (profile.method === "grid") {
     const size = profile.size;
     if (width % size.multiple || height % size.multiple) return { why: `幅・高さは${size.multiple}の倍数で指定してください` };

@@ -1,7 +1,7 @@
 {
  "schemaVersion": 1,
  "snapshot": "2026-10-12",
- "generatedAt": "2026-10-12T01:01:15.150Z",
+ "generatedAt": "2026-10-12T03:25:27.591Z",
  "baseline": "2026-10-11",
  "sources": {
   "litellm": {
@@ -8018,7 +8018,8 @@
     {
      "tier": "standard",
      "minPromptTokens": 0,
-     "perImage": 0.039
+     "perImage": 0.039,
+     "imageOutput": 30
     }
    ],
    "sources": [
@@ -8044,7 +8045,8 @@
     {
      "tier": "standard",
      "minPromptTokens": 0,
-     "perImage": 0.039
+     "perImage": 0.039,
+     "imageOutput": 30
     }
    ],
    "sources": [
@@ -8542,7 +8544,8 @@
     {
      "tier": "standard",
      "minPromptTokens": 0,
-     "perImage": 0.134
+     "perImage": 0.134,
+     "imageOutput": 120
     }
    ],
    "sources": [
@@ -8570,7 +8573,8 @@
     {
      "tier": "standard",
      "minPromptTokens": 0,
-     "perImage": 0.134
+     "perImage": 0.134,
+     "imageOutput": 120
     }
    ],
    "sources": [
@@ -8596,7 +8600,8 @@
     {
      "tier": "standard",
      "minPromptTokens": 0,
-     "perImage": 0.134
+     "perImage": 0.134,
+     "imageOutput": 120
     }
    ],
    "sources": [
@@ -8680,7 +8685,8 @@
     {
      "tier": "standard",
      "minPromptTokens": 0,
-     "perImage": 0.0672
+     "perImage": 0.0672,
+     "imageOutput": 60
     }
    ],
    "sources": [
@@ -8708,7 +8714,8 @@
     {
      "tier": "standard",
      "minPromptTokens": 0,
-     "perImage": 0.045
+     "perImage": 0.045,
+     "imageOutput": 60
     }
    ],
    "sources": [
@@ -8734,7 +8741,8 @@
     {
      "tier": "standard",
      "minPromptTokens": 0,
-     "perImage": 0.0672
+     "perImage": 0.0672,
+     "imageOutput": 60
     }
    ],
    "sources": [
@@ -8764,7 +8772,8 @@
     {
      "tier": "standard",
      "minPromptTokens": 0,
-     "perImage": 0.0336
+     "perImage": 0.0336,
+     "imageOutput": 30
     }
    ],
    "sources": [
@@ -8790,7 +8799,8 @@
     {
      "tier": "standard",
      "minPromptTokens": 0,
-     "perImage": 0.0336
+     "perImage": 0.0336,
+     "imageOutput": 30
     }
    ],
    "sources": [
@@ -9959,7 +9969,8 @@
     {
      "tier": "standard",
      "minPromptTokens": 0,
-     "perImage": 0.0336
+     "perImage": 0.0336,
+     "imageOutput": 30
     }
    ],
    "sources": [
@@ -9985,7 +9996,8 @@
     {
      "tier": "standard",
      "minPromptTokens": 0,
-     "perImage": 0.0336
+     "perImage": 0.0336,
+     "imageOutput": 30
     }
    ],
    "sources": [
@@ -23709,7 +23721,8 @@
     {
      "tier": "standard",
      "minPromptTokens": 0,
-     "perImage": 0.134
+     "perImage": 0.134,
+     "imageOutput": 120
     }
    ],
    "sources": [

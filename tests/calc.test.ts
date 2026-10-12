@@ -92,15 +92,15 @@ describe("calcImage", () => {
     expect(result.usd).toBeCloseTo(100 * tokens * 30 / 1e6, 10);
   });
 
-  it("Geminiの共通単価にOpenAIの画質が影響しない", () => {
+  it("Geminiの解像度別単価にOpenAIの画質が影響しない", () => {
     const model = get("gemini-3.1-flash-image@gemini-api:global");
     expect(calcImage(model, { n: 1000, r: "2K", q: "max" })).toEqual(calcImage(model, { n: 1000, r: "2K", q: "low" }));
   });
 
-  it("1枚単価 × 枚数", () => {
+  it("Gemini Flash Imageの1Kは0.5Kの共通単価を使わず$67.2/1000枚", () => {
     const r = calcImage(get("gemini-3.1-flash-image@gemini-api:global"), { n: 1000, r: "1K" });
     expect(r.na).toBe(false);
-    if (!r.na) expect(r.usd).toBeCloseTo(45, 10);
+    if (!r.na) expect(r.usd).toBeCloseTo(67.2, 10);
   });
 
   it("解像度別単価を優先する", () => {
