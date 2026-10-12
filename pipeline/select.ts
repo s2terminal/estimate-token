@@ -6,6 +6,7 @@ export interface LiteLLMEntry {
   mode?: string;
   max_input_tokens?: number;
   deprecation_date?: string;
+  release_date?: string;
   source?: string;
   [k: string]: unknown;
 }

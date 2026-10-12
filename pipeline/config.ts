@@ -1,7 +1,14 @@
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { parse } from "yaml";
-import type { Platform } from "../shared/types.ts";
+import type { Category, Platform } from "../shared/types.ts";
+
+export interface RecommendationGroup {
+  category: Category;
+  vendor: string;
+  /** 用途が同じモデル系列にだけ一致する正規表現 */
+  pattern: string;
+}
 
 export interface Catalog {
   providers: Record<string, Platform>;
@@ -9,7 +16,7 @@ export interface Catalog {
   excludeKeyPatterns: string[];
   vendors: { pattern: string; vendor: string }[];
   names: Record<string, string>;
-  featured: string[];
+  recommendations: RecommendationGroup[];
 }
 
 export interface Gates {

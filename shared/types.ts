@@ -42,6 +42,8 @@ export interface Model {
   region: string;
   category: Category;
   contextWindow?: number;
+  /** ソースに明記されたリリース日/日時。firstSeen やモデルIDの日付とは別 */
+  releaseDate?: string;
   deprecationDate?: string;
   firstSeen: string;
   status: ModelStatus;

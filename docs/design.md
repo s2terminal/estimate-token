@@ -173,7 +173,7 @@ jobs:
 - 常に `data/latest.json` を読む。共有リンクは入力値だけを持ち、価格は開いた時点の最新値で再計算する(リンクを作った日の価格は再現しない。ざっくり見積もり用途なので割り切る)。
 - 画面上部に「価格データ更新日」と為替の日付を出す。
 
-**モデルの選び方**: 対象は数百行になるので、初期表示は `config/catalog.yaml` の `featured` に書いた系列(例: 各ベンダーの最上位・バランス・低コスト)だけにし、検索欄と「ベンダー」「プラットフォーム」「リージョン」の絞り込みで追加する。`firstSeen` が14日以内のモデルには「新着」を付ける。`featured` にない新モデルも検索すれば当日から使える。
+**モデルの選び方**: 初期選択は `config/catalog.yaml` の `recommendations` に定義した用途別系列から各1件を選び、`featured` を付ける。ソースに明示された `releaseDate` があれば新しい日時を優先し、不明なら数値バージョンで選ぶ。同じモデルの提供先・地域違いは直販APIを優先して1件にまとめる。検索・絞り込みや共有リンクでは他のモデルも選択できる。詳しい選定規則は [README](../README.md#おすすめの初期選択) を参照。初回取り込み後の `firstSeen` から14日以内のモデルには「新着」を付ける。
 
 **計算ロジック**(`src/lib/calc.ts`、画面から独立した純粋関数にしてテストする)
 
@@ -198,7 +198,7 @@ zakkuri-genai/
 │  ├─ deploy-pages.yml     # main への push で Pages に公開
 │  └─ ci.yml               # PRで型チェック・テスト
 ├─ config/
-│  ├─ catalog.yaml         # 対象provider・mode、キーの解析規則、表示名、featured
+│  ├─ catalog.yaml         # 対象provider・mode、キーの解析規則、表示名、おすすめの系列
 │  ├─ gates.yaml           # 品質ゲートのしきい値
 │  └─ overrides.yaml       # 手書き層(後回し。MVPでは空)
 ├─ pipeline/

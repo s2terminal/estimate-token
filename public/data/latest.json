@@ -6122,8 +6122,7 @@
      "url": "https://aws.amazon.com/bedrock/pricing/"
     }
    ],
-   "contextWindow": 1000000,
-   "featured": true
+   "contextWindow": 1000000
   },
   {
    "id": "claude-sonnet-5@bedrock:regional",
@@ -8765,8 +8764,7 @@
     }
    ],
    "contextWindow": 65536,
-   "deprecationDate": "2027-05-28",
-   "featured": true
+   "deprecationDate": "2027-05-28"
   },
   {
    "id": "gemini-3.1-flash-lite-image@gemini-api:global",
@@ -9138,7 +9136,8 @@
      "url": "https://ai.google.dev/gemini-api/docs/pricing"
     }
    ],
-   "contextWindow": 1048576
+   "contextWindow": 1048576,
+   "featured": true
   },
   {
    "id": "gemini-3.1-pro-preview@vertex-ai:global",
@@ -9552,8 +9551,7 @@
      "url": "https://ai.google.dev/gemini-api/docs/pricing"
     }
    ],
-   "contextWindow": 1048576,
-   "featured": true
+   "contextWindow": 1048576
   },
   {
    "id": "gemini-3.7-flash@vertex-ai:global",
@@ -9756,8 +9754,7 @@
      "url": "https://cloud.google.com/gemini-enterprise-agent-platform/generative-ai/pricing"
     }
    ],
-   "contextWindow": 1048576,
-   "featured": true
+   "contextWindow": 1048576
   },
   {
    "id": "gemini-exp-1114@gemini-api:global",
@@ -17365,8 +17362,7 @@
     }
    ],
    "contextWindow": 922000,
-   "deprecationDate": "2028-03-11",
-   "featured": true
+   "deprecationDate": "2028-03-11"
   },
   {
    "id": "gpt-6.1-sol@bedrock:global",
@@ -17764,8 +17760,7 @@
      "url": "https://developers.openai.com/api/docs/pricing"
     }
    ],
-   "deprecationDate": "2026-12-01",
-   "featured": true
+   "deprecationDate": "2026-12-01"
   },
   {
    "id": "gpt-image-1@azure:global",
@@ -17985,8 +17980,7 @@
      ],
      "url": "https://developers.openai.com/api/docs/pricing"
     }
-   ],
-   "featured": true
+   ]
   },
   {
    "id": "gpt-oss-120b-1@bedrock:regional",
