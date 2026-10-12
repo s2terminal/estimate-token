@@ -40,7 +40,7 @@ export function diffMarkdown(
   d: DiffSummary,
   gate: GateResult,
   next: PriceData,
-  extra: { mismatches: string[]; candidates: string[]; unparsed: string[] },
+  extra: { mismatches: string[]; candidates: string[]; unparsed: string[]; unsupportedImages: string[] },
 ): string {
   return [
     `## 価格更新 ${next.snapshot}`,
@@ -73,6 +73,9 @@ export function diffMarkdown(
     "",
     "### 解析できなかったキー(catalog.yaml の見直し候補)",
     list(extra.unparsed, 20),
+    "",
+    "### 画像トークン換算が未対応のモデル(config/image-tokens.json の見直し候補)",
+    list(extra.unsupportedImages),
     "",
   ].join("\n");
 }

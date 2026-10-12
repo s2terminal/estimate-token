@@ -1,0 +1,41 @@
+{
+  "profiles": {
+    "openai-image-2": {
+      "method": "grid",
+      "source": "https://developers.openai.com/api/docs/guides/image-generation",
+      "reviewedAt": "2026-10-11",
+      "size": { "multiple": 16, "maxEdge": 3840, "maxAspectRatio": 3, "minPixels": 655360, "maxPixels": 8294400 },
+      "grids": { "low": 16, "medium": 48, "high": 96 },
+      "pixelOffset": 2000000,
+      "pixelDivisor": 4000000
+    },
+    "openai-image-2.5": {
+      "method": "grid",
+      "source": "https://developers.openai.com/api/docs/guides/image-generation",
+      "reviewedAt": "2026-10-11",
+      "size": { "multiple": 16, "maxEdge": 3840, "maxAspectRatio": 3, "minPixels": 655360, "maxPixels": 8294400 },
+      "grids": { "low": 16, "medium": 24, "high": 48, "xhigh": 64, "max": 96 },
+      "pixelOffset": 2000000,
+      "pixelDivisor": 4000000
+    },
+    "openai-image-legacy": {
+      "method": "table",
+      "source": "https://developers.openai.com/api/docs/guides/image-generation",
+      "reviewedAt": "2026-10-11",
+      "tokensBySize": {
+        "1024x1024": { "low": 272, "medium": 1056, "high": 4160 },
+        "1024x1536": { "low": 408, "medium": 1584, "high": 6240 },
+        "1536x1024": { "low": 400, "medium": 1568, "high": 6208 }
+      }
+    }
+  },
+  "models": {
+    "gpt-image-2": { "profile": "openai-image-2" },
+    "gpt-image-2.5-sunburst": { "profile": "openai-image-2.5" },
+    "gpt-image-2.5-flare": { "profile": "openai-image-2.5" },
+    "gpt-image-1": { "profile": "openai-image-legacy" },
+    "gpt-image-1.5": { "profile": "openai-image-legacy" },
+    "gpt-image-1-mini": { "unsupportedReason": "換算仕様は未対応です(Mini専用のトークン数を確認できず、旧モデルの表と公式単価も不一致)" },
+    "chatgpt-image-latest": { "unsupportedReason": "換算仕様は未対応です(chatgpt-image-latestの参照先モデルを固定できません)" }
+  }
+}

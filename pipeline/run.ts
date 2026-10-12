@@ -8,6 +8,7 @@ import { ROOT, loadCatalog, loadGates } from "./config.ts";
 import { crossCheck } from "./crosscheck.ts";
 import { diffData, diffMarkdown } from "./diff.ts";
 import { fetchAll, readRaw } from "./fetch.ts";
+import { unsupportedImageModels } from "./image-tokens.ts";
 import { normalize } from "./normalize.ts";
 import { select } from "./select.ts";
 import { checkFx, evaluateGates } from "./validate.ts";
@@ -41,6 +42,8 @@ async function main() {
 
   const prevById = new Map((prev?.models ?? []).map((m) => [m.id, m]));
   for (const m of models) m.firstSeen = prevById.get(m.id)?.firstSeen ?? today;
+  const unsupported = unsupportedImageModels(models, prev?.models);
+  notes.push(...unsupported.added.map((m) => `画像トークン換算未対応の新モデル: ${m.id} — ${m.reason}`));
 
   const fxCheck = checkFx(prev?.sources.fx.rate, src.fx?.rate, gates);
   if (!fxCheck.ok) notes.push(`${fxCheck.reason}。為替は前回値を使用`);
@@ -71,6 +74,7 @@ async function main() {
     mismatches: cc.mismatches.map((id) => `照合の不一致(要確認): ${id}`),
     candidates: cc.candidates.map((c) => `${c.family}(${c.platform})`),
     unparsed,
+    unsupportedImages: unsupported.all.map((m) => `${m.id} — ${m.reason}`),
   });
 
   mkdirSync(OUT_DIR, { recursive: true });
