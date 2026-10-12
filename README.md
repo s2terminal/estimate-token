@@ -33,6 +33,8 @@ npm run pipeline -- --force-stop  # 品質ゲートで止めた扱いにする(�
 
 パイプラインは `out/report.md`(差分と判定)と `out/gate.json` も出力します。
 
+公式ドキュメントの料金計算例を固定期待値として検証するテストは `tests/official-pricing-examples.test.ts`。出典・採用範囲・資料の丸め値の扱いは [docs/official-pricing-examples.md](docs/official-pricing-examples.md) を参照。
+
 ## OpenRouter の扱い
 
 OpenRouter の利用規約はサイト・API上の情報のコピーや譲渡を禁じているため、OpenRouter は新モデルの検知と価格の照合にだけ使います。OpenRouter の価格・id・差異%は、公開データ・Issue/PRのレポート・Actionsのartifact・テストのフィクスチャのいずれにも含めません(`tests/fixtures/openrouter-sample.json` は架空のデータ)。
@@ -47,3 +49,4 @@ OpenRouter の利用規約はサイト・API上の情報のコピーや譲渡を
 
 1. Settings → Pages → Build and deployment の Source を **GitHub Actions** にする
 2. Settings → Actions → General → Workflow permissions で **Read and write** と **Allow GitHub Actions to create and approve pull requests** を有効にする
+
