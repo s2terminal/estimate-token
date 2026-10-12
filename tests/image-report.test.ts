@@ -23,7 +23,7 @@ describe("画像換算未対応モデルの更新レポート", () => {
 
   it("既知のモデル・1枚課金・言語モデルは未対応一覧に入らない", () => {
     const data = sampleData();
-    const models = data.models.filter((m) => !["gpt-image-1-mini", "chatgpt-image-latest"].includes(m.family));
+    const models = data.models.filter((m) => !["gpt-image-1-mini", "chatgpt-image-latest", "gemini-2.0-flash-exp-image-generation", "gemini-2.5-flash-image"].includes(m.family));
     models.push({ ...unknown(), prices: [{ tier: "standard", minPromptTokens: 0, perImage: 0.1, imageOutput: 30 }] });
     expect(unsupportedImageModels(models).all).toEqual([]);
   });

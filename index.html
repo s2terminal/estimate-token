@@ -59,16 +59,14 @@
             <legend>使い方(1か月あたり)</legend>
             <div class="field"><label for="imgN">生成枚数<small>枚/月</small></label><input type="number" id="imgN" min="0" step="100" /></div>
             <div class="field">
-              <label>解像度<small>OpenAIの幅・高さもプリセットに設定。共通単価のモデルは固定料金</small></label>
+              <label>解像度<small>OpenAIは1K:1024×1024、2K:2048×2048、4K:3840×2160。共通単価のモデルは固定料金</small></label>
               <div class="seg" id="imgRes"><button type="button" data-v="1K">1K</button><button type="button" data-v="2K">2K</button><button type="button" data-v="4K">4K</button></div>
             </div>
-            <div class="field"><label for="imgWidth">OpenAIの幅<small>px。1K:1024×1024、2K:2048×2048、4K:3840×2160</small></label><input type="number" id="imgWidth" min="16" step="16" /></div>
-            <div class="field"><label for="imgHeight">OpenAIの高さ<small>px。2／2.5は16の倍数、縦横比1:3〜3:1</small></label><input type="number" id="imgHeight" min="16" step="16" /></div>
             <div class="field">
               <label for="imgQuality">OpenAIの画質<small>xhigh・maxはGPT Image 2.5のみ</small></label>
               <select id="imgQuality"><option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option><option value="xhigh">Xhigh</option><option value="max">Max</option></select>
             </div>
-            <p class="imgnote">OpenAIは幅・高さと画質から画像出力料金を概算します。入力テキスト・編集用画像・部分画像の料金は別途かかります。autoは生成結果で変わるため試算対象外です。</p>
+            <p class="imgnote">OpenAI・Geminiの試算額は画像出力料金です。入力・テキスト出力・検索・部分画像などは別料金です。非対応のモデル・解像度は比較表に理由を表示します。</p>
           </fieldset>
 
           <fieldset>

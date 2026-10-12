@@ -6,7 +6,7 @@ import { normalize } from "../pipeline/normalize.ts";
 import { type LiteLLMData, select } from "../pipeline/select.ts";
 
 const fixture = (name: string) => JSON.parse(readFileSync(new URL(`./fixtures/${name}`, import.meta.url), "utf8"));
-export const litellmSample = (): LiteLLMData => ({ ...fixture("litellm-sample.json"), ...fixture("openai-image-sample.json") });
+export const litellmSample = (): LiteLLMData => ({ ...fixture("litellm-sample.json"), ...fixture("openai-image-sample.json"), ...fixture("gemini-image-sample.json") });
 export const openrouterSample = (): OpenRouterModel[] => fixture("openrouter-sample.json").data;
 
 export const TODAY = "2026-10-11";

@@ -1,6 +1,7 @@
 /* 月額の計算ロジック。画面から独立した純粋関数にしてテストする */
 import type { Model, PriceRule, Tier } from "../../shared/types.ts";
-import { estimateImageTokens, type ImageQuality } from "./image-tokens.ts";
+import { estimateImageTokens, IMAGE_SIZES, type ImageQuality } from "./image-tokens.ts";
+import { configuredImageUnsupportedReason, requiresImageConversion, resolveImageTokenProfile } from "../../shared/image-token-config.ts";
 
 export interface Flag {
   t: string;
@@ -26,9 +27,7 @@ export interface ImageUsage {
   n: number;
   /** 解像度 */
   r: string;
-  /** トークン課金モデルの幅・高さ(px)と画質。旧リンクは1024×1024、medium */
-  w?: number;
-  h?: number;
+  /** トークン課金モデルの画質。旧リンクはmedium */
   q?: ImageQuality;
 }
 
@@ -138,8 +137,23 @@ export function calcImage(m: Model, u: ImageUsage): CalcResult {
   const rule = m.prices.find((r) => r.tier === "standard" && r.minPromptTokens === 0) ?? m.prices[0];
   if (!rule) return { na: true, m, why: "価格未取得", flags: [] };
   const flags: Flag[] = [];
-  if (rule.imageOutput != null && rule.perImage == null && !rule.perImageByRes) {
-    const w = u.w ?? 1024, h = u.h ?? 1024, q = u.q ?? "medium";
+  const unsupported = configuredImageUnsupportedReason(m.family, undefined, m.platform);
+  if (unsupported) return { na: true, m, why: unsupported, flags };
+  if (requiresImageConversion(m, rule)) {
+    const profile = resolveImageTokenProfile(m.family, undefined, m.platform);
+    if (!profile.profile) return { na: true, m, why: profile.reason, flags };
+    if (rule.imageOutput == null) return { na: true, m, why: "画像出力トークン単価が未取得のため試算できません", flags };
+    if (profile.profile.method === "resolution") {
+      const tokens = profile.profile.tokensByResolution[u.r];
+      if (tokens == null) return { na: true, m, why: `${u.r}は非対応です(対応解像度: ${Object.keys(profile.profile.tokensByResolution).join("・")})`, flags };
+      const p = tokens * rule.imageOutput / 1e6;
+      flags.push({ t: `概算 ${tokens} 画像tokens/枚(${u.r})`, k: "" });
+      flags.push({ t: "画像出力のみ(入力・テキスト出力・検索は別料金)", k: "warn" });
+      return { na: false, m, usd: u.n * p, rule, perImage: p, imageTokens: tokens, flags, parts: [{ k: "total", v: u.n * p }] };
+    }
+    const size = Object.hasOwn(IMAGE_SIZES, u.r) ? IMAGE_SIZES[u.r] : undefined;
+    if (!size) return { na: true, m, why: "解像度は1K・2K・4Kから選択してください", flags };
+    const { width: w, height: h } = size, q = u.q ?? "medium";
     const estimate = estimateImageTokens(m.family, w, h, q);
     if (estimate.tokens == null) return { na: true, m, why: estimate.why, flags };
     const p = estimate.tokens * rule.imageOutput / 1e6;

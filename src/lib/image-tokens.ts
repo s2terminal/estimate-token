@@ -4,6 +4,13 @@
 import { resolveImageTokenProfile, type ImageQuality, type ImageTokenConfig } from "../../shared/image-token-config.ts";
 export { IMAGE_QUALITIES, type ImageQuality } from "../../shared/image-token-config.ts";
 
+/** 画面と共有リンクで使う固定の解像度。4Kは対応範囲内の横長サイズ。 */
+export const IMAGE_SIZES: Record<string, { width: number; height: number }> = {
+  "1K": { width: 1024, height: 1024 },
+  "2K": { width: 2048, height: 2048 },
+  "4K": { width: 3840, height: 2160 },
+};
+
 export type ImageTokenEstimate = { tokens: number; why?: never } | { tokens?: never; why: string };
 
 /** 公式計算機と同じ、ちょうど .5 の場合は偶数側に丸める。 */
@@ -19,6 +26,7 @@ export function estimateImageTokens(family: string, width: number, height: numbe
   const resolved = resolveImageTokenProfile(family, config);
   if (!resolved.profile) return { why: resolved.reason };
   const profile = resolved.profile;
+  if (profile.method === "resolution") return { why: "このモデルは1K・2K・4Kの解像度から換算します" };
   if (profile.method === "grid") {
     const size = profile.size;
     if (width % size.multiple || height % size.multiple) return { why: `幅・高さは${size.multiple}の倍数で指定してください` };

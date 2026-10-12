@@ -29,13 +29,27 @@ describe("permalink", () => {
     expect(d.state.sel.img).toEqual(base.sel.img);
   });
 
-  it("OpenAIの幅・高さ・画質を共有し、旧e2リンクは既定の条件で復元する", () => {
+  it("解像度と画質を共有し、旧e2リンクも保存された解像度で復元する", () => {
     const s = structuredClone(base);
     s.t = "img";
-    s.img = { n: 100, r: "4K", w: 3840, h: 2160, q: "max" };
+    s.img = { n: 100, r: "4K", q: "max" };
     expect(decodeState(encodeState(s), base)!.state.img).toEqual(s.img);
     const old = "e2" + b64urlEncode(JSON.stringify({ img: { n: 500, r: "2K" } }));
-    expect(decodeState(old, base)!.state.img).toEqual({ n: 500, r: "2K", w: 1024, h: 1024, q: "medium" });
+    expect(decodeState(old, base)!.state.img).toEqual({ n: 500, r: "2K", q: "medium" });
+  });
+
+  it("旧リンクの個別サイズは引き継がず、固定サイズへの変更を知らせる", () => {
+    const old = "e2" + b64urlEncode(JSON.stringify({ t: "img", img: { n: 500, r: "2K", w: 1024, h: 1536, q: "high" } }));
+    const decoded = decodeState(old, base)!;
+    expect(decoded.state.img).toEqual({ n: 500, r: "2K", q: "high" });
+    expect(decoded.warning).toContain("2048×2048");
+    const serialized = JSON.parse(atob(encodeState(decoded.state).slice(2).replace(/-/g, "+").replace(/_/g, "/")));
+    expect(serialized.img).toEqual({ n: 500, r: "2K", q: "high" });
+  });
+
+  it("旧リンクのサイズが解像度の固定サイズと同じなら警告しない", () => {
+    const old = "e2" + b64urlEncode(JSON.stringify({ img: { n: 500, r: "4K", w: 3840, h: 2160 } }));
+    expect(decodeState(old, base)!.warning).toBeUndefined();
   });
 
   it("旧版(e1)のリンクも入力値を読める", () => {

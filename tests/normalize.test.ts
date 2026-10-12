@@ -75,8 +75,8 @@ describe("normalize", () => {
     expect(find("gpt-6-astra@azure:global")!.sources[0].litellm).toBe("azure/gpt-6-astra");
   });
 
-  it("画像の1枚単価を保持する", () => {
-    expect(find("gemini-3.1-flash-image@gemini-api:global")!.prices).toEqual([{ tier: "standard", minPromptTokens: 0, perImage: 0.045 }]);
+  it("画像の1枚単価と画像出力トークン単価を保持する", () => {
+    expect(find("gemini-3.1-flash-image@gemini-api:global")!.prices).toEqual([{ tier: "standard", minPromptTokens: 0, perImage: 0.045, imageOutput: 60 }]);
     expect(find("gemini-3.1-flash-image@vertex-ai:global")!.prices[0].perImage).toBe(0.0672);
   });
 
