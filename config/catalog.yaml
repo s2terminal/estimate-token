@@ -25,6 +25,9 @@ modes: [chat, responses, image_generation]
 excludeKeyPatterns:
   - "(^|/)(low|medium|high|hd|standard|max)/"
   - "\\d+-x-\\d+/"
+  - "(^|/)max-x-max/"
+  # モデルのトークン料金ではなく Code Interpreter のセッション料金
+  - "^openai/container$"
   - "commitment"
   - "^ft:"
   - "(^|/)(us-gov-|cn-|ap-|eu-|us-|ca-|sa-|me-|af-)[a-z]+-\\d/.*commitment"

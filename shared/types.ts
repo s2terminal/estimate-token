@@ -80,6 +80,7 @@ export const PLATFORM_LABEL: Record<Platform, string> = {
 
 export const REGION_LABEL: Record<string, string> = {
   global: "",
+  "global-standard": "Global Standard",
   regional: "リージョン内",
   us: "US",
   eu: "EU",
