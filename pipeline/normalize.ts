@@ -8,7 +8,7 @@ export const perMillion = (v: number): number => Number((v * 1e6).toPrecision(6)
 export const round6 = (v: number): number => Number(v.toPrecision(6));
 
 const BEDROCK_PREFIX_REGIONS = ["global", "us", "eu", "jp", "au", "apac", "us-gov", "ca", "apne"];
-const AZURE_ZONES = ["us", "eu", "apac", "global", "us-gov"];
+const AZURE_ZONES = ["us", "eu", "apac", "global", "us-gov", "global-standard"];
 const DATE_SUFFIX = /-(\d{4}-\d{2}-\d{2}|\d{8})$/;
 
 export interface ParsedKey {
@@ -32,8 +32,8 @@ export function parseKey(key: string, platform: Platform): ParsedKey | null {
       if (rest.includes("/")) return null;
       break;
     case "gemini-api":
-      if (!rest.startsWith("gemini/")) return null;
-      rest = rest.slice("gemini/".length);
+      // LiteLLM は同じ Gemini モデルを接頭辞あり・なしの両方で収録する。
+      rest = rest.replace(/^gemini\//, "");
       break;
     case "vertex-ai": {
       rest = rest.replace(/^vertex_ai\//, "");
@@ -55,6 +55,8 @@ export function parseKey(key: string, platform: Platform): ParsedKey | null {
     }
     case "bedrock": {
       rest = rest.replace(/^bedrock(_converse)?\//, "");
+      // invoke はリージョンではなく API の呼び出し経路。
+      rest = rest.replace(/^invoke\//, "");
       region = "regional";
       const seg = rest.split("/");
       if (seg.length === 2 && /^[a-z]{2}(-gov)?-[a-z]+-\d$/.test(seg[0])) {

@@ -13,14 +13,17 @@ describe("parseKey", () => {
     ["gpt-6.1-sol", "openai", "gpt-6.1-sol", "global"],
     ["claude-sonnet-5-5", "anthropic", "claude-sonnet-5-5", "global"],
     ["gemini/gemini-3.7-flash", "gemini-api", "gemini-3.7-flash", "global"],
+    ["gemini-flash-latest", "gemini-api", "gemini-flash-latest", "global"],
     ["vertex_ai/gemini-3.7-flash", "vertex-ai", "gemini-3.7-flash", "global"],
     ["gemini-3.7-flash", "vertex-ai", "gemini-3.7-flash", "global"],
     ["vertex_ai/claude-opus-5-5@default", "vertex-ai", "claude-opus-5-5", "global"],
     ["jp.anthropic.claude-sonnet-5", "bedrock", "claude-sonnet-5", "jp"],
     ["anthropic.claude-sonnet-5", "bedrock", "claude-sonnet-5", "regional"],
     ["bedrock/us-gov-west-1/anthropic.claude-sonnet-5", "bedrock", "claude-sonnet-5", "us-gov-west-1"],
+    ["bedrock/invoke/anthropic.claude-3-5-sonnet-20240620-v1:0", "bedrock", "claude-3-5-sonnet", "regional"],
     ["azure/gpt-6.1-sol", "azure", "gpt-6.1-sol", "global"],
     ["azure/us/gpt-6.1-sol", "azure", "gpt-6.1-sol", "us"],
+    ["azure/global-standard/gpt-4o-2024-08-06", "azure", "gpt-4o", "global-standard"],
   ] as const)("%s → %s / %s", (key, platform, family, region) => {
     expect(parseKey(key, platform)).toMatchObject({ family, region });
   });
@@ -30,8 +33,9 @@ describe("parseKey", () => {
   });
 
   it("解析できない形は null", () => {
-    expect(parseKey("gemini-3.7-flash", "gemini-api")).toBeNull();
-    expect(parseKey("azure/global-standard/gpt-4o", "azure")).toBeNull();
+    expect(parseKey("gemini/unknown/gemini-3.7-flash", "gemini-api")).toBeNull();
+    expect(parseKey("azure/unknown-zone/gpt-4o", "azure")).toBeNull();
+    expect(parseKey("bedrock/unknown-route/anthropic.claude-sonnet-5", "bedrock")).toBeNull();
   });
 });
 

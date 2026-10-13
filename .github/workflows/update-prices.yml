@@ -22,6 +22,8 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+        # 起動待ち・再実行中に main が進んでも、古いイベント SHA から生成しない。
+        with: { ref: main }
       - uses: actions/setup-node@v4
         with: { node-version: 22, cache: npm }
       - run: npm ci

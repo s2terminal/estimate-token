@@ -1,0 +1,149 @@
+{
+  "azure/global-standard/gpt-4o-2024-08-06": {
+    "litellm_provider": "azure",
+    "mode": "chat",
+    "input_cost_per_token": 2.5e-06,
+    "output_cost_per_token": 1e-05,
+    "cache_read_input_token_cost": 1.25e-06,
+    "input_cost_per_token_batches": 1.25e-06,
+    "output_cost_per_token_batches": 5e-06
+  },
+  "azure/global-standard/gpt-4o-2024-11-20": {
+    "litellm_provider": "azure",
+    "mode": "chat",
+    "input_cost_per_token": 2.5e-06,
+    "output_cost_per_token": 1e-05,
+    "cache_read_input_token_cost": 1.25e-06,
+    "input_cost_per_token_batches": 1.25e-06,
+    "output_cost_per_token_batches": 5e-06
+  },
+  "azure/global-standard/gpt-4o-mini": {
+    "litellm_provider": "azure",
+    "mode": "chat",
+    "input_cost_per_token": 1.5e-07,
+    "output_cost_per_token": 6e-07
+  },
+  "bedrock/invoke/anthropic.claude-3-5-sonnet-20240620-v1:0": {
+    "litellm_provider": "bedrock",
+    "mode": "chat",
+    "input_cost_per_token": 3e-06,
+    "output_cost_per_token": 1.5e-05,
+    "cache_read_input_token_cost": 3e-07
+  },
+  "max-x-max/50-steps/stability.stable-diffusion-xl-v0": {
+    "litellm_provider": "bedrock",
+    "mode": "image_generation",
+    "output_cost_per_image": 0.036
+  },
+  "max-x-max/max-steps/stability.stable-diffusion-xl-v0": {
+    "litellm_provider": "bedrock",
+    "mode": "image_generation",
+    "output_cost_per_image": 0.072
+  },
+  "openai/container": {
+    "litellm_provider": "openai",
+    "mode": "chat"
+  },
+  "gemini-2.0-flash-exp-image-generation": {
+    "litellm_provider": "gemini",
+    "mode": "image_generation",
+    "input_cost_per_token": 0.0,
+    "output_cost_per_token": 0.0,
+    "output_cost_per_image": 0.039
+  },
+  "gemini-flash-latest": {
+    "litellm_provider": "gemini",
+    "mode": "chat",
+    "input_cost_per_token": 7.5e-07,
+    "output_cost_per_token": 3.75e-06,
+    "cache_read_input_token_cost": 7.5e-08,
+    "input_cost_per_token_batches": 3.75e-07,
+    "output_cost_per_token_batches": 1.875e-06
+  },
+  "gemini-flash-lite-latest": {
+    "litellm_provider": "gemini",
+    "mode": "chat",
+    "input_cost_per_token": 3e-07,
+    "output_cost_per_token": 2.5e-06,
+    "cache_read_input_token_cost": 3e-08,
+    "input_cost_per_token_batches": 1.5e-07,
+    "output_cost_per_token_batches": 1.25e-06
+  },
+  "gemini-pro-latest": {
+    "litellm_provider": "gemini",
+    "mode": "chat",
+    "input_cost_per_token": 2e-06,
+    "output_cost_per_token": 1.2e-05,
+    "cache_read_input_token_cost": 2e-07,
+    "input_cost_per_token_batches": 1e-06,
+    "output_cost_per_token_batches": 6e-06
+  },
+  "gemini-exp-1206": {
+    "litellm_provider": "gemini",
+    "mode": "chat",
+    "input_cost_per_token": 3e-07,
+    "output_cost_per_token": 2.5e-06,
+    "cache_read_input_token_cost": 3e-08
+  },
+  "azure/gpt-4o": {
+    "litellm_provider": "azure",
+    "mode": "chat",
+    "input_cost_per_token": 2.5e-06,
+    "output_cost_per_token": 1e-05,
+    "cache_read_input_token_cost": 1.25e-06
+  },
+  "azure/gpt-4o-mini": {
+    "litellm_provider": "azure",
+    "mode": "chat",
+    "input_cost_per_token": 1.5e-07,
+    "output_cost_per_token": 6e-07,
+    "cache_read_input_token_cost": 7.5e-08
+  },
+  "anthropic.claude-3-5-sonnet-20240620-v1:0": {
+    "litellm_provider": "bedrock",
+    "mode": "chat",
+    "input_cost_per_token": 3e-06,
+    "output_cost_per_token": 1.5e-05,
+    "cache_read_input_token_cost": 3e-07
+  },
+  "gemini/gemini-2.0-flash-exp-image-generation": {
+    "litellm_provider": "gemini",
+    "mode": "image_generation",
+    "input_cost_per_token": 0.0,
+    "output_cost_per_token": 0.0,
+    "output_cost_per_image": 0.039
+  },
+  "gemini/gemini-flash-latest": {
+    "litellm_provider": "gemini",
+    "mode": "chat",
+    "input_cost_per_token": 7.5e-07,
+    "output_cost_per_token": 3.75e-06,
+    "cache_read_input_token_cost": 7.5e-08,
+    "input_cost_per_token_batches": 3.75e-07,
+    "output_cost_per_token_batches": 1.875e-06
+  },
+  "gemini/gemini-flash-lite-latest": {
+    "litellm_provider": "gemini",
+    "mode": "chat",
+    "input_cost_per_token": 3e-07,
+    "output_cost_per_token": 2.5e-06,
+    "cache_read_input_token_cost": 3e-08,
+    "input_cost_per_token_batches": 1.5e-07,
+    "output_cost_per_token_batches": 1.25e-06
+  },
+  "gemini/gemini-pro-latest": {
+    "litellm_provider": "gemini",
+    "mode": "chat",
+    "input_cost_per_token": 2e-06,
+    "output_cost_per_token": 1.2e-05,
+    "cache_read_input_token_cost": 2e-07,
+    "input_cost_per_token_batches": 1e-06,
+    "output_cost_per_token_batches": 6e-06
+  },
+  "gemini/gemini-exp-1206": {
+    "litellm_provider": "gemini",
+    "mode": "chat",
+    "input_cost_per_token": 0,
+    "output_cost_per_token": 0
+  }
+}
