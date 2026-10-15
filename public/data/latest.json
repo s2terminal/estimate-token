@@ -1,22 +1,22 @@
 {
  "schemaVersion": 1,
- "snapshot": "2026-10-15",
- "generatedAt": "2026-10-14T21:25:49.615Z",
+ "snapshot": "2026-10-16",
+ "generatedAt": "2026-10-15T21:27:27.148Z",
  "baseline": "2026-10-11",
  "sources": {
   "litellm": {
-   "commit": "0d67cccf03c38a34fe869a4927e5e063fa51efb2",
-   "fetchedAt": "2026-10-14T21:25:50.344Z",
-   "bytes": 2828373
+   "commit": "ad83e3d3c8376e5561b07a329a063bb5ac03dc9c",
+   "fetchedAt": "2026-10-15T21:27:28.424Z",
+   "bytes": 2869149
   },
   "openrouter": {
-   "fetchedAt": "2026-10-14T21:25:50.446Z",
-   "bytes": 773644
+   "fetchedAt": "2026-10-15T21:27:28.529Z",
+   "bytes": 776018
   },
   "fx": {
    "pair": "USDJPY",
-   "rate": 158.45,
-   "date": "2026-10-14"
+   "rate": 157.98,
+   "date": "2026-10-15"
   }
  },
  "models": [
@@ -1197,42 +1197,6 @@
    "contextWindow": 200000
   },
   {
-   "id": "claude-haiku-4-5@bedrock:eu",
-   "family": "claude-haiku-4-5",
-   "name": "Claude Haiku 4.5",
-   "vendor": "Anthropic",
-   "platform": "bedrock",
-   "region": "eu",
-   "category": "llm",
-   "firstSeen": "2026-10-11",
-   "status": "active",
-   "prices": [
-    {
-     "tier": "standard",
-     "minPromptTokens": 0,
-     "cacheWrite": 1.375,
-     "cacheWrite1h": 2.2,
-     "cacheRead": 0.11,
-     "input": 1.1,
-     "output": 5.5
-    },
-    {
-     "tier": "batch",
-     "minPromptTokens": 0,
-     "input": 0.55,
-     "output": 2.75
-    }
-   ],
-   "sources": [
-    {
-     "litellm": "eu.anthropic.claude-haiku-4-5-20251001-v1:0",
-     "url": "https://aws.amazon.com/bedrock/pricing/"
-    }
-   ],
-   "contextWindow": 200000,
-   "deprecationDate": "2026-10-15"
-  },
-  {
    "id": "claude-haiku-4-5@bedrock:global",
    "family": "claude-haiku-4-5",
    "name": "Claude Haiku 4.5",
@@ -1426,47 +1390,6 @@
     }
    ],
    "contextWindow": 200000
-  },
-  {
-   "id": "claude-haiku-4-5@vertex-ai:global",
-   "family": "claude-haiku-4-5",
-   "name": "Claude Haiku 4.5",
-   "vendor": "Anthropic",
-   "platform": "vertex-ai",
-   "region": "global",
-   "category": "llm",
-   "firstSeen": "2026-10-11",
-   "status": "active",
-   "prices": [
-    {
-     "tier": "standard",
-     "minPromptTokens": 0,
-     "cacheWrite": 1.25,
-     "cacheWrite1h": 2,
-     "cacheRead": 0.1,
-     "input": 1,
-     "output": 5
-    },
-    {
-     "tier": "batch",
-     "minPromptTokens": 0,
-     "cacheWrite": 0.625,
-     "cacheRead": 0.05,
-     "input": 0.5,
-     "output": 2.5
-    }
-   ],
-   "sources": [
-    {
-     "litellm": "vertex_ai/claude-haiku-4-5",
-     "aliases": [
-      "vertex_ai/claude-haiku-4-5@20251001"
-     ],
-     "url": "https://cloud.google.com/gemini-enterprise-agent-platform/generative-ai/pricing"
-    }
-   ],
-   "contextWindow": 200000,
-   "deprecationDate": "2026-10-15"
   },
   {
    "id": "claude-haiku-5-5@anthropic:global",
@@ -7100,6 +7023,33 @@
    ],
    "contextWindow": 1000000,
    "deprecationDate": "2026-12-15"
+  },
+  {
+   "id": "deepseek-v4.1-flash@vertex-ai:global",
+   "family": "deepseek-v4.1-flash",
+   "name": "Deepseek V4.1 Flash",
+   "vendor": "DeepSeek",
+   "platform": "vertex-ai",
+   "region": "global",
+   "category": "llm",
+   "firstSeen": "2026-10-16",
+   "status": "active",
+   "prices": [
+    {
+     "tier": "standard",
+     "minPromptTokens": 0,
+     "cacheRead": 0,
+     "input": 0,
+     "output": 0
+    }
+   ],
+   "sources": [
+    {
+     "litellm": "vertex_ai/deepseek-ai/deepseek-v4.1-flash-maas",
+     "url": "https://cloud.google.com/gemini-enterprise-agent-platform/generative-ai/pricing"
+    }
+   ],
+   "contextWindow": 1048576
   },
   {
    "id": "devstral-2-123b@bedrock:regional",
@@ -14419,6 +14369,32 @@
    "contextWindow": 1050000
   },
   {
+   "id": "gpt-5.5-cyber-preview@openai:global",
+   "family": "gpt-5.5-cyber-preview",
+   "name": "GPT-5.5 Cyber Preview",
+   "vendor": "OpenAI",
+   "platform": "openai",
+   "region": "global",
+   "category": "llm",
+   "firstSeen": "2026-10-16",
+   "status": "active",
+   "prices": [
+    {
+     "tier": "standard",
+     "minPromptTokens": 0,
+     "cacheRead": 1.25,
+     "input": 12.5,
+     "output": 75
+    }
+   ],
+   "sources": [
+    {
+     "litellm": "gpt-5.5-cyber-preview",
+     "url": "https://developers.openai.com/api/docs/pricing"
+    }
+   ]
+  },
+  {
    "id": "gpt-5.5-cyber@openai:global",
    "family": "gpt-5.5-cyber",
    "name": "GPT-5.5 Cyber",
@@ -17589,7 +17565,7 @@
     }
    ],
    "contextWindow": 272000,
-   "deprecationDate": "2026-12-02"
+   "deprecationDate": "2027-05-18"
   },
   {
    "id": "gpt-chat-latest@azure:us",
@@ -17617,7 +17593,7 @@
     }
    ],
    "contextWindow": 272000,
-   "deprecationDate": "2026-12-02"
+   "deprecationDate": "2027-05-18"
   },
   {
    "id": "gpt-daybreak-blue-latest@openai:global",
@@ -18037,12 +18013,24 @@
      "minPromptTokens": 0,
      "input": 0.15,
      "output": 0.6
+    },
+    {
+     "tier": "flex",
+     "minPromptTokens": 0,
+     "input": 0.075,
+     "output": 0.3
+    },
+    {
+     "tier": "priority",
+     "minPromptTokens": 0,
+     "input": 0.2625,
+     "output": 1.05
     }
    ],
    "sources": [
     {
      "litellm": "openai.gpt-oss-120b-1:0",
-     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-openai-gpt-oss-120b.html"
+     "url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/index.json"
     }
    ],
    "contextWindow": 128000
@@ -18199,12 +18187,24 @@
      "minPromptTokens": 0,
      "input": 0.07,
      "output": 0.3
+    },
+    {
+     "tier": "flex",
+     "minPromptTokens": 0,
+     "input": 0.035,
+     "output": 0.15
+    },
+    {
+     "tier": "priority",
+     "minPromptTokens": 0,
+     "input": 0.1225,
+     "output": 0.525
     }
    ],
    "sources": [
     {
      "litellm": "openai.gpt-oss-20b-1:0",
-     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-openai-gpt-oss-20b.html"
+     "url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/index.json"
     }
    ],
    "contextWindow": 128000
@@ -24349,6 +24349,53 @@
    "sources": [
     {
      "litellm": "global.amazon.nova-2-lite-v1:0"
+    }
+   ],
+   "contextWindow": 1000000
+  },
+  {
+   "id": "nova-2-lite@bedrock:jp",
+   "family": "nova-2-lite",
+   "name": "Nova 2 Lite",
+   "vendor": "Amazon",
+   "platform": "bedrock",
+   "region": "jp",
+   "category": "llm",
+   "firstSeen": "2026-10-16",
+   "status": "active",
+   "prices": [
+    {
+     "tier": "standard",
+     "minPromptTokens": 0,
+     "cacheRead": 0.099,
+     "input": 0.396,
+     "output": 3.311
+    },
+    {
+     "tier": "batch",
+     "minPromptTokens": 0,
+     "input": 0.198,
+     "output": 1.6555
+    },
+    {
+     "tier": "flex",
+     "minPromptTokens": 0,
+     "cacheRead": 0.0495,
+     "input": 0.198,
+     "output": 1.6555
+    },
+    {
+     "tier": "priority",
+     "minPromptTokens": 0,
+     "cacheRead": 0.17325,
+     "input": 0.693,
+     "output": 5.79425
+    }
+   ],
+   "sources": [
+    {
+     "litellm": "jp.amazon.nova-2-lite-v1:0",
+     "url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/ap-northeast-1/index.json"
     }
    ],
    "contextWindow": 1000000
