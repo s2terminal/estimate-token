@@ -1,22 +1,22 @@
 {
  "schemaVersion": 1,
- "snapshot": "2026-10-16",
- "generatedAt": "2026-10-15T21:27:27.148Z",
+ "snapshot": "2026-10-17",
+ "generatedAt": "2026-10-16T21:24:15.847Z",
  "baseline": "2026-10-11",
  "sources": {
   "litellm": {
-   "commit": "ad83e3d3c8376e5561b07a329a063bb5ac03dc9c",
-   "fetchedAt": "2026-10-15T21:27:28.424Z",
-   "bytes": 2869149
+   "commit": "78372b440d7c353aeb648926fbf3c69106cb8a4b",
+   "fetchedAt": "2026-10-16T21:24:16.367Z",
+   "bytes": 2884285
   },
   "openrouter": {
-   "fetchedAt": "2026-10-15T21:27:28.529Z",
-   "bytes": 776018
+   "fetchedAt": "2026-10-16T21:24:16.450Z",
+   "bytes": 780959
   },
   "fx": {
    "pair": "USDJPY",
-   "rate": 157.98,
-   "date": "2026-10-15"
+   "rate": 158.02,
+   "date": "2026-10-16"
   }
  },
  "models": [
@@ -3702,6 +3702,36 @@
    "contextWindow": 200000
   },
   {
+   "id": "claude-opus-5-5-fast@azure:global",
+   "family": "claude-opus-5-5-fast",
+   "name": "Claude Opus 5.5 Fast",
+   "vendor": "Anthropic",
+   "platform": "azure",
+   "region": "global",
+   "category": "llm",
+   "firstSeen": "2026-10-17",
+   "status": "active",
+   "prices": [
+    {
+     "tier": "standard",
+     "minPromptTokens": 0,
+     "cacheWrite": 10,
+     "cacheWrite1h": 16,
+     "cacheRead": 0.4,
+     "input": 8,
+     "output": 40
+    }
+   ],
+   "sources": [
+    {
+     "litellm": "azure_ai/claude-opus-5-5-fast",
+     "url": "https://learn.microsoft.com/en-us/azure/foundry/foundry-models/concepts/claude-models"
+    }
+   ],
+   "contextWindow": 1000000,
+   "deprecationDate": "2027-10-01"
+  },
+  {
    "id": "claude-opus-5-5@anthropic:global",
    "family": "claude-opus-5-5",
    "name": "Claude Opus 5.5",
@@ -6373,33 +6403,6 @@
    "deprecationDate": "2026-11-15"
   },
   {
-   "id": "cohere-command-a-plus-05-2026@azure:global",
-   "family": "cohere-command-a-plus-05-2026",
-   "name": "Cohere Command A Plus 05.2026",
-   "vendor": "Cohere",
-   "platform": "azure",
-   "region": "global",
-   "category": "llm",
-   "firstSeen": "2026-10-11",
-   "status": "active",
-   "prices": [
-    {
-     "tier": "standard",
-     "minPromptTokens": 0,
-     "input": 0.8,
-     "output": 3.2
-    }
-   ],
-   "sources": [
-    {
-     "litellm": "azure_ai/Cohere-command-a-plus-05-2026",
-     "url": "https://prices.azure.com/api/retail/prices?$filter=serviceName%20eq%20'Foundry%20Models'%20and%20armRegionName%20eq%20'eastus'%20and%20priceType%20eq%20'Consumption'"
-    }
-   ],
-   "contextWindow": 128000,
-   "deprecationDate": "2026-10-16"
-  },
-  {
    "id": "cohere-command-a@azure:global",
    "family": "cohere-command-a",
    "name": "Cohere Command A",
@@ -7038,9 +7041,9 @@
     {
      "tier": "standard",
      "minPromptTokens": 0,
-     "cacheRead": 0,
-     "input": 0,
-     "output": 0
+     "cacheRead": 0.03,
+     "input": 0.3,
+     "output": 1.2
     }
    ],
    "sources": [
@@ -8242,16 +8245,15 @@
     {
      "tier": "flex",
      "minPromptTokens": 0,
-     "cacheRead": 0.05,
      "input": 0.25,
      "output": 1.5
     },
     {
      "tier": "priority",
      "minPromptTokens": 0,
+     "cacheRead": 0.09,
      "input": 0.9,
-     "output": 5.4,
-     "cacheRead": 0.09
+     "output": 5.4
     }
    ],
    "sources": [
@@ -8892,8 +8894,8 @@
     {
      "tier": "standard",
      "minPromptTokens": 200000,
-     "cacheRead": 0.4,
      "cacheWrite": 0.25,
+     "cacheRead": 0.4,
      "input": 4,
      "output": 18
     },
@@ -8906,23 +8908,22 @@
     {
      "tier": "flex",
      "minPromptTokens": 0,
-     "cacheRead": 0.2,
      "input": 1,
      "output": 6
     },
     {
      "tier": "priority",
      "minPromptTokens": 0,
+     "cacheRead": 0.36,
      "input": 3.6,
-     "output": 21.6,
-     "cacheRead": 0.36
+     "output": 21.6
     },
     {
      "tier": "priority",
      "minPromptTokens": 200000,
+     "cacheRead": 0.72,
      "input": 7.2,
-     "output": 32.4,
-     "cacheRead": 0.72
+     "output": 32.4
     }
    ],
    "sources": [
