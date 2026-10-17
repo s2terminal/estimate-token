@@ -1,17 +1,17 @@
 {
  "schemaVersion": 1,
- "snapshot": "2026-10-17",
- "generatedAt": "2026-10-16T21:24:15.847Z",
+ "snapshot": "2026-10-18",
+ "generatedAt": "2026-10-17T21:23:39.683Z",
  "baseline": "2026-10-11",
  "sources": {
   "litellm": {
-   "commit": "78372b440d7c353aeb648926fbf3c69106cb8a4b",
-   "fetchedAt": "2026-10-16T21:24:16.367Z",
-   "bytes": 2884285
+   "commit": "d81472f196323ec677a3f359a984492e37e46b4f",
+   "fetchedAt": "2026-10-17T21:23:40.440Z",
+   "bytes": 2913791
   },
   "openrouter": {
-   "fetchedAt": "2026-10-16T21:24:16.450Z",
-   "bytes": 780959
+   "fetchedAt": "2026-10-17T21:23:40.525Z",
+   "bytes": 788788
   },
   "fx": {
    "pair": "USDJPY",
@@ -7072,16 +7072,28 @@
      "output": 2
     },
     {
+     "tier": "batch",
+     "minPromptTokens": 0,
+     "input": 0.2,
+     "output": 1
+    },
+    {
      "tier": "flex",
      "minPromptTokens": 0,
      "input": 0.2,
      "output": 1
+    },
+    {
+     "tier": "priority",
+     "minPromptTokens": 0,
+     "input": 0.7,
+     "output": 3.5
     }
    ],
    "sources": [
     {
      "litellm": "mistral.devstral-2-123b",
-     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-mistral-ai-devstral-2-123b.html"
+     "url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/us-east-1/index.json"
     }
    ],
    "contextWindow": 256000,
@@ -9487,7 +9499,8 @@
      "url": "https://cloud.google.com/gemini-enterprise-agent-platform/generative-ai/pricing"
     }
    ],
-   "contextWindow": 1048576
+   "contextWindow": 1048576,
+   "deprecationDate": "2027-09-02"
   },
   {
    "id": "gemini-4-argon-cyber-permissive@vertex-ai:global",
@@ -9631,7 +9644,8 @@
      "url": "https://cloud.google.com/gemini-enterprise-agent-platform/generative-ai/pricing"
     }
    ],
-   "contextWindow": 1048576
+   "contextWindow": 1048576,
+   "deprecationDate": "2027-10-13"
   },
   {
    "id": "gemini-exp-1114@gemini-api:global",
@@ -10243,16 +10257,28 @@
      "output": 0.29
     },
     {
+     "tier": "batch",
+     "minPromptTokens": 0,
+     "input": 0.05,
+     "output": 0.15
+    },
+    {
      "tier": "flex",
      "minPromptTokens": 0,
      "input": 0.05,
      "output": 0.15
+    },
+    {
+     "tier": "priority",
+     "minPromptTokens": 0,
+     "input": 0.16,
+     "output": 0.51
     }
    ],
    "sources": [
     {
      "litellm": "google.gemma-3-12b-it",
-     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-google-gemma-3-12b-it.html"
+     "url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/us-east-1/index.json"
     }
    ],
    "contextWindow": 128000,
@@ -10276,16 +10302,28 @@
      "output": 0.38
     },
     {
+     "tier": "batch",
+     "minPromptTokens": 0,
+     "input": 0.12,
+     "output": 0.19
+    },
+    {
      "tier": "flex",
      "minPromptTokens": 0,
      "input": 0.12,
      "output": 0.19
+    },
+    {
+     "tier": "priority",
+     "minPromptTokens": 0,
+     "input": 0.4,
+     "output": 0.67
     }
    ],
    "sources": [
     {
      "litellm": "google.gemma-3-27b-it",
-     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-google-gemma-3-27b-pt.html"
+     "url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/us-east-1/index.json"
     }
    ],
    "contextWindow": 128000,
@@ -10341,16 +10379,28 @@
      "output": 0.08
     },
     {
+     "tier": "batch",
+     "minPromptTokens": 0,
+     "input": 0.02,
+     "output": 0.04
+    },
+    {
      "tier": "flex",
      "minPromptTokens": 0,
      "input": 0.02,
      "output": 0.04
+    },
+    {
+     "tier": "priority",
+     "minPromptTokens": 0,
+     "input": 0.07,
+     "output": 0.14
     }
    ],
    "sources": [
     {
      "litellm": "google.gemma-3-4b-it",
-     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-google-gemma-3-4b-it.html"
+     "url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/us-east-1/index.json"
     }
    ],
    "contextWindow": 128000,
@@ -10455,16 +10505,28 @@
      "output": 0.4
     },
     {
+     "tier": "batch",
+     "minPromptTokens": 0,
+     "input": 0.035,
+     "output": 0.2
+    },
+    {
      "tier": "flex",
      "minPromptTokens": 0,
      "input": 0.035,
      "output": 0.2
+    },
+    {
+     "tier": "priority",
+     "minPromptTokens": 0,
+     "input": 0.1225,
+     "output": 0.7
     }
    ],
    "sources": [
     {
      "litellm": "zai.glm-4.7-flash",
-     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-zai-glm-4-7-flash.md"
+     "url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/us-east-1/index.json"
     }
    ],
    "contextWindow": 203000,
@@ -10488,16 +10550,28 @@
      "output": 2.2
     },
     {
+     "tier": "batch",
+     "minPromptTokens": 0,
+     "input": 0.3,
+     "output": 1.1
+    },
+    {
      "tier": "flex",
      "minPromptTokens": 0,
      "input": 0.3,
      "output": 1.1
+    },
+    {
+     "tier": "priority",
+     "minPromptTokens": 0,
+     "input": 1.05,
+     "output": 3.85
     }
    ],
    "sources": [
     {
      "litellm": "zai.glm-4.7",
-     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-zai-glm-4-7.md"
+     "url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/us-east-1/index.json"
     }
    ],
    "contextWindow": 203000,
@@ -10623,12 +10697,24 @@
      "minPromptTokens": 0,
      "input": 1,
      "output": 3.2
+    },
+    {
+     "tier": "batch",
+     "minPromptTokens": 0,
+     "input": 0.5,
+     "output": 1.6
+    },
+    {
+     "tier": "priority",
+     "minPromptTokens": 0,
+     "input": 1.75,
+     "output": 5.6
     }
    ],
    "sources": [
     {
      "litellm": "zai.glm-5",
-     "url": "https://aws.amazon.com/bedrock/pricing/"
+     "url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/us-east-1/index.json"
     }
    ],
    "contextWindow": 200000
@@ -18016,6 +18102,12 @@
      "output": 0.6
     },
     {
+     "tier": "batch",
+     "minPromptTokens": 0,
+     "input": 0.075,
+     "output": 0.3
+    },
+    {
      "tier": "flex",
      "minPromptTokens": 0,
      "input": 0.075,
@@ -18031,7 +18123,7 @@
    "sources": [
     {
      "litellm": "openai.gpt-oss-120b-1:0",
-     "url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/index.json"
+     "url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/us-east-1/index.json"
     }
    ],
    "contextWindow": 128000
@@ -18190,6 +18282,12 @@
      "output": 0.3
     },
     {
+     "tier": "batch",
+     "minPromptTokens": 0,
+     "input": 0.035,
+     "output": 0.15
+    },
+    {
      "tier": "flex",
      "minPromptTokens": 0,
      "input": 0.035,
@@ -18205,7 +18303,7 @@
    "sources": [
     {
      "litellm": "openai.gpt-oss-20b-1:0",
-     "url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/index.json"
+     "url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/us-east-1/index.json"
     }
    ],
    "contextWindow": 128000
@@ -18340,16 +18438,28 @@
      "output": 0.6
     },
     {
+     "tier": "batch",
+     "minPromptTokens": 0,
+     "input": 0.07,
+     "output": 0.3
+    },
+    {
      "tier": "flex",
      "minPromptTokens": 0,
      "input": 0.07,
      "output": 0.3
+    },
+    {
+     "tier": "priority",
+     "minPromptTokens": 0,
+     "input": 0.26,
+     "output": 1.05
     }
    ],
    "sources": [
     {
      "litellm": "openai.gpt-oss-safeguard-120b",
-     "url": "https://aws.amazon.com/bedrock/pricing/"
+     "url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/us-east-1/index.json"
     }
    ],
    "contextWindow": 128000
@@ -18372,16 +18482,28 @@
      "output": 0.2
     },
     {
+     "tier": "batch",
+     "minPromptTokens": 0,
+     "input": 0.03,
+     "output": 0.1
+    },
+    {
      "tier": "flex",
      "minPromptTokens": 0,
      "input": 0.03,
      "output": 0.1
+    },
+    {
+     "tier": "priority",
+     "minPromptTokens": 0,
+     "input": 0.12,
+     "output": 0.35
     }
    ],
    "sources": [
     {
      "litellm": "openai.gpt-oss-safeguard-20b",
-     "url": "https://aws.amazon.com/bedrock/pricing/"
+     "url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/us-east-1/index.json"
     }
    ],
    "contextWindow": 128000
@@ -20519,12 +20641,18 @@
      "minPromptTokens": 0,
      "input": 0.72,
      "output": 0.72
+    },
+    {
+     "tier": "batch",
+     "minPromptTokens": 0,
+     "input": 0.36,
+     "output": 0.36
     }
    ],
    "sources": [
     {
      "litellm": "meta.llama3-1-70b-instruct-v1:0",
-     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-meta-llama-3-1-70b-instruct.md"
+     "url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/us-east-1/index.json"
     }
    ],
    "contextWindow": 128000,
@@ -20546,12 +20674,18 @@
      "minPromptTokens": 0,
      "input": 0.72,
      "output": 0.72
+    },
+    {
+     "tier": "batch",
+     "minPromptTokens": 0,
+     "input": 0.36,
+     "output": 0.36
     }
    ],
    "sources": [
     {
      "litellm": "us.meta.llama3-1-70b-instruct-v1:0",
-     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-meta-llama-3-1-70b-instruct.md"
+     "url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/us-east-1/index.json"
     }
    ],
    "contextWindow": 128000,
@@ -20573,12 +20707,18 @@
      "minPromptTokens": 0,
      "input": 0.22,
      "output": 0.22
+    },
+    {
+     "tier": "batch",
+     "minPromptTokens": 0,
+     "input": 0.11,
+     "output": 0.11
     }
    ],
    "sources": [
     {
      "litellm": "meta.llama3-1-8b-instruct-v1:0",
-     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-meta-llama-3-1-8b-instruct.md"
+     "url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/us-east-1/index.json"
     }
    ],
    "contextWindow": 128000,
@@ -20600,12 +20740,18 @@
      "minPromptTokens": 0,
      "input": 0.22,
      "output": 0.22
+    },
+    {
+     "tier": "batch",
+     "minPromptTokens": 0,
+     "input": 0.11,
+     "output": 0.11
     }
    ],
    "sources": [
     {
      "litellm": "us.meta.llama3-1-8b-instruct-v1:0",
-     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-meta-llama-3-1-8b-instruct.md"
+     "url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/us-east-1/index.json"
     }
    ],
    "contextWindow": 128000,
@@ -20881,12 +21027,18 @@
      "minPromptTokens": 0,
      "input": 0.72,
      "output": 0.72
+    },
+    {
+     "tier": "batch",
+     "minPromptTokens": 0,
+     "input": 0.36,
+     "output": 0.36
     }
    ],
    "sources": [
     {
      "litellm": "meta.llama3-3-70b-instruct-v1:0",
-     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-meta-llama-3-3-70b-instruct.md"
+     "url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/us-east-1/index.json"
     }
    ],
    "contextWindow": 128000,
@@ -20908,12 +21060,18 @@
      "minPromptTokens": 0,
      "input": 0.72,
      "output": 0.72
+    },
+    {
+     "tier": "batch",
+     "minPromptTokens": 0,
+     "input": 0.36,
+     "output": 0.36
     }
    ],
    "sources": [
     {
      "litellm": "us.meta.llama3-3-70b-instruct-v1:0",
-     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-meta-llama-3-3-70b-instruct.md"
+     "url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/us-east-1/index.json"
     }
    ],
    "contextWindow": 128000,
@@ -21809,16 +21967,28 @@
      "output": 1.5
     },
     {
+     "tier": "batch",
+     "minPromptTokens": 0,
+     "input": 0.25,
+     "output": 0.75
+    },
+    {
      "tier": "flex",
      "minPromptTokens": 0,
      "input": 0.25,
      "output": 0.75
+    },
+    {
+     "tier": "priority",
+     "minPromptTokens": 0,
+     "input": 0.88,
+     "output": 2.63
     }
    ],
    "sources": [
     {
      "litellm": "mistral.magistral-small-2509",
-     "url": "https://aws.amazon.com/bedrock/pricing/"
+     "url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/us-east-1/index.json"
     }
    ],
    "contextWindow": 128000
@@ -22211,16 +22381,28 @@
      "output": 1.2
     },
     {
+     "tier": "batch",
+     "minPromptTokens": 0,
+     "input": 0.15,
+     "output": 0.6
+    },
+    {
      "tier": "flex",
      "minPromptTokens": 0,
      "input": 0.15,
      "output": 0.6
+    },
+    {
+     "tier": "priority",
+     "minPromptTokens": 0,
+     "input": 0.525,
+     "output": 2.1
     }
    ],
    "sources": [
     {
      "litellm": "minimax.minimax-m2.1",
-     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-minimax-minimax-m2-1.html"
+     "url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/us-east-1/index.json"
     }
    ],
    "contextWindow": 196000,
@@ -22664,16 +22846,28 @@
      "output": 1.2
     },
     {
+     "tier": "batch",
+     "minPromptTokens": 0,
+     "input": 0.15,
+     "output": 0.6
+    },
+    {
      "tier": "flex",
      "minPromptTokens": 0,
      "input": 0.15,
      "output": 0.6
+    },
+    {
+     "tier": "priority",
+     "minPromptTokens": 0,
+     "input": 0.525,
+     "output": 2.1
     }
    ],
    "sources": [
     {
      "litellm": "minimax.minimax-m2.5",
-     "url": "https://aws.amazon.com/bedrock/pricing/"
+     "url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/us-east-1/index.json"
     }
    ],
    "contextWindow": 196000
@@ -22824,16 +23018,28 @@
      "output": 1.2
     },
     {
+     "tier": "batch",
+     "minPromptTokens": 0,
+     "input": 0.15,
+     "output": 0.6
+    },
+    {
      "tier": "flex",
      "minPromptTokens": 0,
      "input": 0.15,
      "output": 0.6
+    },
+    {
+     "tier": "priority",
+     "minPromptTokens": 0,
+     "input": 0.52,
+     "output": 2.1
     }
    ],
    "sources": [
     {
      "litellm": "minimax.minimax-m2",
-     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-minimax-minimax-m2.html"
+     "url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/us-east-1/index.json"
     }
    ],
    "contextWindow": 1000000,
@@ -22857,16 +23063,28 @@
      "output": 0.2
     },
     {
+     "tier": "batch",
+     "minPromptTokens": 0,
+     "input": 0.1,
+     "output": 0.1
+    },
+    {
      "tier": "flex",
      "minPromptTokens": 0,
      "input": 0.1,
      "output": 0.1
+    },
+    {
+     "tier": "priority",
+     "minPromptTokens": 0,
+     "input": 0.35,
+     "output": 0.35
     }
    ],
    "sources": [
     {
      "litellm": "mistral.ministral-3-14b-instruct",
-     "url": "https://aws.amazon.com/bedrock/pricing/"
+     "url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/us-east-1/index.json"
     }
    ],
    "contextWindow": 128000
@@ -22889,16 +23107,28 @@
      "output": 0.1
     },
     {
+     "tier": "batch",
+     "minPromptTokens": 0,
+     "input": 0.05,
+     "output": 0.05
+    },
+    {
      "tier": "flex",
      "minPromptTokens": 0,
      "input": 0.05,
      "output": 0.05
+    },
+    {
+     "tier": "priority",
+     "minPromptTokens": 0,
+     "input": 0.17,
+     "output": 0.17
     }
    ],
    "sources": [
     {
      "litellm": "mistral.ministral-3-3b-instruct",
-     "url": "https://aws.amazon.com/bedrock/pricing/"
+     "url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/us-east-1/index.json"
     }
    ],
    "contextWindow": 128000
@@ -22921,16 +23151,28 @@
      "output": 0.15
     },
     {
+     "tier": "batch",
+     "minPromptTokens": 0,
+     "input": 0.07,
+     "output": 0.07
+    },
+    {
      "tier": "flex",
      "minPromptTokens": 0,
      "input": 0.07,
      "output": 0.07
+    },
+    {
+     "tier": "priority",
+     "minPromptTokens": 0,
+     "input": 0.26,
+     "output": 0.26
     }
    ],
    "sources": [
     {
      "litellm": "mistral.ministral-3-8b-instruct",
-     "url": "https://aws.amazon.com/bedrock/pricing/"
+     "url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/us-east-1/index.json"
     }
    ],
    "contextWindow": 128000
@@ -22959,7 +23201,8 @@
      "url": "https://marketplace.microsoft.com/en/marketplace/apps/000-000.ministral-3b-2410-offer?tab=Overview"
     }
    ],
-   "contextWindow": 128000
+   "contextWindow": 128000,
+   "deprecationDate": "2026-12-09"
   },
   {
    "id": "mistral-7b-instruct@bedrock:eu-west-3",
@@ -23267,16 +23510,28 @@
      "output": 1.5
     },
     {
+     "tier": "batch",
+     "minPromptTokens": 0,
+     "input": 0.25,
+     "output": 0.75
+    },
+    {
      "tier": "flex",
      "minPromptTokens": 0,
      "input": 0.25,
      "output": 0.75
+    },
+    {
+     "tier": "priority",
+     "minPromptTokens": 0,
+     "input": 0.88,
+     "output": 2.63
     }
    ],
    "sources": [
     {
      "litellm": "mistral.mistral-large-3-675b-instruct",
-     "url": "https://aws.amazon.com/bedrock/pricing/"
+     "url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/us-east-1/index.json"
     }
    ],
    "contextWindow": 256000
@@ -23387,7 +23642,8 @@
      "litellm": "azure_ai/mistral-medium-2505"
     }
    ],
-   "contextWindow": 131072
+   "contextWindow": 131072,
+   "deprecationDate": "2026-12-09"
   },
   {
    "id": "mistral-medium-3-5@azure:global",
@@ -23529,7 +23785,8 @@
      "litellm": "azure_ai/mistral-small-2503"
     }
    ],
-   "contextWindow": 128000
+   "contextWindow": 128000,
+   "deprecationDate": "2026-12-09"
   },
   {
    "id": "mistral-small-2503@vertex-ai:global",
@@ -23814,16 +24071,28 @@
      "output": 0.6
     },
     {
+     "tier": "batch",
+     "minPromptTokens": 0,
+     "input": 0.1,
+     "output": 0.3
+    },
+    {
      "tier": "flex",
      "minPromptTokens": 0,
      "input": 0.1,
      "output": 0.3
+    },
+    {
+     "tier": "priority",
+     "minPromptTokens": 0,
+     "input": 0.35,
+     "output": 1.05
     }
    ],
    "sources": [
     {
      "litellm": "nvidia.nemotron-nano-12b-v2",
-     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-nvidia-nvidia-nemotron-nano-12b-v2-vl-bf16.html"
+     "url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/us-east-1/index.json"
     }
    ],
    "contextWindow": 128000,
@@ -23928,16 +24197,28 @@
      "output": 0.24
     },
     {
+     "tier": "batch",
+     "minPromptTokens": 0,
+     "input": 0.03,
+     "output": 0.12
+    },
+    {
      "tier": "flex",
      "minPromptTokens": 0,
      "input": 0.03,
      "output": 0.12
+    },
+    {
+     "tier": "priority",
+     "minPromptTokens": 0,
+     "input": 0.11,
+     "output": 0.42
     }
    ],
    "sources": [
     {
      "litellm": "nvidia.nemotron-nano-3-30b",
-     "url": "https://aws.amazon.com/bedrock/pricing/"
+     "url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/us-east-1/index.json"
     }
    ],
    "contextWindow": 256000
@@ -24038,16 +24319,28 @@
      "output": 0.23
     },
     {
+     "tier": "batch",
+     "minPromptTokens": 0,
+     "input": 0.03,
+     "output": 0.12
+    },
+    {
      "tier": "flex",
      "minPromptTokens": 0,
      "input": 0.03,
      "output": 0.12
+    },
+    {
+     "tier": "priority",
+     "minPromptTokens": 0,
+     "input": 0.11,
+     "output": 0.4
     }
    ],
    "sources": [
     {
      "litellm": "nvidia.nemotron-nano-9b-v2",
-     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-nvidia-nvidia-nemotron-nano-9b-v2.html"
+     "url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/us-east-1/index.json"
     }
    ],
    "contextWindow": 128000,
@@ -24184,16 +24477,28 @@
      "output": 0.65
     },
     {
+     "tier": "batch",
+     "minPromptTokens": 0,
+     "input": 0.075,
+     "output": 0.325
+    },
+    {
      "tier": "flex",
      "minPromptTokens": 0,
      "input": 0.075,
      "output": 0.325
+    },
+    {
+     "tier": "priority",
+     "minPromptTokens": 0,
+     "input": 0.2625,
+     "output": 1.1375
     }
    ],
    "sources": [
     {
      "litellm": "nvidia.nemotron-super-3-120b",
-     "url": "https://aws.amazon.com/bedrock/pricing/"
+     "url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/us-east-1/index.json"
     }
    ],
    "contextWindow": 256000
@@ -24345,11 +24650,25 @@
      "cacheRead": 0.075,
      "input": 0.3,
      "output": 2.5
+    },
+    {
+     "tier": "batch",
+     "minPromptTokens": 0,
+     "input": 0.15,
+     "output": 1.25
+    },
+    {
+     "tier": "priority",
+     "minPromptTokens": 0,
+     "cacheRead": 0.13125,
+     "input": 0.525,
+     "output": 4.375
     }
    ],
    "sources": [
     {
-     "litellm": "global.amazon.nova-2-lite-v1:0"
+     "litellm": "global.amazon.nova-2-lite-v1:0",
+     "url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/us-east-1/index.json"
     }
    ],
    "contextWindow": 1000000
@@ -24418,11 +24737,25 @@
      "cacheRead": 0.075,
      "input": 0.3,
      "output": 2.5
+    },
+    {
+     "tier": "batch",
+     "minPromptTokens": 0,
+     "input": 0.15,
+     "output": 1.25
+    },
+    {
+     "tier": "priority",
+     "minPromptTokens": 0,
+     "cacheRead": 0.13125,
+     "input": 0.525,
+     "output": 4.375
     }
    ],
    "sources": [
     {
-     "litellm": "amazon.nova-2-lite-v1:0"
+     "litellm": "amazon.nova-2-lite-v1:0",
+     "url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/us-east-1/index.json"
     }
    ],
    "contextWindow": 1000000
@@ -24446,16 +24779,30 @@
      "output": 2.75
     },
     {
+     "tier": "batch",
+     "minPromptTokens": 0,
+     "input": 0.165,
+     "output": 1.375
+    },
+    {
      "tier": "flex",
      "minPromptTokens": 0,
      "cacheRead": 0.04125,
      "input": 0.165,
      "output": 1.375
+    },
+    {
+     "tier": "priority",
+     "minPromptTokens": 0,
+     "cacheRead": 0.144375,
+     "input": 0.5775,
+     "output": 4.8125
     }
    ],
    "sources": [
     {
-     "litellm": "us.amazon.nova-2-lite-v1:0"
+     "litellm": "us.amazon.nova-2-lite-v1:0",
+     "url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/us-east-1/index.json"
     }
    ],
    "contextWindow": 1000000
@@ -24531,12 +24878,24 @@
      "cacheRead": 0.3125,
      "input": 1.25,
      "output": 10
+    },
+    {
+     "tier": "batch",
+     "minPromptTokens": 0,
+     "input": 0.625,
+     "output": 5
+    },
+    {
+     "tier": "priority",
+     "minPromptTokens": 0,
+     "input": 2.1875,
+     "output": 17.5
     }
    ],
    "sources": [
     {
      "litellm": "amazon.nova-2-pro-preview-20251202-v1:0",
-     "url": "https://aws.amazon.com/nova/pricing/"
+     "url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/us-east-1/index.json"
     }
    ],
    "contextWindow": 1000000
@@ -24558,12 +24917,24 @@
      "cacheRead": 0.34375,
      "input": 1.375,
      "output": 11
+    },
+    {
+     "tier": "batch",
+     "minPromptTokens": 0,
+     "input": 0.6875,
+     "output": 5.5
+    },
+    {
+     "tier": "priority",
+     "minPromptTokens": 0,
+     "input": 2.40625,
+     "output": 19.25
     }
    ],
    "sources": [
     {
      "litellm": "us.amazon.nova-2-pro-preview-20251202-v1:0",
-     "url": "https://aws.amazon.com/nova/pricing/"
+     "url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/us-east-1/index.json"
     }
    ],
    "contextWindow": 1000000
@@ -24637,11 +25008,18 @@
      "cacheRead": 0.015,
      "input": 0.06,
      "output": 0.24
+    },
+    {
+     "tier": "batch",
+     "minPromptTokens": 0,
+     "input": 0.03,
+     "output": 0.12
     }
    ],
    "sources": [
     {
-     "litellm": "amazon.nova-lite-v1:0"
+     "litellm": "amazon.nova-lite-v1:0",
+     "url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/us-east-1/index.json"
     }
    ],
    "contextWindow": 300000
@@ -24663,11 +25041,18 @@
      "cacheRead": 0.015,
      "input": 0.06,
      "output": 0.24
+    },
+    {
+     "tier": "batch",
+     "minPromptTokens": 0,
+     "input": 0.03,
+     "output": 0.12
     }
    ],
    "sources": [
     {
-     "litellm": "us.amazon.nova-lite-v1:0"
+     "litellm": "us.amazon.nova-lite-v1:0",
+     "url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/us-east-1/index.json"
     }
    ],
    "contextWindow": 300000
@@ -24767,11 +25152,18 @@
      "cacheRead": 0.00875,
      "input": 0.035,
      "output": 0.14
+    },
+    {
+     "tier": "batch",
+     "minPromptTokens": 0,
+     "input": 0.0175,
+     "output": 0.07
     }
    ],
    "sources": [
     {
-     "litellm": "amazon.nova-micro-v1:0"
+     "litellm": "amazon.nova-micro-v1:0",
+     "url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/us-east-1/index.json"
     }
    ],
    "contextWindow": 128000
@@ -24793,11 +25185,18 @@
      "cacheRead": 0.00875,
      "input": 0.035,
      "output": 0.14
+    },
+    {
+     "tier": "batch",
+     "minPromptTokens": 0,
+     "input": 0.0175,
+     "output": 0.07
     }
    ],
    "sources": [
     {
-     "litellm": "us.amazon.nova-micro-v1:0"
+     "litellm": "us.amazon.nova-micro-v1:0",
+     "url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/us-east-1/index.json"
     }
    ],
    "contextWindow": 128000
@@ -24845,11 +25244,25 @@
      "cacheRead": 0.625,
      "input": 2.5,
      "output": 12.5
+    },
+    {
+     "tier": "batch",
+     "minPromptTokens": 0,
+     "input": 1.25,
+     "output": 6.25
+    },
+    {
+     "tier": "priority",
+     "minPromptTokens": 0,
+     "cacheRead": 1.09375,
+     "input": 4.375,
+     "output": 21.875
     }
    ],
    "sources": [
     {
-     "litellm": "amazon.nova-premier-v1:0"
+     "litellm": "amazon.nova-premier-v1:0",
+     "url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/us-east-1/index.json"
     }
    ],
    "contextWindow": 1000000
@@ -24940,16 +25353,30 @@
      "output": 3.2
     },
     {
+     "tier": "batch",
+     "minPromptTokens": 0,
+     "input": 0.4,
+     "output": 1.6
+    },
+    {
      "tier": "flex",
      "minPromptTokens": 0,
      "cacheRead": 0.1,
      "input": 0.4,
      "output": 1.6
+    },
+    {
+     "tier": "priority",
+     "minPromptTokens": 0,
+     "cacheRead": 0.35,
+     "input": 1.4,
+     "output": 5.6
     }
    ],
    "sources": [
     {
-     "litellm": "amazon.nova-pro-v1:0"
+     "litellm": "amazon.nova-pro-v1:0",
+     "url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/us-east-1/index.json"
     }
    ],
    "contextWindow": 300000
@@ -24973,16 +25400,30 @@
      "output": 3.2
     },
     {
+     "tier": "batch",
+     "minPromptTokens": 0,
+     "input": 0.4,
+     "output": 1.6
+    },
+    {
      "tier": "flex",
      "minPromptTokens": 0,
      "cacheRead": 0.1,
      "input": 0.4,
      "output": 1.6
+    },
+    {
+     "tier": "priority",
+     "minPromptTokens": 0,
+     "cacheRead": 0.35,
+     "input": 1.4,
+     "output": 5.6
     }
    ],
    "sources": [
     {
-     "litellm": "us.amazon.nova-pro-v1:0"
+     "litellm": "us.amazon.nova-pro-v1:0",
+     "url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/us-east-1/index.json"
     }
    ],
    "contextWindow": 300000
@@ -25945,16 +26386,28 @@
      "output": 0.6
     },
     {
+     "tier": "batch",
+     "minPromptTokens": 0,
+     "input": 0.075,
+     "output": 0.3
+    },
+    {
      "tier": "flex",
      "minPromptTokens": 0,
      "input": 0.075,
      "output": 0.3
+    },
+    {
+     "tier": "priority",
+     "minPromptTokens": 0,
+     "input": 0.2625,
+     "output": 1.05
     }
    ],
    "sources": [
     {
      "litellm": "writer.palmyra-vision-7b",
-     "url": "https://aws.amazon.com/bedrock/pricing/"
+     "url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/us-east-1/index.json"
     }
    ],
    "contextWindow": 4096
@@ -26525,16 +26978,28 @@
      "output": 0.6
     },
     {
+     "tier": "batch",
+     "minPromptTokens": 0,
+     "input": 0.075,
+     "output": 0.3
+    },
+    {
      "tier": "flex",
      "minPromptTokens": 0,
      "input": 0.075,
      "output": 0.3
+    },
+    {
+     "tier": "priority",
+     "minPromptTokens": 0,
+     "input": 0.2625,
+     "output": 1.05
     }
    ],
    "sources": [
     {
      "litellm": "qwen.qwen3-32b-v1:0",
-     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-qwen-qwen3-32b.html"
+     "url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/us-east-1/index.json"
     }
    ],
    "contextWindow": 32768
@@ -26555,12 +27020,24 @@
      "minPromptTokens": 0,
      "input": 0.15,
      "output": 0.6
+    },
+    {
+     "tier": "batch",
+     "minPromptTokens": 0,
+     "input": 0.075,
+     "output": 0.3
+    },
+    {
+     "tier": "priority",
+     "minPromptTokens": 0,
+     "input": 0.2625,
+     "output": 1.05
     }
    ],
    "sources": [
     {
      "litellm": "qwen.qwen3-coder-30b-a3b-v1:0",
-     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-qwen-qwen3-coder-30b-a3b-instruct.html"
+     "url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/us-east-1/index.json"
     }
    ],
    "contextWindow": 262144,
@@ -26869,16 +27346,28 @@
      "output": 1.2
     },
     {
+     "tier": "batch",
+     "minPromptTokens": 0,
+     "input": 0.25,
+     "output": 0.6
+    },
+    {
      "tier": "flex",
      "minPromptTokens": 0,
      "input": 0.25,
      "output": 0.6
+    },
+    {
+     "tier": "priority",
+     "minPromptTokens": 0,
+     "input": 0.875,
+     "output": 2.1
     }
    ],
    "sources": [
     {
      "litellm": "qwen.qwen3-coder-next",
-     "url": "https://aws.amazon.com/bedrock/pricing/"
+     "url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/us-east-1/index.json"
     }
    ],
    "contextWindow": 256000
@@ -27263,12 +27752,24 @@
      "minPromptTokens": 0,
      "input": 0.53,
      "output": 2.66
+    },
+    {
+     "tier": "batch",
+     "minPromptTokens": 0,
+     "input": 0.26,
+     "output": 1.33
+    },
+    {
+     "tier": "priority",
+     "minPromptTokens": 0,
+     "input": 0.93,
+     "output": 4.66
     }
    ],
    "sources": [
     {
      "litellm": "qwen.qwen3-vl-235b-a22b",
-     "url": "https://aws.amazon.com/bedrock/pricing/"
+     "url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/us-east-1/index.json"
     }
    ],
    "contextWindow": 256000
@@ -27854,16 +28355,28 @@
      "output": 1.85
     },
     {
+     "tier": "batch",
+     "minPromptTokens": 0,
+     "input": 0.31,
+     "output": 0.925
+    },
+    {
      "tier": "flex",
      "minPromptTokens": 0,
      "input": 0.31,
      "output": 0.925
+    },
+    {
+     "tier": "priority",
+     "minPromptTokens": 0,
+     "input": 1.085,
+     "output": 3.2375
     }
    ],
    "sources": [
     {
      "litellm": "deepseek.v3.2",
-     "url": "https://aws.amazon.com/bedrock/pricing/"
+     "url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/us-east-1/index.json"
     }
    ],
    "contextWindow": 164000
@@ -27918,15 +28431,28 @@
      "output": 1.85
     },
     {
+     "tier": "batch",
+     "minPromptTokens": 0,
+     "input": 0.31,
+     "output": 0.925
+    },
+    {
      "tier": "flex",
      "minPromptTokens": 0,
      "input": 0.31,
      "output": 0.925
+    },
+    {
+     "tier": "priority",
+     "minPromptTokens": 0,
+     "input": 1.085,
+     "output": 3.2375
     }
    ],
    "sources": [
     {
-     "litellm": "us.deepseek.v3.2"
+     "litellm": "us.deepseek.v3.2",
+     "url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/us-east-1/index.json"
     }
    ],
    "contextWindow": 163840
@@ -28097,16 +28623,28 @@
      "output": 0.04
     },
     {
+     "tier": "batch",
+     "minPromptTokens": 0,
+     "input": 0.02,
+     "output": 0.02
+    },
+    {
      "tier": "flex",
      "minPromptTokens": 0,
      "input": 0.02,
      "output": 0.02
+    },
+    {
+     "tier": "priority",
+     "minPromptTokens": 0,
+     "input": 0.07,
+     "output": 0.07
     }
    ],
    "sources": [
     {
      "litellm": "mistral.voxtral-mini-3b-2507",
-     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-mistral-ai-voxtral-mini-3b-2507.html"
+     "url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/us-east-1/index.json"
     }
    ],
    "contextWindow": 32768,
@@ -28130,16 +28668,28 @@
      "output": 0.3
     },
     {
+     "tier": "batch",
+     "minPromptTokens": 0,
+     "input": 0.05,
+     "output": 0.15
+    },
+    {
      "tier": "flex",
      "minPromptTokens": 0,
      "input": 0.05,
      "output": 0.15
+    },
+    {
+     "tier": "priority",
+     "minPromptTokens": 0,
+     "input": 0.17,
+     "output": 0.52
     }
    ],
    "sources": [
     {
      "litellm": "mistral.voxtral-small-24b-2507",
-     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-mistral-ai-voxtral-small-24b-2507.html"
+     "url": "https://pricing.us-east-1.amazonaws.com/offers/v1.0/aws/AmazonBedrock/current/us-east-1/index.json"
     }
    ],
    "contextWindow": 32768,
