@@ -28,13 +28,24 @@ jobs:
         with: { node-version: 22, cache: npm }
       - run: npm ci
 
+      # 前回の正常rawを維持し、片方の取得障害でも提供条件を変えない。
+      - uses: actions/cache/restore@v4
+        with:
+          path: |
+            raw/litellm.json
+            raw/litellm.meta.json
+            raw/models-dev.catalog.json
+            raw/models-dev.meta.json
+          key: prices-raw-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: prices-raw-
+
       - id: pipeline
         name: Pipeline (fetch → select → normalize → cross-check → validate → diff)
         run: npm run pipeline -- ${{ inputs.force_stop && '--force-stop' || '' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - run: npm test
+      - run: npm run check
 
       # OpenRouter の生データは規約上再配布しないため artifact に含めない
       - uses: actions/upload-artifact@v4
@@ -44,9 +55,21 @@ jobs:
           path: |
             raw/litellm.json
             raw/litellm.meta.json
+            raw/models-dev.catalog.json
+            raw/models-dev.meta.json
             raw/fx.json
             out/
           retention-days: 14
+
+      - uses: actions/cache/save@v4
+        if: always()
+        with:
+          path: |
+            raw/litellm.json
+            raw/litellm.meta.json
+            raw/models-dev.catalog.json
+            raw/models-dev.meta.json
+          key: prices-raw-${{ github.run_id }}-${{ github.run_attempt }}
 
       - name: Publish (gate passed → commit to main)
         if: steps.pipeline.outputs.status == 'pass' && steps.pipeline.outputs.changed == 'true'
@@ -73,8 +96,8 @@ jobs:
             --title "価格データの更新を止めました(${{ steps.pipeline.outputs.snapshot }})" \
             --body-file out/report.md
 
-      - name: Log notes to issue
-        if: steps.pipeline.outputs.status == 'pass' && steps.pipeline.outputs.notes == 'true'
+      - name: Log notes or unchanged gate failure to issue
+        if: (steps.pipeline.outputs.status == 'pass' && steps.pipeline.outputs.notes == 'true') || (steps.pipeline.outputs.status == 'stop' && steps.pipeline.outputs.changed == 'false')
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |

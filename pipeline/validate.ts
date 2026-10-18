@@ -1,9 +1,22 @@
-import type { Model, PriceData, PriceRule } from "../shared/types.ts";
+import type { Model, PriceData, PriceRule, ValueSource } from "../shared/types.ts";
 import type { Gates } from "./config.ts";
+import { releaseDate } from "./recommend.ts";
 
 const PLATFORMS = ["openai", "anthropic", "gemini-api", "vertex-ai", "bedrock", "azure"];
 const TIERS = ["standard", "batch", "flex", "priority"];
 const PRICE_FIELDS = ["input", "output", "cacheRead", "cacheWrite", "cacheWrite1h", "perImage", "imageOutput"] as const;
+const validSource = (s: ValueSource) => !!s && ["litellm", "models.dev"].includes(s.source) &&
+  typeof s.modelId === "string" && !!s.modelId && typeof s.url === "string" && /^https:\/\//.test(s.url) &&
+  (s.providerId === undefined || typeof s.providerId === "string") &&
+  (s.checkedAt === undefined || !!releaseDate(s.checkedAt)) &&
+  (s.references === undefined || Array.isArray(s.references) && s.references.every(url => typeof url === "string" && /^https:\/\//.test(url)));
+
+export function ruleValues(rule: PriceRule): Record<string, number> {
+  const values: Record<string, number> = {};
+  for (const field of PRICE_FIELDS) if (rule[field] !== undefined) values[field] = rule[field]!;
+  for (const [res, price] of Object.entries(rule.perImageByRes ?? {})) values["perImageByRes." + res] = price;
+  return values;
+}
 
 /** 出力データの構造チェック(JSON Schema 相当の最低限) */
 export function validateSchema(d: PriceData): string[] {
@@ -11,6 +24,13 @@ export function validateSchema(d: PriceData): string[] {
   if (d.schemaVersion !== 1) errs.push("schemaVersion が 1 ではない");
   if (!/^\d{4}-\d{2}-\d{2}$/.test(d.snapshot)) errs.push("snapshot が日付ではない");
   if (!(d.sources?.fx?.rate > 0)) errs.push("為替レートが正の数ではない");
+  const md = d.sources?.modelsDev;
+  if (md) {
+    if (md.url !== "https://models.dev/catalog.json" || !/^[a-f0-9]{64}$/.test(md.sha256) ||
+        !Number.isFinite(md.bytes) || md.bytes <= 0 || !Number.isFinite(Date.parse(md.fetchedAt)) ||
+        (md.stale !== undefined && typeof md.stale !== "boolean")) errs.push("models.dev の出典メタ情報が不正");
+    for (const count of Object.values(md.counts ?? {})) if (!Number.isSafeInteger(count) || count < 0) errs.push("models.dev の取得件数が不正");
+  }
   if (!Array.isArray(d.models) || !d.models.length) errs.push("models が空");
   const ids = new Set<string>();
   for (const m of d.models ?? []) {
@@ -21,12 +41,31 @@ export function validateSchema(d: PriceData): string[] {
     if (!PLATFORMS.includes(m.platform)) errs.push(`${where}: platform が不正`);
     if (m.category !== "llm" && m.category !== "image") errs.push(`${where}: category が不正`);
     if (!m.name || !m.vendor) errs.push(`${where}: name / vendor が空`);
+    if (m.releaseDate !== undefined && !releaseDate(m.releaseDate)) errs.push(`${where}: releaseDate が不正`);
+    if (m.releaseDateSource && (!m.releaseDate || !validSource(m.releaseDateSource) ||
+        !["month", "day", "timestamp"].includes(m.releaseDateSource.precision) ||
+        (m.releaseDate?.length === 7 ? "month" : m.releaseDate?.length === 10 ? "day" : "timestamp") !== m.releaseDateSource.precision))
+      errs.push(`${where}: リリース日の出典・精度が不正`);
+    if (m.canonicalModelId !== undefined && (typeof m.canonicalModelId !== "string" || !m.canonicalModelId.includes("/"))) errs.push(`${where}: canonicalModelId が不正`);
+    for (const field of ["inputLimit", "totalContext", "outputLimit"] as const)
+      if (m[field] !== undefined && (!Number.isFinite(m[field]) || m[field]! < 0)) errs.push(`${where}: ${field} が不正`);
+    for (const source of Object.values(m.metadataSources ?? {})) if (source && !validSource(source)) errs.push(`${where}: 仕様の出典が不正`);
+    if (m.providerStatus !== undefined && !["alpha", "beta", "deprecated"].includes(m.providerStatus)) errs.push(`${where}: providerStatus が不正`);
+    if (m.recommendationEligible !== undefined && typeof m.recommendationEligible !== "boolean") errs.push(`${where}: recommendationEligible が不正`);
+    if (!Array.isArray(m.sources)) errs.push(`${where}: sources が不正`);
+    for (const source of Array.isArray(m.sources) ? m.sources : []) if (source.modelsDev && (!source.modelsDev.providerId || !source.modelsDev.modelId ||
+        (source.modelsDev.status !== undefined && !["alpha", "beta", "deprecated"].includes(source.modelsDev.status))))
+      errs.push(`${where}: models.dev 元IDが不正`);
     if (!Array.isArray(m.prices)) errs.push(`${where}: prices がない`);
-    for (const r of m.prices ?? []) {
+    for (const r of Array.isArray(m.prices) ? m.prices : []) {
       if (!TIERS.includes(r.tier)) errs.push(`${where}: tier が不正`);
-      if (!(r.minPromptTokens >= 0)) errs.push(`${where}: minPromptTokens が不正`);
+      if (!Number.isSafeInteger(r.minPromptTokens) || r.minPromptTokens < 0) errs.push(`${where}: minPromptTokens が不正`);
       const vals: unknown[] = PRICE_FIELDS.map((f) => r[f]).concat(Object.values(r.perImageByRes ?? {}));
       for (const v of vals) if (v != null && !(typeof v === "number" && Number.isFinite(v) && v >= 0)) errs.push(`${where}: 単価が負またはNaN`);
+      for (const [field, source] of Object.entries(r.provenance ?? {}))
+        if (!source || !validSource(source) || r[field as keyof PriceRule] === undefined) errs.push(`${where}: 価格の採用元が不正`);
+      for (const sources of Object.values(r.comparedSources ?? {}))
+        if (!Array.isArray(sources) || sources.some(s => !validSource(s))) errs.push(`${where}: 価格の照合元が不正`);
     }
   }
   return errs;
@@ -52,6 +91,15 @@ export function evaluateGates(prev: PriceData | null, next: PriceData, gates: Ga
     const a = prev.sources[src].bytes, b = next.sources[src].bytes;
     if (a && b != null && b < a * gates.fetch.minSizeRatio) stop.push(`取得失敗: ${src} のサイズが前回の${Math.round((b / a) * 100)}%`);
   }
+  if (prev.sources.modelsDev && !next.sources.modelsDev) stop.push("models.dev の出典が欠落");
+  const previousMd = prev.sources.modelsDev, nextMd = next.sources.modelsDev;
+  if (previousMd && nextMd) {
+    if (nextMd.bytes < previousMd.bytes * gates.fetch.minSizeRatio) stop.push("models.dev の取得サイズが急減");
+    for (const [provider, before] of Object.entries(previousMd.counts ?? {}))
+      if (before && (nextMd.counts?.[provider] ?? 0) < before * gates.fetch.minSizeRatio) stop.push(`models.dev ${provider} の取得件数が急減`);
+  }
+  if (next.sources.litellm.stale) notes.push("LiteLLM: 前回の正常値を使用");
+  if (nextMd?.stale) notes.push("models.dev: 前回の正常値を使用");
 
   const prevCount = prev.models.length, nextCount = next.models.length;
   if (prevCount && ((prevCount - nextCount) / prevCount) * 100 >= gates.count.maxDropPct)
@@ -64,10 +112,9 @@ export function evaluateGates(prev: PriceData | null, next: PriceData, gates: Ga
     const rules = new Map(nm.prices.map((r) => [ruleKey(r), r]));
     for (const pr of pm.prices) {
       const nr = rules.get(ruleKey(pr));
-      for (const f of ["input", "output", "perImage", "imageOutput"] as const) {
-        const a = pr[f];
+      for (const [f, a] of Object.entries(ruleValues(pr))) {
         if (!(a && a > 0)) continue;
-        const b = nr?.[f];
+        const b = nr ? ruleValues(nr)[f] : undefined;
         const label = `${pm.id} ${pr.tier}${pr.minPromptTokens ? `(>${pr.minPromptTokens / 1000}K)` : ""} ${f}`;
         if (!b) {
           stop.push(`単価が0になった: ${label} ${a} → ${b ?? "欠落"}`);

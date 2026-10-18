@@ -1,6 +1,6 @@
 # 品質ゲートのしきい値(初期値。運用しながら調整する)
 fetch:
-  minSizeRatio: 0.5        # 取得サイズが前回の50%未満なら止める
+  minSizeRatio: 0.5        # ソース別bytes・models.dev provider別件数が前回の50%未満なら止める
 count:
   maxDropPct: 10           # 対象モデル数が前回から10%以上減ったら止める
 price:

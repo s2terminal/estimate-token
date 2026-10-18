@@ -315,7 +315,8 @@ async function boot() {
   }
 
   const fxs = DATA.sources.fx;
-  $("srcNote").innerHTML = `データ: LiteLLM <code>${esc(DATA.sources.litellm.commit.slice(0, 12))}</code>、為替 ${esc(fxs.rate)} 円(${esc(fxs.date)})、生成 ${esc(DATA.generatedAt)}。対象 ${DATA.models.length} モデル。`;
+  const md = DATA.sources.modelsDev;
+  $("srcNote").innerHTML = `データ: LiteLLM <code>${esc(DATA.sources.litellm.commit.slice(0, 12))}</code>${DATA.sources.litellm.stale ? "（前回値）" : ""}${md ? `、<a href="https://models.dev/catalog.json" target="_blank" rel="noopener">models.dev</a> <code>${esc(md.sha256.slice(0, 12))}</code>（取得 ${esc(md.fetchedAt)}${md.stale ? "・前回値" : ""}）` : ""}、為替 ${esc(fxs.rate)} 円(${esc(fxs.date)})、生成 ${esc(DATA.generatedAt)}。対象 ${DATA.models.length} モデル。<a href="${import.meta.env.BASE_URL}licenses/models-dev.txt">models.dev MIT License</a>。`;
   $("app").hidden = false;
   if (window.innerWidth > 900) ($("modelsBox") as HTMLDetailsElement).open = true;
   bind();

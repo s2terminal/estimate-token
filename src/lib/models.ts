@@ -19,6 +19,8 @@ export function modelFlags(m: Model, d: PriceData): Flag[] {
   const f: Flag[] = [];
   if (isNew(m, d)) f.push({ t: "新着", k: "promo" });
   if (m.needsReview) f.push({ t: "要確認(別ソースと価格に差)", k: "warn" });
+  if (m.providerStatus === "deprecated" || m.sources.some(s => s.modelsDev?.status === "deprecated"))
+    f.push({ t: "提供元の情報では廃止", k: "warn" });
   return f;
 }
 

@@ -6,7 +6,18 @@ export type Category = "llm" | "image";
 export type Tier = "standard" | "batch" | "flex" | "priority";
 export type ModelStatus = "active" | "deprecated";
 
+export type PriceField = "input" | "output" | "cacheRead" | "cacheWrite" | "cacheWrite1h" | "perImage" | "imageOutput" | "perImageByRes";
+export interface ValueSource {
+  source: "litellm" | "models.dev";
+  modelId: string;
+  providerId?: string;
+  url: string;
+  checkedAt?: string;
+  references?: string[];
+}
 export interface PriceRule {
+  provenance?: Partial<Record<PriceField, ValueSource>>;
+  comparedSources?: Partial<Record<PriceField, ValueSource[]>>;
   tier: Tier;
   /** 長文価格の開始点。この値を超える入力tokensで適用(0 は通常価格) */
   minPromptTokens: number;
@@ -28,6 +39,7 @@ export interface PriceRule {
 }
 
 export interface ModelSource {
+  modelsDev?: { providerId: string; modelId: string; status?: "alpha" | "beta" | "deprecated" };
   litellm?: string;
   aliases?: string[];
   url?: string;
@@ -41,7 +53,19 @@ export interface Model {
   platform: Platform;
   region: string;
   category: Category;
+  /** 互換フィールド。従来どおり入力上限を表す。 */
   contextWindow?: number;
+  inputLimit?: number;
+  totalContext?: number;
+  outputLimit?: number;
+  canonicalModelId?: string;
+  modalities?: { input: string[]; output: string[] };
+  reasoning?: boolean;
+  toolCall?: boolean;
+  metadataSources?: Partial<Record<"inputLimit" | "totalContext" | "outputLimit" | "modalities" | "reasoning" | "toolCall", ValueSource>>;
+  providerStatus?: "alpha" | "beta" | "deprecated";
+  recommendationEligible?: boolean;
+  releaseDateSource?: ValueSource & { precision: "month" | "day" | "timestamp" };
   /** ソースに明記されたリリース日/日時。firstSeen やモデルIDの日付とは別 */
   releaseDate?: string;
   deprecationDate?: string;
@@ -61,9 +85,10 @@ export interface PriceData {
   /** 初回取り込み日。これより後の firstSeen を「新着」とみなす */
   baseline: string;
   sources: {
-    litellm: { commit: string; fetchedAt: string; bytes?: number };
+    litellm: { commit: string; fetchedAt: string; bytes?: number; records?: number; stale?: boolean };
+    modelsDev?: { url: string; fetchedAt: string; sha256: string; bytes: number; etag?: string; stale?: boolean; counts?: Record<string, number> };
     /** 照合にだけ使う。値は公開しない */
-    openrouter: { fetchedAt: string; bytes?: number };
+    openrouter: { fetchedAt: string; bytes?: number; stale?: boolean };
     fx: { pair: "USDJPY"; rate: number; date: string; stale?: boolean };
   };
   models: Model[];

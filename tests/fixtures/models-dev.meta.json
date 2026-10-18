@@ -1,0 +1,21 @@
+{
+  "url": "https://models.dev/catalog.json",
+  "fetchedAt": "2026-10-18T05:58:07.493Z",
+  "sha256": "bb25c829fd38fae6f0b88f8807451aaf51d708d23296ae7b8d2701d2b67a624a",
+  "bytes": 6287005,
+  "etag": "W/\"bb25c829fd38fae6f0b88f8807451aaf\"",
+  "extraction": "Selected original API records; unchanged field values",
+  "counts": {
+    "models": 553,
+    "openai": 53,
+    "anthropic": 17,
+    "google": 40,
+    "google-vertex": 61,
+    "google-vertex-anthropic": 17,
+    "amazon-bedrock": 199,
+    "azure": 97,
+    "azure-cognitive-services": 87
+  },
+  "fixtureSha256": "6fcb1f0e7b77f3faec8cbd02331a4b1a2f47d6392e92409a2b07bad6f9ad5c7b",
+  "fixtureBytes": 179361
+}
