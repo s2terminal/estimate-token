@@ -97,3 +97,46 @@ jobs:
           num=$(gh issue list --state open --limit 200 --json number,title \
             --jq "map(select(.title == env.LOG_ISSUE_TITLE)) | .[0].number // empty")
           [ -n "$num" ] && gh issue comment "$num" --body "日次更新が失敗しました: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" || true
+
+      - name: Notify Slack (Incoming Webhook)
+        if: always()
+        continue-on-error: true
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          JOB_STATUS: ${{ job.status }}
+          PIPELINE_STATUS: ${{ steps.pipeline.outputs.status }}
+          CHANGED: ${{ steps.pipeline.outputs.changed }}
+          HAS_NOTES: ${{ steps.pipeline.outputs.notes }}
+          SNAPSHOT: ${{ steps.pipeline.outputs.snapshot }}
+          REPOSITORY: ${{ github.repository }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          if [ -z "$SLACK_WEBHOOK_URL" ]; then
+            echo "SLACK_WEBHOOK_URL is not configured; skipping Slack notification."
+            exit 0
+          fi
+
+          if [ "$JOB_STATUS" = "failure" ]; then
+            result="❌ 日次の価格更新が失敗しました。"
+          elif [ "$JOB_STATUS" = "cancelled" ]; then
+            result="⏹️ 日次の価格更新がキャンセルされました。"
+          elif [ "$PIPELINE_STATUS" = "stop" ]; then
+            result="⚠️ 品質ゲートで価格更新を停止しました。"
+            if [ "$CHANGED" = "true" ]; then
+              result="$result 確認用PRを作成しました。"
+            fi
+          elif [ "$CHANGED" = "true" ]; then
+            result="✅ 日次の価格更新をmainへ反映しました。"
+          else
+            result="✅ 日次の価格更新が完了しました（変更なし）。"
+          fi
+
+          if [ "$HAS_NOTES" = "true" ]; then
+            result="$result 要確認の記録があります（Actionsのレポートを参照）。"
+          fi
+          payload=$(jq -n --arg result "$result" --arg repository "$REPOSITORY" \
+            --arg snapshot "$SNAPSHOT" --arg url "$RUN_URL" \
+            '{text: ($result + "\nリポジトリ: " + $repository + (if $snapshot == "" then "" else "\n対象日: " + $snapshot end) + "\n実行ログ: " + $url)}')
+          curl --fail --silent --show-error --connect-timeout 5 --max-time 15 \
+            --header 'Content-Type: application/json' --data "$payload" \
+            --output /dev/null "$SLACK_WEBHOOK_URL"
