@@ -12,6 +12,7 @@ Geminiの画像生成は公式の解像度別トークン数と画像出力単�
 | --- | --- |
 | `pipeline/` | 価格データの日次更新(fetch → select → normalize → merge → recommend → cross-check → validate → diff) |
 | `config/` | 対象の選別規則・表示名・おすすめの系列(`catalog.yaml`)、品質ゲートのしきい値(`gates.yaml`) |
+| `config/models-dev-policy.yaml` | models.devの価格補完・新規追加・previewのおすすめ採用・共通モデルID対応の条件。項目の説明は[設定ファイル](docs/models-dev.md#設定ファイル)を参照 |
 | `config/image-tokens.json` | 画像トークンの換算プロファイル、モデルとの対応、出典・確認日、未対応の理由 |
 | `shared/` | パイプラインと画面で共有する価格データの型・画像換算設定 |
 | `src/main.ts` | 画面の起動・状態管理・イベント処理 |

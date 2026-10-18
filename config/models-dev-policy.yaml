@@ -1,3 +1,8 @@
+# models.dev由来のデータを採用する条件を管理する。
+# offers: 価格補完・新規追加を許可する提供条件、根拠資料と確認日。
+# recommendationPreviews: おすすめに含める確認済みpreview。価格採用には使わない。
+# metadata: 既存モデルIDと共通モデルIDの明示対応。価格の照合には使わない。
+# 各項目の意味と更新方法: docs/models-dev.md「設定ファイル」
 # 価格は完全一致した直販の提供条件に限って補完する。
 # 調査と採用範囲: https://github.com/s2terminal/estimate-token/issues/8
 # 新しいモデルは公開APIでの利用可能性と課金条件を確認してから追加する。

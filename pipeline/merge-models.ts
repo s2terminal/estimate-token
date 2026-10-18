@@ -16,7 +16,7 @@ export interface VerifiedOffer {
   /** 汎用cache_writeを5分料金として採用できる場合だけ指定する。 */
   cacheWriteTtlMinutes?: 5;
 }
-export interface ModelMappings {
+export interface ModelsDevPolicy {
   offers: VerifiedOffer[];
   /** 既存のお勧めで採用を確認済みのpreview。価格採用の許可には使用しない。 */
   recommendationPreviews?: string[];
@@ -31,7 +31,7 @@ const rulesConflict = (a: PriceRule[], b: PriceRule[]) => a.some(ar => {
   const br = b.find(r => r.tier === ar.tier && r.minPromptTokens === ar.minPromptTokens);
   return br && FIELDS.some(f => ar[f] !== undefined && br[f] !== undefined && !pricesEqual(ar[f]!, br[f]!));
 });
-const verified = (o: ModelsDevOffer, mappings: ModelMappings) => mappings.offers.find(v => v.providerId === o.providerId && v.modelId === o.modelId);
+const verified = (o: ModelsDevOffer, policy: ModelsDevPolicy) => policy.offers.find(v => v.providerId === o.providerId && v.modelId === o.modelId);
 const current = (o: ModelsDevOffer, today: string) => {
   const date = releaseDate(o.model.release_date);
   return o.model.status !== "deprecated" && o.model.status !== "alpha" && !!date &&
@@ -49,12 +49,12 @@ function eligible(o: ModelsDevOffer, v: VerifiedOffer | undefined, today: string
   if (o.model.cost?.context_over_200k && !o.model.cost.tiers?.length) return false;
   return JSON.stringify([...v.promptThresholds].sort((a,b) => a-b)) === JSON.stringify(o.rules.map(r => r.minPromptTokens));
 }
-function enrich(m: Model, matches: ModelsDevOffer[], data: NormalizedModelsDev, mappings: ModelMappings, notes: string[]) {
+function enrich(m: Model, matches: ModelsDevOffer[], data: NormalizedModelsDev, policy: ModelsDevPolicy, notes: string[]) {
   const primary = m.sources.find(s => s.litellm)?.litellm;
   const lab = ({ OpenAI: "openai", Anthropic: "anthropic", Google: "google" } as Record<string, string>)[m.vendor];
   const exact = primary && lab ? `${lab}/${nativeId(primary)}` : "";
   const ids = new Set(matches.map(o => o.canonicalModelId).filter((id): id is string => !!id && !!data.catalog.models[id]));
-  const mapped = mappings.metadata[m.id];
+  const mapped = policy.metadata[m.id];
   if (mapped && !data.catalog.models[mapped]) notes.push(`${m.id}: 確認済み共通モデルの参照先なし ${mapped}`);
   if (mapped && data.catalog.models[mapped]) ids.add(mapped);
   if (exact && data.catalog.models[exact]) ids.add(exact);
@@ -102,9 +102,9 @@ function enrich(m: Model, matches: ModelsDevOffer[], data: NormalizedModelsDev, 
       if (value !== undefined) { m[target] = value; m.metadataSources[target] = ref(matches[0]); }
     }
     m.providerStatus = matches[0].model.status;
-    const offer = matches[0], mapping = verified(offer, mappings);
+    const offer = matches[0], mapping = verified(offer, policy);
     if (["alpha", "deprecated"].includes(offer.model.status ?? "") ||
-        ((offer.model.status === "beta" || /preview/i.test(offer.modelId)) && !mapping?.allowPreview && !mappings.recommendationPreviews?.includes(m.id)))
+        ((offer.model.status === "beta" || /preview/i.test(offer.modelId)) && !mapping?.allowPreview && !policy.recommendationPreviews?.includes(m.id)))
       m.recommendationEligible = false;
   }
   if (canonical || matches.length) {
@@ -114,7 +114,7 @@ function enrich(m: Model, matches: ModelsDevOffer[], data: NormalizedModelsDev, 
       m.sources.push({ modelsDev: { providerId: o.providerId, modelId: o.modelId, ...(o.model.status ? { status: o.model.status } : {}) }, url: MODELS_DEV_URL });
   }
 }
-export function mergeModels(models: Model[], data: NormalizedModelsDev, mappings: ModelMappings, catalog: Catalog, today: string,
+export function mergeModels(models: Model[], data: NormalizedModelsDev, policy: ModelsDevPolicy, catalog: Catalog, today: string,
   options: { blockedOffers?: Set<string> } = {}): { models: Model[]; notes: string[] } {
   const notes = [...data.notes];
   const byApp = new Map<string, ModelsDevOffer[]>();
@@ -123,7 +123,7 @@ export function mergeModels(models: Model[], data: NormalizedModelsDev, mappings
     const key = m.sources.find(s => s.litellm)?.litellm;
     const previous = m.sources.find(s => s.modelsDev)?.modelsDev;
     const matches = (byApp.get(m.id) ?? []).filter(o => key ? nativeId(key) === o.modelId : previous?.providerId === o.providerId && previous.modelId === o.modelId);
-    enrich(m, matches, data, mappings, notes);
+    enrich(m, matches, data, policy, notes);
     let conflict = false;
     for (let i = 0; i < matches.length; i++) for (let j = i + 1; j < matches.length; j++) {
       if (rulesConflict(matches[i].rules, matches[j].rules)) {
@@ -138,7 +138,7 @@ export function mergeModels(models: Model[], data: NormalizedModelsDev, mappings
       }
     }
     for (const o of matches) {
-      const comparable = eligible(o, verified(o, mappings), today);
+      const comparable = eligible(o, verified(o, policy), today);
       if (!["openai", "anthropic", "google"].includes(o.providerId))
         notes.push(`${m.id}: ${o.providerId}/${o.modelId} の地域・サービス条件は未確認、価格は自動採用しない`);
       for (const rule of o.rules) {
@@ -147,7 +147,7 @@ export function mergeModels(models: Model[], data: NormalizedModelsDev, mappings
         for (const field of FIELDS) {
           const a = existing[field], b = rule[field];
           if (a === undefined || b === undefined) continue;
-          if (pricesEqual(a, b) && comparable && (field !== "cacheWrite" || verified(o, mappings)?.cacheWriteTtlMinutes === 5)) {
+          if (pricesEqual(a, b) && comparable && (field !== "cacheWrite" || verified(o, policy)?.cacheWriteTtlMinutes === 5)) {
             existing.comparedSources ??= {};
             existing.comparedSources[field] ??= [];
             if (!existing.comparedSources[field]!.some(s => s.providerId === o.providerId && s.modelId === o.modelId))
@@ -161,7 +161,7 @@ export function mergeModels(models: Model[], data: NormalizedModelsDev, mappings
     }
     if (conflict) { m.needsReview = true; continue; }
     for (const o of matches) {
-      const v = verified(o, mappings);
+      const v = verified(o, policy);
       if (!eligible(o, v, today) || m.category !== "llm" || m.status !== "active") continue;
       if (m.prices.some(r => r.tier === "standard" && !v.promptThresholds.includes(r.minPromptTokens))) {
         notes.push(`${m.id}: 長文価格ルールの集合が不一致。補完を保留`); continue;
@@ -186,7 +186,7 @@ export function mergeModels(models: Model[], data: NormalizedModelsDev, mappings
     if (options.blockedOffers?.has(o.platform + "/" + o.modelId)) {
       notes.push(`${o.providerId}/${o.modelId}: LiteLLMで既知の廃止・対象外条件を維持し、新規追加を保留`); continue;
     }
-    const v = verified(o, mappings);
+    const v = verified(o, policy);
     if (!v?.allowNew || !eligible(o, v, today) || catalog.excludeKeyPatterns.some(p => new RegExp(p).test(o.modelId))) {
       notes.push(`${o.providerId}/${o.modelId}: 追加候補 (提供条件・公開APIでの利用可能性を未確認)`); continue;
     }
@@ -205,7 +205,7 @@ export function mergeModels(models: Model[], data: NormalizedModelsDev, mappings
       }
       m.prices.push(rule);
     }
-    enrich(m, [o], data, mappings, notes);
+    enrich(m, [o], data, policy, notes);
     models.push(m); ids.add(m.id);
     notes.push(`${m.id}: models.devから確認済みモデルを追加`);
   }

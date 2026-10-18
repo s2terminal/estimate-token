@@ -1,7 +1,7 @@
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { loadCatalog, loadModelMappings } from "../../pipeline/config.ts";
+import { loadCatalog, loadModelsDevPolicy } from "../../pipeline/config.ts";
 import { mergeModels } from "../../pipeline/merge-models.ts";
 import { normalizeModelsDev, validateCatalog } from "../../pipeline/models-dev.ts";
 import { applyRecommendations } from "../../pipeline/recommend.ts";
@@ -12,7 +12,7 @@ const meta = JSON.parse(readFileSync(new URL("../fixtures/models-dev.meta.json",
 const data = normalizeModelsDev(validateCatalog(JSON.parse(raw)));
 const published: PriceData = JSON.parse(readFileSync(new URL("../../public/data/latest.json", import.meta.url), "utf8"));
 const rulesOnly = (rules: PriceRule[]) => rules.map(({ provenance, comparedSources, ...r }) => r);
-const catalog = loadCatalog(), mappings = loadModelMappings();
+const catalog = loadCatalog(), policy = loadModelsDevPolicy();
 
 describe("2026-10-18のライブcatalog固定fixture", () => {
   it("抽出fixtureの内容ハッシュと元スナップショットの出典を保持する", () => {
@@ -32,7 +32,7 @@ describe("2026-10-18のライブcatalog固定fixture", () => {
       "gpt-image-2.5-flare@openai:global", "gpt-image-2.5-sunburst@openai:global",
     ];
     for (const m of models) { delete m.releaseDate; delete m.releaseDateSource; }
-    mergeModels(models, data, mappings, catalog, "2026-10-18");
+    mergeModels(models, data, policy, catalog, "2026-10-18");
     for (const id of ids) {
       const m = models.find(m => m.id === id)!;
       expect(m.releaseDate).toMatch(/^2026-\d{2}-\d{2}$/);
@@ -51,11 +51,11 @@ describe("2026-10-18のライブcatalog固定fixture", () => {
     m.prices = m.prices.filter(r => r.tier !== "standard" || r.minPromptTokens === 0);
     const base = m.prices.find(r => r.tier === "standard")!;
     delete base.cacheRead; delete base.provenance?.cacheRead;
-    mergeModels([m], data, mappings, catalog, "2026-10-18");
+    mergeModels([m], data, policy, catalog, "2026-10-18");
     expect(base.cacheRead).toBe(0.1);
     expect(m.prices.find(r => r.tier === "standard" && r.minPromptTokens === 0)?.provenance?.cacheRead?.source).toBe("models.dev");
     expect(m.prices.find(r => r.tier === "standard" && r.minPromptTokens === 272000)).toMatchObject({ input: 4, output: 15 });
-    const added = mergeModels([], data, mappings, catalog, "2026-10-18").models;
+    const added = mergeModels([], data, policy, catalog, "2026-10-18").models;
     expect(added.some(m => m.id === "gpt-6.1-sol@openai:global")).toBe(true);
     expect(added.some(m => m.id.includes("spark"))).toBe(false);
   });

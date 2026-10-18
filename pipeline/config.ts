@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { parse } from "yaml";
 import type { Category, Platform } from "../shared/types.ts";
-import type { ModelMappings } from "./merge-models.ts";
+import type { ModelsDevPolicy } from "./merge-models.ts";
 
 export interface RecommendationGroup {
   category: Category;
@@ -34,10 +34,10 @@ const load = <T>(name: string): T => parse(readFileSync(`${root}config/${name}`,
 
 export const loadCatalog = (): Catalog => load<Catalog>("catalog.yaml");
 export const loadGates = (): Gates => load<Gates>("gates.yaml");
-export function loadModelMappings(): ModelMappings {
-  const config = load<ModelMappings>("model-aliases.yaml");
+export function loadModelsDevPolicy(): ModelsDevPolicy {
+  const config = load<ModelsDevPolicy>("models-dev-policy.yaml");
   if (!config || !Array.isArray(config.offers) || !config.metadata || typeof config.metadata !== "object")
-    throw new Error("model-aliases.yaml のルート構造が不正");
+    throw new Error("models-dev-policy.yaml のルート構造が不正");
   const ids = new Set<string>();
   for (const offer of config.offers) {
     const id = offer.providerId + "/" + offer.modelId;
@@ -50,13 +50,13 @@ export function loadModelMappings(): ModelMappings {
         (offer.cacheWriteTtlMinutes !== undefined && offer.cacheWriteTtlMinutes !== 5) ||
         (offer.allowNew !== undefined && typeof offer.allowNew !== "boolean") ||
         (offer.allowPreview !== undefined && typeof offer.allowPreview !== "boolean"))
-      throw new Error("model-aliases.yaml の確認済み提供条件が不正: " + id);
+      throw new Error("models-dev-policy.yaml の確認済み提供条件が不正: " + id);
     ids.add(id);
   }
   for (const canonical of Object.values(config.metadata))
-    if (typeof canonical !== "string" || !canonical.includes("/")) throw new Error("model-aliases.yaml の共通モデル対応が不正");
+    if (typeof canonical !== "string" || !canonical.includes("/")) throw new Error("models-dev-policy.yaml の共通モデル対応が不正");
   if (config.recommendationPreviews !== undefined && (!Array.isArray(config.recommendationPreviews) || config.recommendationPreviews.some(id => typeof id !== "string")))
-    throw new Error("model-aliases.yaml のpreview採用設定が不正");
+    throw new Error("models-dev-policy.yaml のpreview採用設定が不正");
   return config;
 }
 export const ROOT = root;

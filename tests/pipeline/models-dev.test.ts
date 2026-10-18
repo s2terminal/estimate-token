@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { loadCatalog, loadModelMappings } from "../../pipeline/config.ts";
+import { loadCatalog, loadModelsDevPolicy } from "../../pipeline/config.ts";
 import { mergeModels, pricesEqual } from "../../pipeline/merge-models.ts";
 import { normalizeModelsDev, validateCatalog } from "../../pipeline/models-dev.ts";
 import { normalize } from "../../pipeline/normalize.ts";
@@ -9,9 +9,9 @@ import { catalogOf, offering } from "../support/models-dev.ts";
 import { sampleModel } from "../support/fixtures.ts";
 import type { Model } from "../../shared/types.ts";
 
-const catalog = loadCatalog(), mappings = loadModelMappings(), today = "2026-10-18";
+const catalog = loadCatalog(), policy = loadModelsDevPolicy(), today = "2026-10-18";
 const merge = (models: Model[], providers: Parameters<typeof catalogOf>[0], common = {}) =>
-  mergeModels(models, normalizeModelsDev(catalogOf(providers, common)), mappings, catalog, today);
+  mergeModels(models, normalizeModelsDev(catalogOf(providers, common)), policy, catalog, today);
 const sol = () => sampleModel("gpt-6.1-sol@openai:global");
 const base = (m: Model) => m.prices.find(r => r.tier === "standard" && r.minPromptTokens === 0)!;
 
@@ -108,7 +108,7 @@ describe("models.devの正規化・価格補完", () => {
     const data = normalizeModelsDev(catalogOf({ openai: [offering("gpt-image-2", { modalities: { input: ["text"], output: ["image"] }, cost: { input: 5, output: 60 } })],
       google: [offering("gemini-omni-flash-preview", { modalities: { input: ["text"], output: ["text", "video"] }, cost: { input: 1, output: 17.5 } })] }));
     expect(data.offers.every(o => !o.rules.length)).toBe(true);
-    mergeModels([m], data, mappings, catalog, today);
+    mergeModels([m], data, policy, catalog, today);
     expect(m.prices).toEqual(before);
     expect(merge([], { openai: [offering("gpt-image-1.5", { cost: undefined })] }).models).toEqual([]);
   });

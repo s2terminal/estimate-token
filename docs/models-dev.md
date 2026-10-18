@@ -18,13 +18,27 @@ npm run pipeline -- --offline
 npm run pipeline -- --offline --raw=/tmp/raw --data=/tmp/latest.json --out=/tmp/report
 ```
 
+## 設定ファイル
+
+[`config/models-dev-policy.yaml`](../config/models-dev-policy.yaml) は、models.dev由来のデータを採用する条件を定義します。価格の異なる提供先やモデルを誤って統合しないため、確認できた範囲を明示します。
+
+| 項目 | 役割 |
+| --- | --- |
+| `offers` | 価格補完を許可するprovider/model IDと、入力長の境界・確認日・根拠資料を登録します。`allowNew: true` なら新規追加も許可します。汎用cache writeを採用する場合は確認済みTTLも指定します |
+| `recommendationPreviews` | おすすめに含めてよい確認済みpreviewの既存モデルIDを登録します。価格補完・新規追加の許可には使いません |
+| `metadata` | 既存モデルIDとmodels.devの共通モデルIDの確認済み対応を登録します。現在は空です。価格の照合には使いません |
+
+`offers` に未登録の提供条件は、価格補完・新規追加を保留して候補としてレポートします。リリース日などのメタデータは、元IDやcanonical参照を確認できれば `offers` への登録がなくても補完できます。
+
+更新するときは提供先・snapshot・地域・サービスティア・入力長境界・キャッシュTTLを確認し、確認日と根拠資料を記録します。登録済みでも料金の競合や未確認条件があれば採用を保留します。更新後は `npm run check` とパイプラインの差分レポートを確認してください。
+
 ## 照合と価格採用
 
 対象は OpenAI / Anthropic / Google と、Vertex二系統、Bedrock、Azure二系統です。元のprovider/model IDを残し、LiteLLMの代表キーへ完全一致した提供先だけを照合します。日付付きsnapshot、地域接頭辞、Vertexの `@default` を照合時に削除しません。共通 `canonical_model_id` はメタデータとおすすめの重複除去に使い、価格の結合には使いません。
 
 - LiteLLMのUSD/tokenだけを100万倍します。models.devはUSD/1Mのまま使います。
 - 両方にある数値は絶対差 `1e-8` または相対差 `1e-5` 以下を一致とします。それ以外は20%未満の差も値・元ID・条件付きで全件レポートし、既存値を維持します。
-- 提供条件と公開APIでの利用を確認した直販モデルを `config/model-aliases.yaml` の `offers` に出典・確認日・正確な入力長境界付きで登録します。この許可リストだけが不足料金の補完や新規追加を行えます。初期対象はGPT-6.1 Sol、Claude Sonnet 5.5、Gemini 2.5 Flashです。
+- 提供条件と公開APIでの利用を確認した直販モデルを `config/models-dev-policy.yaml` の `offers` に出典・確認日・正確な入力長境界付きで登録します。この許可リストだけが不足料金の補完や新規追加を行えます。初期対象はGPT-6.1 Sol、Claude Sonnet 5.5、Gemini 2.5 Flashです。
 - 既存の標準料金に競合や未確認の長文境界があれば補完しません。確認できたルール集合内で不足項目・ルールを補完します。batch/flex/priorityと1時間cache writeは保持します。汎用cache writeを5分料金として採用するには別途TTLの明示確認が必要です。
 - `cost.tiers[].tier.size` を優先します。`context_over_200k` は272K等の互換出力でもあるため、単独では採用しません。実設定が未確認のexperimental modeも採用せずレポートします。
 - Cloudの地域・サービス条件が未確認の場合は自動補完しません。同じアプリIDに対応するAzure/Vertexの複数providerで料金が違う場合は競合を記録して補完・新規追加を保留します。

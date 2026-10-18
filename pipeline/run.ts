@@ -3,7 +3,7 @@
    出力: public/data/latest.json(中身が変わったときだけ)、out/report.md、out/gate.json */
 import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import type { PriceData } from "../shared/types.ts";
-import { ROOT, loadCatalog, loadGates, loadModelMappings } from "./config.ts";
+import { ROOT, loadCatalog, loadGates, loadModelsDevPolicy } from "./config.ts";
 import { assembleModels } from "./assemble.ts";
 import { contentHash } from "./content.ts";
 import { crossCheck } from "./crosscheck.ts";
@@ -32,7 +32,7 @@ async function main() {
   const src = args.has("--offline") ? readRaw(RAW_DIR) : await fetchAll(RAW_DIR, { minSizeRatio: gates.fetch.minSizeRatio, previous: prev?.sources });
   const notes = [...src.warnings];
 
-  const { models, unparsed, frozen, notes: mergeNotes } = assembleModels(src, prev, catalog, loadModelMappings(), today);
+  const { models, unparsed, frozen, notes: mergeNotes } = assembleModels(src, prev, catalog, loadModelsDevPolicy(), today);
   notes.push(...mergeNotes);
   const cc = src.openrouter
     ? crossCheck(models, src.openrouter.data, { mismatchPct: gates.crosscheck.mismatchPct, recentDays: gates.newModel.openrouterRecentDays, now })

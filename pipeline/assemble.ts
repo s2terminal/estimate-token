@@ -1,12 +1,12 @@
 import type { PriceData } from "../shared/types.ts";
 import type { Catalog } from "./config.ts";
 import type { FetchResult } from "./fetch.ts";
-import { mergeModels, type ModelMappings } from "./merge-models.ts";
+import { mergeModels, type ModelsDevPolicy } from "./merge-models.ts";
 import { normalizeModelsDev } from "./models-dev.ts";
 import { normalize } from "./normalize.ts";
 import { select } from "./select.ts";
 
-export function assembleModels(src: FetchResult, prev: PriceData | null, catalog: Catalog, mappings: ModelMappings, today: string) {
+export function assembleModels(src: FetchResult, prev: PriceData | null, catalog: Catalog, policy: ModelsDevPolicy, today: string) {
   if (!src.litellm || (!src.modelsDev && prev?.sources.modelsDev)) {
     if (!prev) throw new Error("LiteLLMの正常スナップショットも前回の公開値もないため更新できません");
     return { models: structuredClone(prev.models), unparsed: [] as string[], frozen: true,
@@ -23,6 +23,6 @@ export function assembleModels(src: FetchResult, prev: PriceData | null, catalog
       blockedOffers.add(platform + "/" + sourceId);
     }
   }
-  const merged = mergeModels(normalized.models, normalizeModelsDev(src.modelsDev.data), mappings, catalog, today, { blockedOffers });
+  const merged = mergeModels(normalized.models, normalizeModelsDev(src.modelsDev.data), policy, catalog, today, { blockedOffers });
   return { models: merged.models, unparsed: normalized.unparsed, frozen: false, notes: merged.notes };
 }

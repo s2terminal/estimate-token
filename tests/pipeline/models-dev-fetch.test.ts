@@ -4,7 +4,7 @@ import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { fetchAll, readRaw } from "../../pipeline/fetch.ts";
 import { assembleModels } from "../../pipeline/assemble.ts";
-import { loadCatalog, loadModelMappings } from "../../pipeline/config.ts";
+import { loadCatalog, loadModelsDevPolicy } from "../../pipeline/config.ts";
 import { MODELS_DEV_URL } from "../../pipeline/models-dev.ts";
 import { catalogOf, offering } from "../support/models-dev.ts";
 import { litellmSample, sampleData } from "../support/fixtures.ts";
@@ -85,10 +85,10 @@ describe("models.devの取得・前回値維持", () => {
     const prev = sampleData();
     prev.sources.modelsDev = { url: MODELS_DEV_URL, fetchedAt: "2026-10-12T00:00:00Z", sha256: "a".repeat(64), bytes: 1000 };
     const src = readRaw(dir);
-    const result = assembleModels(src, prev, loadCatalog(), loadModelMappings(), "2026-10-18");
+    const result = assembleModels(src, prev, loadCatalog(), loadModelsDevPolicy(), "2026-10-18");
     expect(result.frozen).toBe(true);
     expect(result.models).toEqual(prev.models);
-    expect(() => assembleModels(src, null, loadCatalog(), loadModelMappings(), "2026-10-18")).toThrow("更新できません");
+    expect(() => assembleModels(src, null, loadCatalog(), loadModelsDevPolicy(), "2026-10-18")).toThrow("更新できません");
   });
   it("LiteLLMで廃止済みの確認済みモデルを別ソースの欠損statusで復活させない", () => {
     seed();
@@ -97,7 +97,7 @@ describe("models.devの取得・前回値維持", () => {
       litellm_provider: "openai", mode: "chat", input_cost_per_token: 0.000002, output_cost_per_token: 0.00001,
       deprecation_date: "2026-10-01",
     } };
-    const result = assembleModels(src, null, loadCatalog(), loadModelMappings(), "2026-10-18");
+    const result = assembleModels(src, null, loadCatalog(), loadModelsDevPolicy(), "2026-10-18");
     expect(result.models.some(m => m.id === "gpt-6.1-sol@openai:global")).toBe(false);
     expect(result.notes.some(n => n.includes("既知の廃止"))).toBe(true);
   });
