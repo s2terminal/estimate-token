@@ -58,6 +58,8 @@ jobs:
             raw/models-dev.catalog.json
             raw/models-dev.meta.json
             raw/fx.json
+            raw/gemini-pricing.txt
+            raw/gemini-pricing.meta.json
             out/
           retention-days: 14
 

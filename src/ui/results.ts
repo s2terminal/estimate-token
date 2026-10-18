@@ -21,7 +21,7 @@ export function renderResults(data: PriceData, state: State, ok: CalcOk[], na: C
     }
     return `月 ${int(state.img.n)} 枚 × 入力 ${int(state.img.i ?? 0)} tokens/枚 ・ 解像度 ${state.img.r} ・ OpenAI画質 ${state.img.q ?? "medium"}`;
   }
-  const conditionText = () => `為替 1 USD = ${fx()} 円 ・ 価格データ ${data.snapshot} ・ 税抜`;
+  const conditionText = () => `為替 1 USD = ${fx()} 円 ・ 期間限定の割引価格 ${state.promo ? "加味する" : "加味しない"} ・ 価格データ ${data.snapshot} ・ 税抜`;
   const allFlags = (x: CalcResult) => [...modelFlags(x.m, data), ...x.flags];
   const flagHtml = (x: CalcResult) => allFlags(x).map((f) => `<span class="flag ${f.k}">${esc(f.t)}</span>`).join("");
 
@@ -75,7 +75,7 @@ export function renderResults(data: PriceData, state: State, ok: CalcOk[], na: C
     if (r.promo) parts.push("期間限定");
     return parts.join(" ・ ");
   }
-  const srcCell = sourceCell;
+  const srcCell = (m: Model, r?: PriceRule) => sourceCell(m, r, data.sources.promotions);
 
   function renderUnitTable() {
     const t = $<HTMLTableElement>("unitTable");
@@ -86,11 +86,11 @@ export function renderResults(data: PriceData, state: State, ok: CalcOk[], na: C
       t.tHead!.innerHTML = `<tr><th>モデル</th><th>提供環境</th><th>条件</th><th class="num">画像tokens/枚</th><th class="num">単価/枚</th><th class="num">入力${unitLabel(state.unit)}</th><th class="num">画像出力/1M tokens</th><th>出典</th></tr>`;
       t.tBodies[0].innerHTML = ms
         .map((m) => {
-          const result = calcImage(m, { ...state.img, n: 1 });
-          const r = m.prices.find((p) => p.tier === "standard" && p.minPromptTokens === 0) ?? m.prices[0];
+          const result = calcImage(m, { ...state.img, n: 1 }, { asOf: data.snapshot, promo: state.promo });
+          const r = result.na ? undefined : result.rule;
           const condition = result.na ? result.why : result.imageTokens != null
             ? `${state.img.r}${resolveImageTokenProfile(m.family).profile?.method === "resolution" ? "" : ` / ${state.img.q ?? "medium"}`}` : state.img.r;
-          return `<tr><td class="mname">${esc(m.name)}</td><td class="mmeta">${esc(where(m))}</td><td class="mmeta">${esc(condition)}</td><td class="num">${!result.na && result.imageTokens != null ? int(result.imageTokens) : "—"}</td><td class="num">${!result.na ? money(result.perImage ?? 0) : "—"}</td><td class="num">${unitPrice(r?.input)}</td><td class="num">${r?.imageOutput != null ? money(r.imageOutput) : "—"}</td><td class="mmeta">${srcCell(m)}</td></tr>`;
+          return `<tr><td class="mname">${esc(m.name)}</td><td class="mmeta">${esc(where(m))}</td><td class="mmeta">${esc(condition)}</td><td class="num">${!result.na && result.imageTokens != null ? int(result.imageTokens) : "—"}</td><td class="num">${!result.na ? money(result.perImage ?? 0) : "—"}</td><td class="num">${unitPrice(r?.input)}</td><td class="num">${r?.imageOutput != null ? money(r.imageOutput) : "—"}</td><td class="mmeta">${srcCell(m, r)}</td></tr>`;
         })
         .join("") || `<tr class="na"><td colspan="8">モデルが選ばれていません。</td></tr>`;
       return;

@@ -8,8 +8,9 @@ import { assembleModels } from "./assemble.ts";
 import { contentHash } from "./content.ts";
 import { crossCheck } from "./crosscheck.ts";
 import { diffData, diffMarkdown } from "./diff.ts";
-import { fetchAll, readRaw } from "./fetch.ts";
+import { fetchAll, readRaw, fetchPromotions, readPromotions } from "./fetch.ts";
 import { unsupportedImageModels } from "./image-tokens.ts";
+import { applyPromotions } from "./promotions.ts";
 import { applyRecommendations } from "./recommend.ts";
 import { checkFx, evaluateGates } from "./validate.ts";
 
@@ -30,6 +31,7 @@ async function main() {
   const prev: PriceData | null = existsSync(DATA_PATH) ? JSON.parse(readFileSync(DATA_PATH, "utf8")) : null;
 
   const src = args.has("--offline") ? readRaw(RAW_DIR) : await fetchAll(RAW_DIR, { minSizeRatio: gates.fetch.minSizeRatio, previous: prev?.sources });
+  const promotions = args.has("--offline") ? readPromotions(RAW_DIR) : (await fetchPromotions(RAW_DIR)).promotions;
   const notes = [...src.warnings];
 
   const { models, unparsed, frozen, notes: mergeNotes } = assembleModels(src, prev, catalog, loadModelsDevPolicy(), today);
@@ -37,6 +39,8 @@ async function main() {
   const cc = src.openrouter
     ? crossCheck(models, src.openrouter.data, { mismatchPct: gates.crosscheck.mismatchPct, recentDays: gates.newModel.openrouterRecentDays, now })
     : { mismatches: [], candidates: [] };
+
+  applyPromotions(models, promotions);
 
   const prevById = new Map((prev?.models ?? []).map((m) => [m.id, m]));
   for (const m of models) {
@@ -74,6 +78,7 @@ async function main() {
       openrouter: src.openrouter ? { fetchedAt: src.openrouter.fetchedAt, bytes: src.openrouter.bytes, ...(src.openrouter.stale ? { stale: true } : {}) } :
         { ...(prev?.sources.openrouter ?? { fetchedAt: "" }), stale: true },
       fx,
+      promotions: [promotions.source],
     },
     models,
   };

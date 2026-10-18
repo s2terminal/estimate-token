@@ -28,7 +28,8 @@ function defaultSelection() {
 
 /* ===== 結果 ===== */
 function calc(m: Model): CalcResult {
-  return S.t === "img" ? calcImage(m, S.img) : calcLlm(m, S.llm);
+  const opts = { asOf: DATA.snapshot, promo: S.promo };
+  return S.t === "img" ? calcImage(m, S.img, opts) : calcLlm(m, S.llm, opts);
 }
 function results() {
   const map = byId();
@@ -74,6 +75,7 @@ function syncInputs() {
   set("imgIn", S.img.i ?? 0);
   set("imgQuality", S.img.q ?? "medium");
   set("fx", fx());
+  set("promo", String(S.promo));
 }
 
 /* ===== モデルの選択(検索・絞り込み) ===== */
@@ -186,6 +188,7 @@ function bind() {
     S.img.n = num("imgN");
     S.img.i = num("imgIn");
     S.img.q = $<HTMLSelectElement>("imgQuality").value as State["img"]["q"];
+    S.promo = $<HTMLSelectElement>("promo").value === "true";
     if (el.id === "fx") {
       const v = num("fx", 1);
       S.fx = v === DATA.sources.fx.rate ? null : v;
@@ -317,6 +320,9 @@ async function boot() {
   const fxs = DATA.sources.fx;
   const md = DATA.sources.modelsDev;
   $("srcNote").innerHTML = `データ: LiteLLM <code>${esc(DATA.sources.litellm.commit.slice(0, 12))}</code>${DATA.sources.litellm.stale ? "（前回値）" : ""}${md ? `、<a href="https://models.dev/catalog.json" target="_blank" rel="noopener">models.dev</a> <code>${esc(md.sha256.slice(0, 12))}</code>（取得 ${esc(md.fetchedAt)}${md.stale ? "・前回値" : ""}）` : ""}、為替 ${esc(fxs.rate)} 円(${esc(fxs.date)})、生成 ${esc(DATA.generatedAt)}。対象 ${DATA.models.length} モデル。<a href="${import.meta.env.BASE_URL}licenses/models-dev.txt">models.dev MIT License</a>。`;
+  $("promoSources").innerHTML = (DATA.sources.promotions ?? []).map((s) =>
+    `割引料金の出典: ${esc(s.author)}「<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a>」(<a href="${esc(s.licenseUrl)}" target="_blank" rel="noopener">CC BY 4.0</a>)。確認日 ${esc(s.checkedOn)}。変更内容: ${esc(s.modifications)}`
+  ).join("<br>");
   $("app").hidden = false;
   if (window.innerWidth > 900) ($("modelsBox") as HTMLDetailsElement).open = true;
   bind();
