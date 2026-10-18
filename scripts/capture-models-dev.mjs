@@ -27,11 +27,28 @@ for (const [id, model] of Object.entries(catalog.models))
 const meta = { url, fetchedAt: new Date().toISOString(), sha256: createHash("sha256").update(raw).digest("hex"), bytes: Buffer.byteLength(raw),
   etag: response.headers.get("etag"), extraction: "Selected original API records; unchanged field values",
   counts: { models: Object.keys(catalog.models).length, ...Object.fromEntries(Object.entries(selected.providers).map(([id]) => [id, Object.keys(catalog.providers[id].models).length])) } };
+const fixture = JSON.stringify(selected, null, 2) + "\n";
+meta.fixtureSha256 = createHash("sha256").update(fixture).digest("hex");
+meta.fixtureBytes = Buffer.byteLength(fixture);
+mkdirSync("raw", { recursive: true });
+writeFileSync("raw/models-dev.catalog.json", raw);
+writeFileSync("raw/models-dev.meta.json", JSON.stringify(meta, null, 2) + "\n");
 mkdirSync("tests/fixtures", { recursive: true });
 for (const [name, data] of [["models-dev.catalog.json", selected], ["models-dev.meta.json", meta]]) {
   const text = JSON.stringify(data, null, 2) + "\n";
   writeFileSync("tests/fixtures/" + name, text);
-  const b64 = Buffer.from(text).toString("base64");
-  for (let i = 0; i < b64.length; i += 6000) console.log("MODELS_DEV_CAPTURE " + name + " " + (i / 6000) + " " + b64.slice(i, i+6000));
 }
 console.log("models.dev live API verified", JSON.stringify(meta));
+
+const { gzipSync } = await import("node:zlib");
+const published = JSON.parse(readFileSync("public/data/latest.json", "utf8"));
+const lt = published.sources.litellm;
+const ltResponse = await fetch("https://raw.githubusercontent.com/BerriAI/litellm/" + lt.commit + "/model_prices_and_context_window.json", { signal: AbortSignal.timeout(30000) });
+if (!ltResponse.ok) throw new Error("fixed LiteLLM HTTP " + ltResponse.status);
+const ltRaw = await ltResponse.text();
+writeFileSync("raw/litellm.json", ltRaw);
+writeFileSync("raw/litellm.meta.json", JSON.stringify({ ...lt, bytes: Buffer.byteLength(ltRaw), records: Object.keys(JSON.parse(ltRaw)).length }));
+for (const name of ["models-dev.catalog.json", "models-dev.meta.json", "litellm.json", "litellm.meta.json"]) {
+  const b64 = gzipSync(readFileSync("raw/" + name)).toString("base64");
+  for (let i=0; i<b64.length; i+=6000) console.log("SOURCE_RAW_CAPTURE " + name + " " + (i/6000) + " " + b64.slice(i,i+6000));
+}
