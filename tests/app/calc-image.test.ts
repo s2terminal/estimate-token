@@ -5,6 +5,21 @@ import { sampleModel as get } from "../support/fixtures.ts";
 import { calculated as ok } from "../support/calc.ts";
 
 describe("calcImage", () => {
+  it("画像生成も割引の設定と期間に従って入力・出力料金を切り替える", () => {
+    const regular = { tier: "standard" as const, minPromptTokens: 0, input: 5, imageOutput: 30 };
+    const m = { ...get("gpt-image-2.5-sunburst@openai:global"), prices: [
+      regular,
+      { ...regular, input: 2.5, imageOutput: 15, promo: true, validTo: "2026-10-31" },
+    ] };
+    const usage = { n: 1000, i: 500, r: "1K", q: "low" as const };
+    expect(ok(calcImage(m, usage)).usd).toBeCloseTo(8.38);
+    expect(ok(calcImage(m, usage, { asOf: "2026-10-18", promo: false })).usd).toBeCloseTo(8.38);
+    expect(ok(calcImage(m, usage, { asOf: "2026-10-18", promo: true })).usd).toBeCloseTo(4.19);
+    expect(ok(calcImage(m, usage, { asOf: "2026-11-01", promo: true })).usd).toBeCloseTo(8.38);
+    const promoOnly = { ...m, prices: [m.prices[1]] };
+    expect(calcImage(promoOnly, usage, { asOf: "2026-10-18", promo: false }).na).toBe(true);
+  });
+
   it("入力(プロンプト)tokensを入力単価で足す", () => {
     // 196 tokens × $30/1M + 500 tokens × $5/1M = $0.00838/枚
     const r = ok(calcImage(get("gpt-image-2.5-sunburst@openai:global"), { n: 1000, i: 500, r: "1K", q: "low" }));

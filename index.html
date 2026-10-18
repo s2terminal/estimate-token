@@ -73,6 +73,10 @@
           <fieldset>
             <legend>価格の条件と表示</legend>
             <div class="field">
+              <label for="promo">期間限定の割引価格<small>割引情報のある価格が対象。期間は価格データ更新日で判定</small></label>
+              <select id="promo"><option value="false" selected>加味しない</option><option value="true">加味する</option></select>
+            </div>
+            <div class="field">
               <label for="fx">為替<small>円/USD(<button type="button" class="mini" id="fxReset">取得値に戻す</button>)</small></label>
               <input type="number" id="fx" min="1" step="1" />
             </div>
@@ -132,9 +136,10 @@
             <div class="sectionhead"><h2>単価一覧</h2><p id="unitSub"></p></div>
             <div class="tablebox"><table id="unitTable"><thead></thead><tbody></tbody></table></div>
             <div class="notes">
-              <p><strong>価格は自動取得した各ソースの値です。</strong>LiteLLM を優先し、提供条件を確認できた不足料金とモデル情報を models.dev で補完します。採用元とリリース日の出典は単価一覧で確認できます。取得に失敗したソースは前回の正常値を使用します。為替は Frankfurter(ECB参照レート)を毎日取得しています。期間限定価格の終了日は反映されません。稟議に使う前に各社の公式価格ページで確認してください。</p>
+              <p><strong>期間限定の割引価格は初期設定では加味しません。</strong>公式料金表で期間と通常価格を確認できたGemini APIのGemini 4 Argon、3.8 Flash、3.6 Flash、Robotics ER 2 Preview / Streaming Previewが切り替え対象です。「加味しない」では割引終了後の通常価格、「加味する」では価格データ更新日に有効な価格を使います。月額・年額はその単価が続くと仮定した試算です。対象外のモデル・提供環境はLiteLLMを優先し、確認済みの不足料金・モデル情報をmodels.devで補完します。未識別の価格は取得値を使うため、未識別の割引は除外できません。為替はFrankfurter(ECB参照レート)です。稟議に使う前に各社の公式価格ページで確認してください。</p>
               <p>キャッシュの書込み料・保存料、ツール呼び出し料、消費税は含みません。月額 = (通常入力 × 入力単価 + キャッシュ読取 × キャッシュ単価 + 出力 × 出力単価) × 回数 ÷ 1,000,000。</p>
               <p id="srcNote"></p>
+              <p id="promoSources"></p>
             </div>
           </div>
         </section>

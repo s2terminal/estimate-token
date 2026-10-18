@@ -56,6 +56,44 @@ describe("pickRule", () => {
     ];
     expect(pickRule(prices, "standard", 0, { asOf: "2026-10-11", promo: true }).rule?.input).toBe(0.75);
     expect(pickRule(prices, "standard", 0, { asOf: "2027-01-01", promo: true }).rule?.input).toBe(1.5);
-    expect(pickRule(prices, "standard", 0, { asOf: "2026-10-11", promo: false }).rule).toBeNull();
+    const regular = pickRule(prices, "standard", 0, { asOf: "2026-10-11", promo: false });
+    expect(regular.rule?.input).toBe(1.5);
+    expect(regular.flags.map((f) => f.t)).toContain("期間限定終了後の通常価格");
+  });
+
+  it("通常価格と割引が同時に有効なら、配列順によらず設定で月額を切り替える", () => {
+    const regular = { tier: "standard" as const, minPromptTokens: 0, input: 2, output: 10 };
+    const promo = { ...regular, input: 1, output: 5, promo: true, validFrom: "2026-10-01", validTo: "2026-10-31" };
+    for (const prices of [[regular, promo], [promo, regular]]) {
+      const m = { ...get("gpt-6.1-sol@openai:global"), prices };
+      expect(ok(calcLlm(m, usage())).usd).toBeCloseTo(90);
+      expect(ok(calcLlm(m, usage(), { asOf: "2026-10-18", promo: false })).usd).toBeCloseTo(90);
+      for (const asOf of ["2026-10-01", "2026-10-18", "2026-10-31"])
+        expect(ok(calcLlm(m, usage(), { asOf, promo: true })).usd).toBeCloseTo(45);
+      for (const asOf of ["2026-09-30", "2026-11-01"])
+        expect(ok(calcLlm(m, usage(), { asOf, promo: true })).usd).toBeCloseTo(90);
+    }
+  });
+
+  it("通常価格が不明なら、割引価格を使わず理由を表示する", () => {
+    const prices = [{ tier: "standard" as const, minPromptTokens: 0, input: 1, output: 5, promo: true }];
+    const r = pickRule(prices, "standard", 0, { asOf: "2026-10-18", promo: false });
+    expect(r.rule).toBeNull();
+    expect(r.why).toContain("通常価格が未取得");
+    expect(pickRule(prices, "standard", 0).rule).toBeNull();
+  });
+
+  it("割引終了後の通常価格はプランと長文しきい値を保ち、直近の開始日を選ぶ", () => {
+    const prices = [
+      { tier: "batch" as const, minPromptTokens: 0, input: 1, promo: true, validTo: "2026-10-31" },
+      { tier: "batch" as const, minPromptTokens: 100, input: 2, promo: true, validTo: "2026-10-31" },
+      { tier: "batch" as const, minPromptTokens: 0, input: 3, validFrom: "2026-11-01" },
+      { tier: "batch" as const, minPromptTokens: 100, input: 5, validFrom: "2027-01-01" },
+      { tier: "batch" as const, minPromptTokens: 100, input: 4, validFrom: "2026-11-01" },
+      { tier: "standard" as const, minPromptTokens: 100, input: 10 },
+    ];
+    const opts = { asOf: "2026-10-18", promo: false };
+    expect(pickRule(prices, "batch", 100, opts).rule?.input).toBe(3);
+    expect(pickRule(prices, "batch", 101, opts).rule?.input).toBe(4);
   });
 });

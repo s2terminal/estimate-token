@@ -3,6 +3,7 @@ import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from "
 import type { LiteLLMData } from "./select.ts";
 import type { OpenRouterModel } from "./crosscheck.ts";
 import { MODELS_DEV_URL, normalizeModelsDev, validateCatalog, type ModelsDevCatalog } from "./models-dev.ts";
+import { GEMINI_PRICING_URL, parsePromotions, type Promotions } from "./promotions.ts";
 
 const LITELLM_REPO = "BerriAI/litellm";
 const LITELLM_PATH = "model_prices_and_context_window.json";
@@ -38,6 +39,25 @@ async function latestCommit(): Promise<string | null> {
     });
     return (JSON.parse(text) as { sha: string }[])[0]?.sha ?? null;
   } catch { return null; }
+}
+
+/** 公式割引は古い取得値へ戻さず、確認できなければ更新全体を中断する。 */
+export async function fetchPromotions(rawDir?: string): Promise<{ body: string; promotions: Promotions }> {
+  const { text: robots } = await get("https://ai.google.dev/robots.txt");
+  if (!/User-agent:\s*\*/i.test(robots) || /^[ \t]*Disallow:[ \t]*[^\s#]/mi.test(robots))
+    throw new Error("Gemini料金表のrobots.txtを再確認してください");
+  const { text: body } = await get(`${GEMINI_PRICING_URL}?hl=en`, { accept: "text/markdown, text/html;q=0.9" });
+  const promotions = parsePromotions(body, new Date().toISOString().slice(0, 10));
+  if (rawDir) {
+    mkdirSync(rawDir, { recursive: true });
+    save(`${rawDir}/gemini-pricing.txt`, body);
+    save(`${rawDir}/gemini-pricing.meta.json`, JSON.stringify({ checkedOn: promotions.source.checkedOn }));
+  }
+  return { body, promotions };
+}
+
+export function readPromotions(rawDir: string): Promotions {
+  return parsePromotions(read(rawDir, "gemini-pricing.txt"), JSON.parse(read(rawDir, "gemini-pricing.meta.json")).checkedOn);
 }
 const liteData = (text: string): LiteLLMData => {
   const data: unknown = JSON.parse(text);

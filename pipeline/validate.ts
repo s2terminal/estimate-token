@@ -58,6 +58,11 @@ export function validateSchema(d: PriceData): string[] {
       errs.push(`${where}: models.dev 元IDが不正`);
     if (!Array.isArray(m.prices)) errs.push(`${where}: prices がない`);
     for (const r of Array.isArray(m.prices) ? m.prices : []) {
+      if (r.source && !d.sources.promotions?.some((s) => s.id === r.source && s.license === "CC-BY-4.0")) errs.push(`${where}: 価格の出典・ライセンスが未取得`);
+      for (const day of [r.validFrom, r.validTo]) {
+        if (day && (!/^\d{4}-\d{2}-\d{2}$/.test(day) || !Number.isFinite(Date.parse(day)) || new Date(day).toISOString().slice(0, 10) !== day)) errs.push(`${where}: 価格の適用日が不正`);
+      }
+      if (r.validFrom && r.validTo && r.validFrom > r.validTo) errs.push(`${where}: 価格の適用期間が逆転`);
       if (!TIERS.includes(r.tier)) errs.push(`${where}: tier が不正`);
       if (!Number.isSafeInteger(r.minPromptTokens) || r.minPromptTokens < 0) errs.push(`${where}: minPromptTokens が不正`);
       const vals: unknown[] = PRICE_FIELDS.map((f) => r[f]).concat(Object.values(r.perImageByRes ?? {}));
@@ -78,7 +83,7 @@ export interface GateResult {
   notes: string[];
 }
 
-const ruleKey = (r: PriceRule) => `${r.tier}|${r.minPromptTokens}`;
+const ruleKey = (r: PriceRule) => `${r.tier}|${r.minPromptTokens}|${!!r.promo}|${r.validFrom ?? ""}|${r.validTo ?? ""}`;
 const changePct = (a: number, b: number) => ((b - a) / a) * 100;
 
 /** 前回の公開データと比べて品質ゲートを判定する */

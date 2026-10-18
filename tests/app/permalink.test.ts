@@ -5,6 +5,21 @@ import { defaultState } from "../../src/lib/state.ts";
 const base = defaultState({ llm: ["a@openai:global"], img: ["b@gemini-api:global"] });
 
 describe("permalink", () => {
+  it("割引は初期値・設定のない旧リンク・不正な値で加味しない", () => {
+    expect(defaultState().promo).toBe(false);
+    for (const promo of [undefined, "true", 1, null]) {
+      const hash = "e2" + b64urlEncode(JSON.stringify({ promo }));
+      expect(decodeState(hash, { ...base, promo: true })!.state.promo).toBe(false);
+    }
+  });
+
+  it.each([false, true])("割引設定 %s を共有リンクから復元する", (promo) => {
+    for (const t of ["llm", "img"] as const) {
+      const state = { ...base, t, promo };
+      expect(decodeState(encodeState(state), base)!.state.promo).toBe(promo);
+    }
+  });
+
   it("書き出しと読み戻しで状態が一致する", () => {
     const s = structuredClone(base);
     s.t = "llm";

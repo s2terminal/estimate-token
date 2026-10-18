@@ -11,6 +11,8 @@ export interface State {
   t: Tab;
   /** 為替の手入力値。null なら取得したレートを使う */
   fx: number | null;
+  /** 期間限定の割引価格を加味するか */
+  promo: boolean;
   cur: Currency;
   unit: Unit;
   cm: ChartMode;
@@ -31,6 +33,7 @@ export function defaultState(sel: { llm: string[]; img: string[] } = { llm: [], 
   return {
     t: "llm",
     fx: null,
+    promo: false,
     cur: "JPY",
     unit: "1M",
     cm: "mix",

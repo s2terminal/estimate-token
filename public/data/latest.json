@@ -1,7 +1,7 @@
 {
  "schemaVersion": 1,
  "snapshot": "2026-10-18",
- "generatedAt": "2026-10-18T06:09:14.388Z",
+ "generatedAt": "2026-10-18T13:43:09.281Z",
  "baseline": "2026-10-11",
  "sources": {
   "litellm": {
@@ -37,7 +37,19 @@
    "pair": "USDJPY",
    "rate": 158.02,
    "date": "2026-10-16"
-  }
+  },
+  "promotions": [
+   {
+    "id": "google-gemini-api",
+    "title": "Gemini Developer API pricing",
+    "author": "Google",
+    "url": "https://ai.google.dev/gemini-api/docs/pricing",
+    "license": "CC-BY-4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "checkedOn": "2026-10-18",
+    "modifications": "有料トークン料金と適用日を抜粋・構造化。保存料金・ツール料金・招待制プランを除外。"
+   }
+  ]
  },
  "models": [
   {
@@ -29112,98 +29124,78 @@
     {
      "tier": "standard",
      "minPromptTokens": 0,
-     "cacheRead": 0.075,
+     "promo": true,
+     "source": "google-gemini-api",
+     "validTo": "2026-12-31",
      "input": 0.75,
      "output": 3.75,
-     "provenance": {
-      "input": {
-       "source": "litellm",
-       "modelId": "gemini/gemini-3.6-flash",
-       "url": "https://github.com/BerriAI/litellm/blob/d81472f196323ec677a3f359a984492e37e46b4f/model_prices_and_context_window.json"
-      },
-      "output": {
-       "source": "litellm",
-       "modelId": "gemini/gemini-3.6-flash",
-       "url": "https://github.com/BerriAI/litellm/blob/d81472f196323ec677a3f359a984492e37e46b4f/model_prices_and_context_window.json"
-      },
-      "cacheRead": {
-       "source": "litellm",
-       "modelId": "gemini/gemini-3.6-flash",
-       "url": "https://github.com/BerriAI/litellm/blob/d81472f196323ec677a3f359a984492e37e46b4f/model_prices_and_context_window.json"
-      }
-     }
+     "cacheRead": 0.075
+    },
+    {
+     "tier": "standard",
+     "minPromptTokens": 0,
+     "source": "google-gemini-api",
+     "validFrom": "2027-01-01",
+     "input": 1.5,
+     "output": 7.5,
+     "cacheRead": 0.15
     },
     {
      "tier": "batch",
      "minPromptTokens": 0,
-     "cacheRead": 0.0375,
+     "promo": true,
+     "source": "google-gemini-api",
+     "validTo": "2026-12-31",
      "input": 0.375,
      "output": 1.875,
-     "provenance": {
-      "input": {
-       "source": "litellm",
-       "modelId": "gemini/gemini-3.6-flash",
-       "url": "https://github.com/BerriAI/litellm/blob/d81472f196323ec677a3f359a984492e37e46b4f/model_prices_and_context_window.json"
-      },
-      "output": {
-       "source": "litellm",
-       "modelId": "gemini/gemini-3.6-flash",
-       "url": "https://github.com/BerriAI/litellm/blob/d81472f196323ec677a3f359a984492e37e46b4f/model_prices_and_context_window.json"
-      },
-      "cacheRead": {
-       "source": "litellm",
-       "modelId": "gemini/gemini-3.6-flash",
-       "url": "https://github.com/BerriAI/litellm/blob/d81472f196323ec677a3f359a984492e37e46b4f/model_prices_and_context_window.json"
-      }
-     }
+     "cacheRead": 0.0375
+    },
+    {
+     "tier": "batch",
+     "minPromptTokens": 0,
+     "source": "google-gemini-api",
+     "validFrom": "2027-01-01",
+     "input": 0.75,
+     "output": 3.75,
+     "cacheRead": 0.075
     },
     {
      "tier": "flex",
      "minPromptTokens": 0,
-     "cacheRead": 0.0375,
+     "promo": true,
+     "source": "google-gemini-api",
+     "validTo": "2026-12-31",
      "input": 0.375,
      "output": 1.875,
-     "provenance": {
-      "input": {
-       "source": "litellm",
-       "modelId": "gemini/gemini-3.6-flash",
-       "url": "https://github.com/BerriAI/litellm/blob/d81472f196323ec677a3f359a984492e37e46b4f/model_prices_and_context_window.json"
-      },
-      "output": {
-       "source": "litellm",
-       "modelId": "gemini/gemini-3.6-flash",
-       "url": "https://github.com/BerriAI/litellm/blob/d81472f196323ec677a3f359a984492e37e46b4f/model_prices_and_context_window.json"
-      },
-      "cacheRead": {
-       "source": "litellm",
-       "modelId": "gemini/gemini-3.6-flash",
-       "url": "https://github.com/BerriAI/litellm/blob/d81472f196323ec677a3f359a984492e37e46b4f/model_prices_and_context_window.json"
-      }
-     }
+     "cacheRead": 0.0375
+    },
+    {
+     "tier": "flex",
+     "minPromptTokens": 0,
+     "source": "google-gemini-api",
+     "validFrom": "2027-01-01",
+     "input": 0.75,
+     "output": 3.75,
+     "cacheRead": 0.075
     },
     {
      "tier": "priority",
      "minPromptTokens": 0,
+     "promo": true,
+     "source": "google-gemini-api",
+     "validTo": "2026-12-31",
      "input": 1.35,
      "output": 6.75,
-     "cacheRead": 0.135,
-     "provenance": {
-      "input": {
-       "source": "litellm",
-       "modelId": "gemini/gemini-3.6-flash",
-       "url": "https://github.com/BerriAI/litellm/blob/d81472f196323ec677a3f359a984492e37e46b4f/model_prices_and_context_window.json"
-      },
-      "output": {
-       "source": "litellm",
-       "modelId": "gemini/gemini-3.6-flash",
-       "url": "https://github.com/BerriAI/litellm/blob/d81472f196323ec677a3f359a984492e37e46b4f/model_prices_and_context_window.json"
-      },
-      "cacheRead": {
-       "source": "litellm",
-       "modelId": "gemini/gemini-3.6-flash",
-       "url": "https://github.com/BerriAI/litellm/blob/d81472f196323ec677a3f359a984492e37e46b4f/model_prices_and_context_window.json"
-      }
-     }
+     "cacheRead": 0.135
+    },
+    {
+     "tier": "priority",
+     "minPromptTokens": 0,
+     "source": "google-gemini-api",
+     "validFrom": "2027-01-01",
+     "input": 2.7,
+     "output": 13.5,
+     "cacheRead": 0.27
     }
    ],
    "sources": [
@@ -29992,98 +29984,78 @@
     {
      "tier": "standard",
      "minPromptTokens": 0,
-     "cacheRead": 0.075,
+     "promo": true,
+     "source": "google-gemini-api",
+     "validTo": "2026-12-31",
      "input": 0.75,
      "output": 3.75,
-     "provenance": {
-      "input": {
-       "source": "litellm",
-       "modelId": "gemini/gemini-3.8-flash",
-       "url": "https://github.com/BerriAI/litellm/blob/d81472f196323ec677a3f359a984492e37e46b4f/model_prices_and_context_window.json"
-      },
-      "output": {
-       "source": "litellm",
-       "modelId": "gemini/gemini-3.8-flash",
-       "url": "https://github.com/BerriAI/litellm/blob/d81472f196323ec677a3f359a984492e37e46b4f/model_prices_and_context_window.json"
-      },
-      "cacheRead": {
-       "source": "litellm",
-       "modelId": "gemini/gemini-3.8-flash",
-       "url": "https://github.com/BerriAI/litellm/blob/d81472f196323ec677a3f359a984492e37e46b4f/model_prices_and_context_window.json"
-      }
-     }
+     "cacheRead": 0.075
+    },
+    {
+     "tier": "standard",
+     "minPromptTokens": 0,
+     "source": "google-gemini-api",
+     "validFrom": "2027-01-01",
+     "input": 1.5,
+     "output": 7.5,
+     "cacheRead": 0.15
     },
     {
      "tier": "batch",
      "minPromptTokens": 0,
-     "cacheRead": 0.0375,
+     "promo": true,
+     "source": "google-gemini-api",
+     "validTo": "2026-12-31",
      "input": 0.375,
      "output": 1.875,
-     "provenance": {
-      "input": {
-       "source": "litellm",
-       "modelId": "gemini/gemini-3.8-flash",
-       "url": "https://github.com/BerriAI/litellm/blob/d81472f196323ec677a3f359a984492e37e46b4f/model_prices_and_context_window.json"
-      },
-      "output": {
-       "source": "litellm",
-       "modelId": "gemini/gemini-3.8-flash",
-       "url": "https://github.com/BerriAI/litellm/blob/d81472f196323ec677a3f359a984492e37e46b4f/model_prices_and_context_window.json"
-      },
-      "cacheRead": {
-       "source": "litellm",
-       "modelId": "gemini/gemini-3.8-flash",
-       "url": "https://github.com/BerriAI/litellm/blob/d81472f196323ec677a3f359a984492e37e46b4f/model_prices_and_context_window.json"
-      }
-     }
+     "cacheRead": 0.0375
+    },
+    {
+     "tier": "batch",
+     "minPromptTokens": 0,
+     "source": "google-gemini-api",
+     "validFrom": "2027-01-01",
+     "input": 0.75,
+     "output": 3.75,
+     "cacheRead": 0.075
     },
     {
      "tier": "flex",
      "minPromptTokens": 0,
-     "cacheRead": 0.0375,
+     "promo": true,
+     "source": "google-gemini-api",
+     "validTo": "2026-12-31",
      "input": 0.375,
      "output": 1.875,
-     "provenance": {
-      "input": {
-       "source": "litellm",
-       "modelId": "gemini/gemini-3.8-flash",
-       "url": "https://github.com/BerriAI/litellm/blob/d81472f196323ec677a3f359a984492e37e46b4f/model_prices_and_context_window.json"
-      },
-      "output": {
-       "source": "litellm",
-       "modelId": "gemini/gemini-3.8-flash",
-       "url": "https://github.com/BerriAI/litellm/blob/d81472f196323ec677a3f359a984492e37e46b4f/model_prices_and_context_window.json"
-      },
-      "cacheRead": {
-       "source": "litellm",
-       "modelId": "gemini/gemini-3.8-flash",
-       "url": "https://github.com/BerriAI/litellm/blob/d81472f196323ec677a3f359a984492e37e46b4f/model_prices_and_context_window.json"
-      }
-     }
+     "cacheRead": 0.0375
+    },
+    {
+     "tier": "flex",
+     "minPromptTokens": 0,
+     "source": "google-gemini-api",
+     "validFrom": "2027-01-01",
+     "input": 0.75,
+     "output": 3.75,
+     "cacheRead": 0.075
     },
     {
      "tier": "priority",
      "minPromptTokens": 0,
+     "promo": true,
+     "source": "google-gemini-api",
+     "validTo": "2026-12-31",
      "input": 1.35,
      "output": 6.75,
-     "cacheRead": 0.135,
-     "provenance": {
-      "input": {
-       "source": "litellm",
-       "modelId": "gemini/gemini-3.8-flash",
-       "url": "https://github.com/BerriAI/litellm/blob/d81472f196323ec677a3f359a984492e37e46b4f/model_prices_and_context_window.json"
-      },
-      "output": {
-       "source": "litellm",
-       "modelId": "gemini/gemini-3.8-flash",
-       "url": "https://github.com/BerriAI/litellm/blob/d81472f196323ec677a3f359a984492e37e46b4f/model_prices_and_context_window.json"
-      },
-      "cacheRead": {
-       "source": "litellm",
-       "modelId": "gemini/gemini-3.8-flash",
-       "url": "https://github.com/BerriAI/litellm/blob/d81472f196323ec677a3f359a984492e37e46b4f/model_prices_and_context_window.json"
-      }
-     }
+     "cacheRead": 0.135
+    },
+    {
+     "tier": "priority",
+     "minPromptTokens": 0,
+     "source": "google-gemini-api",
+     "validFrom": "2027-01-01",
+     "input": 2.7,
+     "output": 13.5,
+     "cacheRead": 0.27
     }
    ],
    "sources": [
@@ -30495,98 +30467,78 @@
     {
      "tier": "standard",
      "minPromptTokens": 0,
-     "cacheRead": 0.1,
+     "promo": true,
+     "source": "google-gemini-api",
+     "validTo": "2026-11-30",
      "input": 2,
      "output": 10,
-     "provenance": {
-      "input": {
-       "source": "litellm",
-       "modelId": "gemini/gemini-4-argon",
-       "url": "https://github.com/BerriAI/litellm/blob/d81472f196323ec677a3f359a984492e37e46b4f/model_prices_and_context_window.json"
-      },
-      "output": {
-       "source": "litellm",
-       "modelId": "gemini/gemini-4-argon",
-       "url": "https://github.com/BerriAI/litellm/blob/d81472f196323ec677a3f359a984492e37e46b4f/model_prices_and_context_window.json"
-      },
-      "cacheRead": {
-       "source": "litellm",
-       "modelId": "gemini/gemini-4-argon",
-       "url": "https://github.com/BerriAI/litellm/blob/d81472f196323ec677a3f359a984492e37e46b4f/model_prices_and_context_window.json"
-      }
-     }
+     "cacheRead": 0.1
+    },
+    {
+     "tier": "standard",
+     "minPromptTokens": 0,
+     "source": "google-gemini-api",
+     "validFrom": "2026-12-01",
+     "input": 4,
+     "output": 20,
+     "cacheRead": 0.2
     },
     {
      "tier": "batch",
      "minPromptTokens": 0,
-     "cacheRead": 0.05,
+     "promo": true,
+     "source": "google-gemini-api",
+     "validTo": "2026-11-30",
      "input": 1,
      "output": 5,
-     "provenance": {
-      "input": {
-       "source": "litellm",
-       "modelId": "gemini/gemini-4-argon",
-       "url": "https://github.com/BerriAI/litellm/blob/d81472f196323ec677a3f359a984492e37e46b4f/model_prices_and_context_window.json"
-      },
-      "output": {
-       "source": "litellm",
-       "modelId": "gemini/gemini-4-argon",
-       "url": "https://github.com/BerriAI/litellm/blob/d81472f196323ec677a3f359a984492e37e46b4f/model_prices_and_context_window.json"
-      },
-      "cacheRead": {
-       "source": "litellm",
-       "modelId": "gemini/gemini-4-argon",
-       "url": "https://github.com/BerriAI/litellm/blob/d81472f196323ec677a3f359a984492e37e46b4f/model_prices_and_context_window.json"
-      }
-     }
+     "cacheRead": 0.05
+    },
+    {
+     "tier": "batch",
+     "minPromptTokens": 0,
+     "source": "google-gemini-api",
+     "validFrom": "2026-12-01",
+     "input": 2,
+     "output": 10,
+     "cacheRead": 0.1
     },
     {
      "tier": "flex",
      "minPromptTokens": 0,
-     "cacheRead": 0.05,
+     "promo": true,
+     "source": "google-gemini-api",
+     "validTo": "2026-11-30",
      "input": 1,
      "output": 5,
-     "provenance": {
-      "input": {
-       "source": "litellm",
-       "modelId": "gemini/gemini-4-argon",
-       "url": "https://github.com/BerriAI/litellm/blob/d81472f196323ec677a3f359a984492e37e46b4f/model_prices_and_context_window.json"
-      },
-      "output": {
-       "source": "litellm",
-       "modelId": "gemini/gemini-4-argon",
-       "url": "https://github.com/BerriAI/litellm/blob/d81472f196323ec677a3f359a984492e37e46b4f/model_prices_and_context_window.json"
-      },
-      "cacheRead": {
-       "source": "litellm",
-       "modelId": "gemini/gemini-4-argon",
-       "url": "https://github.com/BerriAI/litellm/blob/d81472f196323ec677a3f359a984492e37e46b4f/model_prices_and_context_window.json"
-      }
-     }
+     "cacheRead": 0.05
+    },
+    {
+     "tier": "flex",
+     "minPromptTokens": 0,
+     "source": "google-gemini-api",
+     "validFrom": "2026-12-01",
+     "input": 2,
+     "output": 10,
+     "cacheRead": 0.1
     },
     {
      "tier": "priority",
      "minPromptTokens": 0,
-     "cacheRead": 0.18,
+     "promo": true,
+     "source": "google-gemini-api",
+     "validTo": "2026-11-30",
      "input": 3.6,
      "output": 18,
-     "provenance": {
-      "input": {
-       "source": "litellm",
-       "modelId": "gemini/gemini-4-argon",
-       "url": "https://github.com/BerriAI/litellm/blob/d81472f196323ec677a3f359a984492e37e46b4f/model_prices_and_context_window.json"
-      },
-      "output": {
-       "source": "litellm",
-       "modelId": "gemini/gemini-4-argon",
-       "url": "https://github.com/BerriAI/litellm/blob/d81472f196323ec677a3f359a984492e37e46b4f/model_prices_and_context_window.json"
-      },
-      "cacheRead": {
-       "source": "litellm",
-       "modelId": "gemini/gemini-4-argon",
-       "url": "https://github.com/BerriAI/litellm/blob/d81472f196323ec677a3f359a984492e37e46b4f/model_prices_and_context_window.json"
-      }
-     }
+     "cacheRead": 0.18
+    },
+    {
+     "tier": "priority",
+     "minPromptTokens": 0,
+     "source": "google-gemini-api",
+     "validFrom": "2026-12-01",
+     "input": 7.2,
+     "output": 36,
+     "cacheRead": 0.36
     }
    ],
    "sources": [
@@ -32190,50 +32142,40 @@
     {
      "tier": "standard",
      "minPromptTokens": 0,
-     "cacheRead": 0.1,
+     "promo": true,
+     "source": "google-gemini-api",
+     "validTo": "2026-12-31",
      "input": 1,
      "output": 5,
-     "provenance": {
-      "input": {
-       "source": "litellm",
-       "modelId": "gemini/gemini-robotics-er-2-preview",
-       "url": "https://github.com/BerriAI/litellm/blob/d81472f196323ec677a3f359a984492e37e46b4f/model_prices_and_context_window.json"
-      },
-      "output": {
-       "source": "litellm",
-       "modelId": "gemini/gemini-robotics-er-2-preview",
-       "url": "https://github.com/BerriAI/litellm/blob/d81472f196323ec677a3f359a984492e37e46b4f/model_prices_and_context_window.json"
-      },
-      "cacheRead": {
-       "source": "litellm",
-       "modelId": "gemini/gemini-robotics-er-2-preview",
-       "url": "https://github.com/BerriAI/litellm/blob/d81472f196323ec677a3f359a984492e37e46b4f/model_prices_and_context_window.json"
-      }
-     }
+     "cacheRead": 0.1
+    },
+    {
+     "tier": "standard",
+     "minPromptTokens": 0,
+     "source": "google-gemini-api",
+     "validFrom": "2027-01-01",
+     "input": 2,
+     "output": 10,
+     "cacheRead": 0.2
     },
     {
      "tier": "batch",
      "minPromptTokens": 0,
-     "cacheRead": 0.05,
+     "promo": true,
+     "source": "google-gemini-api",
+     "validTo": "2026-12-31",
      "input": 0.5,
      "output": 2.5,
-     "provenance": {
-      "input": {
-       "source": "litellm",
-       "modelId": "gemini/gemini-robotics-er-2-preview",
-       "url": "https://github.com/BerriAI/litellm/blob/d81472f196323ec677a3f359a984492e37e46b4f/model_prices_and_context_window.json"
-      },
-      "output": {
-       "source": "litellm",
-       "modelId": "gemini/gemini-robotics-er-2-preview",
-       "url": "https://github.com/BerriAI/litellm/blob/d81472f196323ec677a3f359a984492e37e46b4f/model_prices_and_context_window.json"
-      },
-      "cacheRead": {
-       "source": "litellm",
-       "modelId": "gemini/gemini-robotics-er-2-preview",
-       "url": "https://github.com/BerriAI/litellm/blob/d81472f196323ec677a3f359a984492e37e46b4f/model_prices_and_context_window.json"
-      }
-     }
+     "cacheRead": 0.05
+    },
+    {
+     "tier": "batch",
+     "minPromptTokens": 0,
+     "source": "google-gemini-api",
+     "validFrom": "2027-01-01",
+     "input": 1,
+     "output": 5,
+     "cacheRead": 0.1
     }
    ],
    "sources": [
@@ -32357,20 +32299,19 @@
     {
      "tier": "standard",
      "minPromptTokens": 0,
+     "promo": true,
+     "source": "google-gemini-api",
+     "validTo": "2026-12-31",
      "input": 1,
-     "output": 5,
-     "provenance": {
-      "input": {
-       "source": "litellm",
-       "modelId": "gemini/gemini-robotics-er-2-streaming-preview",
-       "url": "https://github.com/BerriAI/litellm/blob/d81472f196323ec677a3f359a984492e37e46b4f/model_prices_and_context_window.json"
-      },
-      "output": {
-       "source": "litellm",
-       "modelId": "gemini/gemini-robotics-er-2-streaming-preview",
-       "url": "https://github.com/BerriAI/litellm/blob/d81472f196323ec677a3f359a984492e37e46b4f/model_prices_and_context_window.json"
-      }
-     }
+     "output": 5
+    },
+    {
+     "tier": "standard",
+     "minPromptTokens": 0,
+     "source": "google-gemini-api",
+     "validFrom": "2027-01-01",
+     "input": 2,
+     "output": 10
     }
    ],
    "sources": [

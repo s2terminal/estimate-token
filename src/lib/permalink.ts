@@ -22,7 +22,7 @@ export function b64urlDecode(s: string): string {
 
 /** 状態を # 以降の文字列にする。選択は表示中のタブの分だけ入れる */
 export function encodeState(s: State): string {
-  const o = { t: s.t, fx: s.fx, cur: s.cur, unit: s.unit, cm: s.cm, llm: s.llm, img: { n: s.img.n, i: s.img.i, r: s.img.r, q: s.img.q }, sel: { [s.t]: s.sel[s.t] } };
+  const o = { t: s.t, fx: s.fx, promo: s.promo, cur: s.cur, unit: s.unit, cm: s.cm, llm: s.llm, img: { n: s.img.n, i: s.img.i, r: s.img.r, q: s.img.q }, sel: { [s.t]: s.sel[s.t] } };
   return VERSION + b64urlEncode(JSON.stringify(o));
 }
 
@@ -45,6 +45,7 @@ function merge(o: Raw, base: State): Decoded {
   const state: State = {
     t: oneOf(o.t, ["llm", "img"] as const, base.t),
     fx: typeof o.fx === "number" && o.fx > 0 ? o.fx : null,
+    promo: typeof o.promo === "boolean" ? o.promo : false,
     cur: oneOf(o.cur, ["JPY", "USD"] as const, base.cur),
     unit: oneOf(o.unit, ["1K", "1M"] as const, base.unit),
     cm: oneOf(o.cm, ["mix", "ratio", "log"] as const, base.cm),

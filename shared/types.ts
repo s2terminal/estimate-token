@@ -32,10 +32,23 @@ export interface PriceRule {
   perImageByRes?: Record<string, number>;
   /** 画像出力トークン単価(USD / 1M image output tokens)。1枚単価とは別 */
   imageOutput?: number;
-  /** 期間限定価格用。MVPでは常に空 */
+  /** 期間限定価格用。日付は両端を含む */
   validFrom?: string;
   validTo?: string;
   promo?: boolean;
+  /** sources.promotions の出典ID */
+  source?: string;
+}
+
+export interface PromotionSource {
+  id: string;
+  title: string;
+  author: string;
+  url: string;
+  license: "CC-BY-4.0";
+  licenseUrl: string;
+  checkedOn: string;
+  modifications: string;
 }
 
 export interface ModelSource {
@@ -90,6 +103,7 @@ export interface PriceData {
     /** 照合にだけ使う。値は公開しない */
     openrouter: { fetchedAt: string; bytes?: number; stale?: boolean };
     fx: { pair: "USDJPY"; rate: number; date: string; stale?: boolean };
+    promotions?: PromotionSource[];
   };
   models: Model[];
 }

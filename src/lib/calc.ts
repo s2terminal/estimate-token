@@ -75,14 +75,14 @@ const inRange = (r: PriceRule, d: string) => (!r.validFrom || r.validFrom <= d) 
 /**
  * 価格ルールを選ぶ。
  * 1. 料金プランで絞る(ないときは standard にして注記)
- * 2. 期間限定価格の有効期間で絞る
+ * 2. 有効期間で絞る。割引を加味しない場合は、判明している終了後の通常価格も使う
  * 3. 入力tokensが minPromptTokens を超えるルールのうち、最大の minPromptTokens を持つもの(長文価格)
  */
 export function pickRule(
   prices: PriceRule[],
   tier: Tier,
   promptTokens: number,
-  opts: PriceOptions = { asOf: "9999-12-31", promo: true },
+  opts: PriceOptions = { asOf: new Date().toISOString().slice(0, 10), promo: false },
 ): { rule: PriceRule | null; flags: Flag[]; why?: string } {
   const flags: Flag[] = [];
   let cands = prices.filter((r) => r.tier === tier);
@@ -92,14 +92,23 @@ export function pickRule(
   }
   if (!cands.length) return { rule: null, flags, why: "価格未取得" };
 
-  cands = cands.filter((r) => inRange(r, opts.asOf) && (opts.promo || !r.promo));
-  if (!cands.length) return { rule: null, flags, why: "基準日に有効な価格なし" };
-
-  const fit = cands.filter((r) => r.minPromptTokens === 0 || promptTokens > r.minPromptTokens);
-  const rule = fit.sort((a, b) => b.minPromptTokens - a.minPromptTokens)[0] ?? null;
-  if (!rule) return { rule: null, flags, why: "価格未取得" };
+  const applicable = cands.filter((r) => r.minPromptTokens === 0 || promptTokens > r.minPromptTokens);
+  const activePromo = applicable.filter((r) => r.promo && inRange(r, opts.asOf));
+  cands = applicable.filter((r) => inRange(r, opts.asOf) && (opts.promo || !r.promo));
+  if (!opts.promo) {
+    // 各長文しきい値について、現在の通常価格がなければ最も近い将来の通常価格を使う。
+    for (const threshold of new Set(activePromo.map((r) => r.minPromptTokens))) {
+      if (cands.some((r) => r.minPromptTokens === threshold)) continue;
+      const future = applicable.filter((r) => !r.promo && r.minPromptTokens === threshold && r.validFrom && r.validFrom > opts.asOf)
+        .sort((a, b) => a.validFrom!.localeCompare(b.validFrom!))[0];
+      if (future) cands.push(future);
+    }
+  }
+  const rule = cands.sort((a, b) => b.minPromptTokens - a.minPromptTokens || Number(!!b.promo) - Number(!!a.promo))[0] ?? null;
+  if (!rule) return { rule: null, flags, why: !opts.promo && activePromo.length ? "期間限定価格を除いた通常価格が未取得" : "基準日に有効な価格なし" };
+  if (rule.validFrom && rule.validFrom > opts.asOf) flags.push({ t: "期間限定終了後の通常価格", k: "" });
   if (rule.minPromptTokens > 0) flags.push({ t: `長文価格(>${rule.minPromptTokens / 1000}K)`, k: "warn" });
-  if (rule.promo && rule.validTo) flags.push({ t: `期間限定 〜${rule.validTo.slice(5).replace("-", "/")}`, k: "promo" });
+  if (rule.promo) flags.push({ t: rule.validTo ? `期間限定 〜${rule.validTo.slice(5).replace("-", "/")}` : "期間限定", k: "promo" });
   return { rule, flags };
 }
 
@@ -136,10 +145,11 @@ export function calcLlm(m: Model, u: LlmUsage, opts?: PriceOptions): CalcResult 
 }
 
 /** 画像生成の月額(USD)。画像出力トークン課金、または解像度別単価 → perImage。入力単価があればプロンプト分を足す */
-export function calcImage(m: Model, u: ImageUsage): CalcResult {
-  const rule = m.prices.find((r) => r.tier === "standard" && r.minPromptTokens === 0) ?? m.prices[0];
-  if (!rule) return { na: true, m, why: "価格未取得", flags: [] };
-  const flags: Flag[] = [];
+export function calcImage(m: Model, u: ImageUsage, opts?: PriceOptions): CalcResult {
+  const pk = pickRule(m.prices, "standard", u.i ?? 0, opts);
+  if (!pk.rule) return { na: true, m, why: pk.why ?? "価格未取得", flags: pk.flags };
+  const rule = pk.rule;
+  const flags: Flag[] = [...pk.flags];
   const done = (out: number, imageTokens?: number): CalcOk => {
     const tokensIn = u.i ?? 0;
     let pin = 0;
