@@ -3,6 +3,7 @@ import type { Model, PriceData } from "../../shared/types.ts";
 import { loadCatalog } from "../../pipeline/config.ts";
 import type { OpenRouterModel } from "../../pipeline/crosscheck.ts";
 import { normalize } from "../../pipeline/normalize.ts";
+import { applyRecommendations } from "../../pipeline/recommend.ts";
 import { type LiteLLMData, select } from "../../pipeline/select.ts";
 
 const fixture = (name: string) => JSON.parse(readFileSync(new URL(`../fixtures/${name}`, import.meta.url), "utf8"));
@@ -15,6 +16,7 @@ export const TODAY = "2026-10-11";
 function buildSampleData(): PriceData {
   const catalog = loadCatalog();
   const { models } = normalize(select(litellmSample(), catalog, TODAY), catalog);
+  applyRecommendations(models, catalog.recommendations, TODAY);
   for (const m of models) m.firstSeen = TODAY;
   return {
     schemaVersion: 1,

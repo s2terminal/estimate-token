@@ -1,0 +1,34 @@
+# 価格は完全一致した直販の提供条件に限って補完する。
+# 調査と採用範囲: https://github.com/s2terminal/estimate-token/issues/8
+# 新しいモデルは公開APIでの利用可能性と課金条件を確認してから追加する。
+offers:
+  - providerId: openai
+    modelId: gpt-6.1-sol
+    promptThresholds: [0, 272000]
+    checkedAt: "2026-10-12"
+    allowNew: true
+    references:
+      - https://github.com/s2terminal/estimate-token/issues/8
+      - https://github.com/anomalyco/models.dev/blob/6967e61ac158f3192ee9a1633a365b40c28b6ee0/providers/openai/models/gpt-6.1-sol.toml
+  - providerId: anthropic
+    modelId: claude-sonnet-5-5
+    promptThresholds: [0]
+    cacheWriteTtlMinutes: 5
+    checkedAt: "2026-10-12"
+    allowNew: true
+    references:
+      - https://github.com/s2terminal/estimate-token/issues/8
+      - https://platform.claude.com/docs/en/about-claude/pricing
+  - providerId: google
+    modelId: gemini-2.5-flash
+    promptThresholds: [0]
+    checkedAt: "2026-10-12"
+    allowNew: true
+    references:
+      - https://ai.google.dev/gemini-api/docs/pricing#gemini-2.5-flash
+      - https://ai.google.dev/gemini-api/docs/tokens
+# PR #9 / catalog.yamlで採用済み。未確認previewへの価格補完や新規追加は許可しない。
+recommendationPreviews:
+  - gemini-3.1-pro-preview@gemini-api:global
+# 価格の照合には使用しない。元IDと共通モデルIDが完全一致しない場合の確認済み対応。
+metadata: {}

@@ -14,5 +14,4 @@ jobs:
       - uses: actions/setup-node@v4
         with: { node-version: 22, cache: npm }
       - run: npm ci
-      - run: node scripts/capture-models-dev.mjs
       - run: npm run check

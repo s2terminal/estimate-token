@@ -39,16 +39,3 @@ for (const [name, data] of [["models-dev.catalog.json", selected], ["models-dev.
   writeFileSync("tests/fixtures/" + name, text);
 }
 console.log("models.dev live API verified", JSON.stringify(meta));
-
-const { gzipSync } = await import("node:zlib");
-const published = JSON.parse(readFileSync("public/data/latest.json", "utf8"));
-const lt = published.sources.litellm;
-const ltResponse = await fetch("https://raw.githubusercontent.com/BerriAI/litellm/" + lt.commit + "/model_prices_and_context_window.json", { signal: AbortSignal.timeout(30000) });
-if (!ltResponse.ok) throw new Error("fixed LiteLLM HTTP " + ltResponse.status);
-const ltRaw = await ltResponse.text();
-writeFileSync("raw/litellm.json", ltRaw);
-writeFileSync("raw/litellm.meta.json", JSON.stringify({ ...lt, bytes: Buffer.byteLength(ltRaw), records: Object.keys(JSON.parse(ltRaw)).length }));
-for (const name of ["models-dev.catalog.json", "models-dev.meta.json", "litellm.json", "litellm.meta.json"]) {
-  const b64 = gzipSync(readFileSync("raw/" + name)).toString("base64");
-  for (let i=0; i<b64.length; i+=6000) console.log("SOURCE_RAW_CAPTURE " + name + " " + (i/6000) + " " + b64.slice(i,i+6000));
-}

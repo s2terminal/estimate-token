@@ -1,7 +1,7 @@
 import type { Category, Model, Platform, PriceRule, Tier } from "../shared/types.ts";
 import type { Catalog } from "./config.ts";
 import type { LiteLLMEntry } from "./select.ts";
-import { applyRecommendations, releaseDate } from "./recommend.ts";
+import { releaseDate } from "./recommend.ts";
 
 /** USD/token → USD/1M tokens。浮動小数点の誤差を消すため有効数字6桁で丸める */
 export const perMillion = (v: number): number => Number((v * 1e6).toPrecision(6));
@@ -159,7 +159,7 @@ export function vendorOf(family: string, catalog: Catalog, hint?: string, provid
 }
 
 /** 選別済みエントリを正規化スキーマのモデルにまとめる */
-export function normalize(entries: [string, LiteLLMEntry][], catalog: Catalog): { models: Model[]; unparsed: string[] } {
+export function normalize(entries: [string, LiteLLMEntry][], catalog: Catalog, commit = "main"): { models: Model[]; unparsed: string[] } {
   const providerOrder = Object.keys(catalog.providers);
   const unparsed: string[] = [];
   type Cand = { key: string; e: LiteLLMEntry; parsed: ParsedKey; platform: Platform; category: Category; rules: PriceRule[] };
@@ -207,13 +207,30 @@ export function normalize(entries: [string, LiteLLMEntry][], catalog: Catalog): 
       prices: main.rules,
       sources: [{ litellm: main.key, ...(aliases.length ? { aliases } : {}), ...(typeof main.e.source === "string" ? { url: main.e.source } : {}) }],
     };
-    if (typeof main.e.max_input_tokens === "number") m.contextWindow = main.e.max_input_tokens;
+    const provenance = { source: "litellm" as const, modelId: main.key, url: `https://github.com/BerriAI/litellm/blob/${encodeURIComponent(commit)}/model_prices_and_context_window.json` };
+    for (const rule of m.prices) {
+      rule.provenance = {};
+      for (const field of ["input", "output", "cacheRead", "cacheWrite", "cacheWrite1h", "perImage", "perImageByRes", "imageOutput"] as const)
+        if (rule[field] !== undefined) rule.provenance[field] = provenance;
+    }
+    m.metadataSources = {};
+    if (typeof main.e.max_input_tokens === "number") {
+      m.contextWindow = main.e.max_input_tokens;
+      m.inputLimit = main.e.max_input_tokens;
+      m.metadataSources.inputLimit = provenance;
+    }
+    if (typeof main.e.max_output_tokens === "number") {
+      m.outputLimit = main.e.max_output_tokens;
+      m.metadataSources.outputLimit = provenance;
+    }
     if (main.e.deprecation_date) m.deprecationDate = main.e.deprecation_date;
     const released = releaseDate(main.e.release_date);
-    if (released) m.releaseDate = released;
+    if (released) {
+      m.releaseDate = released;
+      m.releaseDateSource = { ...provenance, precision: released.length === 7 ? "month" : released.length === 10 ? "day" : "timestamp" };
+    }
     models.push(m);
   }
   models.sort((a, b) => a.id.localeCompare(b.id));
-  applyRecommendations(models, catalog.recommendations);
   return { models, unparsed };
 }

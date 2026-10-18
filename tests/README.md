@@ -22,3 +22,5 @@ npm run check                     # テスト・型チェック・ビルド
 `support/fixtures.ts` は正規化済みのデータを必要になった時点で一度だけ作ります。`sampleData()` と `sampleModel(id)` は複製を返すため、単価やフラグを書き換えても他のテストに影響しません。`findModel(models, id)` は渡されたデータ内のモデルを返し、不足時はID付きのエラーにします。
 
 `reference/` は日次の公開データや正規化処理に依存させず、資料の固定期待値を保持します。`integration/` は取得元データの単位・提供先・解像度が計算に反映されることを確認するため、同じ料金例が登場しても検証する経路が異なります。出典と期待値の更新方針は [公式料金例](../docs/official-pricing-examples.md) を参照してください。
+
+models.devのライブAPIから抽出した固定fixtureは `fixtures/models-dev.catalog.json`。元スナップショットと抽出ファイルのハッシュは `models-dev.meta.json` に保存します。境界条件用の合成データは `support/models-dev.ts` と区別します。更新方法と採用条件は [models.devの採用範囲](../docs/models-dev.md) を参照してください。

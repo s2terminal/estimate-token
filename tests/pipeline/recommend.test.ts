@@ -16,6 +16,12 @@ const picks = (models: Model[], groups = group) => {
 };
 
 describe("おすすめモデル", () => {
+  it("直販だけcanonicalが判明していても、日付不明の地域行と重複選択しない", () => {
+    expect(picks([
+      model("gemini-3.8-flash", "vertex-ai"),
+      model("gemini-3.8-flash", "gemini-api", { canonicalModelId: "google/gemini-3.8-flash", releaseDate: "2026-09-02" }),
+    ])).toEqual(["gemini-3.8-flash@gemini-api:global"]);
+  });
   it("同じ用途では旧世代を外し、数値バージョンで最新を選ぶ", () => {
     expect(picks([model("gemini-3.9-flash"), model("gemini-3.10-flash"), model("gemini-3.8-flash", "gemini-api", { featured: true })]))
       .toEqual(["gemini-3.10-flash@gemini-api:global"]);
@@ -102,6 +108,8 @@ describe("リリース日時の取り込み", () => {
       ["gemini/gemini-3.9-flash", { ...e, release_date: "2026-09-01" }],
       ["gemini/gemini-3.7-flash-2026-10-11", e],
     ], catalog);
+    expect(models.every(m => !m.featured)).toBe(true);
+    applyRecommendations(models, catalog.recommendations, "2026-10-18");
     expect(models.find(m => m.featured)?.family).toBe("gemini-3.8-flash");
     expect(models.find(m => m.family === "gemini-3.8-flash")?.releaseDate).toBe("2026-10-12");
     expect(models.find(m => m.family === "gemini-3.7-flash")?.releaseDate).toBeUndefined();

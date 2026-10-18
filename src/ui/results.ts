@@ -5,6 +5,7 @@ import { esc, int, money as fmtMoney, sig, unitLabel, unitPrice as fmtUnit } fro
 import { modelFlags, where } from "../lib/models.ts";
 import { type State, TAB_LABEL } from "../lib/state.ts";
 import { $ } from "./dom.ts";
+import { sourceCell } from "../lib/sources.ts";
 
 /** 試算結果の要約・比較表・単価一覧。イベント処理やアプリの状態管理は持たない。 */
 export function renderResults(data: PriceData, state: State, ok: CalcOk[], na: CalcNa[]) {
@@ -74,11 +75,7 @@ export function renderResults(data: PriceData, state: State, ok: CalcOk[], na: C
     if (r.promo) parts.push("期間限定");
     return parts.join(" ・ ");
   }
-  const srcCell = (m: Model) => {
-    const s = m.sources[0] ?? {};
-    const label = s.litellm ? "LiteLLM" : "—";
-    return s.url ? `<a href="${esc(s.url)}" target="_blank" rel="noopener">${label}</a>` : label;
-  };
+  const srcCell = sourceCell;
 
   function renderUnitTable() {
     const t = $<HTMLTableElement>("unitTable");
@@ -108,7 +105,7 @@ export function renderResults(data: PriceData, state: State, ok: CalcOk[], na: C
       }
       for (const r of m.prices)
         rows.push(
-          `<tr><td class="mname">${esc(m.name)}</td><td class="mmeta">${esc(where(m))}</td><td class="mmeta">${esc(ruleLabel(r))}</td><td class="num">${unitPrice(r.input)}</td><td class="num">${unitPrice(r.cacheRead)}</td><td class="num">${unitPrice(r.cacheWrite)}</td><td class="num">${unitPrice(r.output)}</td><td class="mmeta">${srcCell(m)}</td></tr>`,
+          `<tr><td class="mname">${esc(m.name)}</td><td class="mmeta">${esc(where(m))}</td><td class="mmeta">${esc(ruleLabel(r))}</td><td class="num">${unitPrice(r.input)}</td><td class="num">${unitPrice(r.cacheRead)}</td><td class="num">${unitPrice(r.cacheWrite)}</td><td class="num">${unitPrice(r.output)}</td><td class="mmeta">${srcCell(m, r)}</td></tr>`,
         );
     }
     t.tBodies[0].innerHTML = rows.join("") || `<tr class="na"><td colspan="8">モデルが選ばれていません。</td></tr>`;

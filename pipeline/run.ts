@@ -1,28 +1,26 @@
 /* 日次更新パイプライン: fetch → select → normalize → cross-check → validate → diff
    使い方: npm run pipeline [-- --offline] [-- --force-stop]
    出力: public/data/latest.json(中身が変わったときだけ)、out/report.md、out/gate.json */
-import { createHash } from "node:crypto";
 import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import type { PriceData } from "../shared/types.ts";
-import { ROOT, loadCatalog, loadGates } from "./config.ts";
+import { ROOT, loadCatalog, loadGates, loadModelMappings } from "./config.ts";
+import { assembleModels } from "./assemble.ts";
+import { contentHash } from "./content.ts";
 import { crossCheck } from "./crosscheck.ts";
 import { diffData, diffMarkdown } from "./diff.ts";
 import { fetchAll, readRaw } from "./fetch.ts";
 import { unsupportedImageModels } from "./image-tokens.ts";
-import { normalize } from "./normalize.ts";
-import { select } from "./select.ts";
+import { applyRecommendations } from "./recommend.ts";
 import { checkFx, evaluateGates } from "./validate.ts";
 
 const args = new Set(process.argv.slice(2));
-const DATA_PATH = `${ROOT}public/data/latest.json`;
-const OUT_DIR = `${ROOT}out`;
-const RAW_DIR = `${ROOT}raw`;
+const option = (name: string, fallback: string) => process.argv.find(a => a.startsWith(name + "="))?.slice(name.length + 1) ?? fallback;
+const DATA_PATH = option("--data", `${ROOT}public/data/latest.json`);
+const OUT_DIR = option("--out", `${ROOT}out`);
+const RAW_DIR = option("--raw", `${ROOT}raw`);
 
 /** 日次実行は JST の朝なので、スナップショット日は JST の日付にする */
 const jstDate = (d: Date) => new Date(d.getTime() + 9 * 3600_000).toISOString().slice(0, 10);
-
-const contentHash = (d: PriceData) =>
-  createHash("sha256").update(JSON.stringify({ models: d.models, fx: d.sources.fx.rate, commit: d.sources.litellm.commit })).digest("hex");
 
 async function main() {
   const now = new Date();
@@ -31,17 +29,21 @@ async function main() {
   const gates = loadGates();
   const prev: PriceData | null = existsSync(DATA_PATH) ? JSON.parse(readFileSync(DATA_PATH, "utf8")) : null;
 
-  const src = args.has("--offline") ? readRaw(RAW_DIR) : await fetchAll(RAW_DIR);
+  const src = args.has("--offline") ? readRaw(RAW_DIR) : await fetchAll(RAW_DIR, { minSizeRatio: gates.fetch.minSizeRatio, previous: prev?.sources });
   const notes = [...src.warnings];
 
-  const selected = select(src.litellm.data, catalog, today);
-  const { models, unparsed } = normalize(selected, catalog);
+  const { models, unparsed, frozen, notes: mergeNotes } = assembleModels(src, prev, catalog, loadModelMappings(), today);
+  notes.push(...mergeNotes);
   const cc = src.openrouter
     ? crossCheck(models, src.openrouter.data, { mismatchPct: gates.crosscheck.mismatchPct, recentDays: gates.newModel.openrouterRecentDays, now })
     : { mismatches: [], candidates: [] };
 
   const prevById = new Map((prev?.models ?? []).map((m) => [m.id, m]));
-  for (const m of models) m.firstSeen = prevById.get(m.id)?.firstSeen ?? today;
+  for (const m of models) {
+    m.firstSeen = prevById.get(m.id)?.firstSeen ?? today;
+    if (!src.openrouter && prevById.get(m.id)?.needsReview) m.needsReview = true;
+  }
+  applyRecommendations(models, catalog.recommendations, today);
   const unsupported = unsupportedImageModels(models, prev?.models);
   notes.push(...unsupported.added.map((m) => `画像トークン換算未対応の新モデル: ${m.id} — ${m.reason}`));
 
@@ -58,14 +60,26 @@ async function main() {
     generatedAt: now.toISOString(),
     baseline: prev?.baseline ?? today,
     sources: {
-      litellm: { commit: src.litellm.commit, fetchedAt: src.litellm.fetchedAt, bytes: src.litellm.bytes },
-      openrouter: { fetchedAt: src.openrouter?.fetchedAt ?? "", ...(src.openrouter ? { bytes: src.openrouter.bytes } : {}) },
+      litellm: frozen ? { ...prev!.sources.litellm, stale: true } : {
+        commit: src.litellm!.commit, fetchedAt: src.litellm!.fetchedAt, bytes: src.litellm!.bytes,
+        records: src.litellm!.records, ...(src.litellm!.stale ? { stale: true } : {}),
+      },
+      ...((frozen && prev!.sources.modelsDev) ? { modelsDev: { ...prev!.sources.modelsDev!, stale: true } } :
+        src.modelsDev ? { modelsDev: {
+          url: src.modelsDev.url, fetchedAt: src.modelsDev.fetchedAt, sha256: src.modelsDev.sha256,
+          bytes: src.modelsDev.bytes, counts: src.modelsDev.counts,
+          ...(src.modelsDev.etag ? { etag: src.modelsDev.etag } : {}),
+          ...(src.modelsDev.stale ? { stale: true } : {}),
+        } } : {}),
+      openrouter: src.openrouter ? { fetchedAt: src.openrouter.fetchedAt, bytes: src.openrouter.bytes, ...(src.openrouter.stale ? { stale: true } : {}) } :
+        { ...(prev?.sources.openrouter ?? { fetchedAt: "" }), stale: true },
       fx,
     },
     models,
   };
 
   const gate = evaluateGates(prev, next, gates);
+  gate.stop.push(...src.rejected);
   gate.notes.unshift(...notes);
   if (args.has("--force-stop")) gate.stop.push("テスト用の強制フラグ(--force-stop)");
 

@@ -25,7 +25,7 @@ describe("価格更新ログの未解析キー", () => {
     const gpt4o = models.filter((m) => m.family === "gpt-4o");
     expect(gpt4o.map((m) => m.region).sort()).toEqual(["global", "global-standard"]);
     const standard = gpt4o.find((m) => m.region === "global-standard")!;
-    expect(standard.prices).toContainEqual({ tier: "batch", minPromptTokens: 0, input: 1.25, output: 5 });
+    expect(standard.prices).toContainEqual(expect.objectContaining({ tier: "batch", minPromptTokens: 0, input: 1.25, output: 5 }));
     expect(standard.sources[0].aliases).toEqual(["azure/global-standard/gpt-4o-2024-11-20"]);
     expect(models.some((m) => m.id === "gpt-4o-mini@azure:global-standard")).toBe(true);
   });

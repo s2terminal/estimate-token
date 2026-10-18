@@ -46,7 +46,7 @@ describe("evaluateGates", () => {
   ] as const)("$labelなら公開を止める", ({ id, field, value, reason }) => {
     const prev = sampleData(), next = structuredClone(prev);
     const rule = findModel(next.models, id).prices[0];
-    if (value === undefined) delete rule[field];
+    if (value === undefined) { delete rule[field]; delete rule.provenance?.[field]; }
     else rule[field] = value;
     expect(evaluateGates(prev, next, gates).stop).toEqual([
       expect.stringContaining(`${reason}: ${id} standard ${field}`),

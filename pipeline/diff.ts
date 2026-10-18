@@ -1,20 +1,20 @@
 import type { Model, PriceData } from "../shared/types.ts";
 import type { GateResult } from "./validate.ts";
-import { fmtPct } from "./validate.ts";
+import { fmtPct, ruleValues } from "./validate.ts";
 
 export interface DiffSummary {
   added: Model[];
   removed: Model[];
   up: string[];
   down: string[];
+  sourceChanges: string[];
+  metadataChanges: string[];
 }
-
-const base = (m: Model) => m.prices.find((r) => r.tier === "standard" && r.minPromptTokens === 0);
 
 export function diffData(prev: PriceData | null, next: PriceData): DiffSummary {
   const prevById = new Map((prev?.models ?? []).map((m) => [m.id, m]));
   const nextIds = new Set(next.models.map((m) => m.id));
-  const out: DiffSummary = { added: [], removed: [], up: [], down: [] };
+  const out: DiffSummary = { added: [], removed: [], up: [], down: [], sourceChanges: [], metadataChanges: [] };
   if (!prev) return out;
   for (const m of next.models) {
     const p = prevById.get(m.id);
@@ -22,11 +22,19 @@ export function diffData(prev: PriceData | null, next: PriceData): DiffSummary {
       out.added.push(m);
       continue;
     }
-    const a = base(p), b = base(m);
-    for (const f of ["input", "output", "perImage", "imageOutput"] as const) {
-      const x = a?.[f], y = b?.[f];
-      if (x && y && x !== y) (y > x ? out.up : out.down).push(`${m.id} ${f}: ${x} → ${y}(${fmtPct(((y - x) / x) * 100)})`);
+    for (const r of m.prices) {
+      const prior = p.prices.find(pr => pr.tier === r.tier && pr.minPromptTokens === r.minPromptTokens);
+      const before = prior ? ruleValues(prior) : {};
+      for (const [field, y] of Object.entries(ruleValues(r))) {
+        const x = before[field];
+        if (x !== undefined && x !== y) (y > x ? out.up : out.down).push(`${m.id} ${r.tier} >${r.minPromptTokens} ${field}: ${x} → ${y}${x ? "(" + fmtPct(((y-x)/x)*100) + ")" : ""}`);
+        else if (x === undefined) out.sourceChanges.push(`${m.id} ${r.tier} >${r.minPromptTokens} ${field}: 料金を補完 ${y}`);
+      }
+      if (JSON.stringify(prior?.provenance) !== JSON.stringify(r.provenance))
+        out.sourceChanges.push(`${m.id} ${r.tier} >${r.minPromptTokens}: 採用元 ${JSON.stringify(prior?.provenance ?? {})} → ${JSON.stringify(r.provenance ?? {})}`);
     }
+    for (const field of ["canonicalModelId", "releaseDate", "releaseDateSource", "inputLimit", "totalContext", "outputLimit", "providerStatus"] as const)
+      if (JSON.stringify(p[field]) !== JSON.stringify(m[field])) out.metadataChanges.push(`${m.id} ${field}: ${JSON.stringify(p[field]) ?? "不明"} → ${JSON.stringify(m[field]) ?? "不明"}`);
   }
   for (const p of prev.models) if (!nextIds.has(p.id)) out.removed.push(p);
   return out;
@@ -49,12 +57,14 @@ export function diffMarkdown(
     `- モデル数: ${next.models.length}`,
     `- 為替: 1 USD = ${next.sources.fx.rate} 円(${next.sources.fx.date}${next.sources.fx.stale ? "、前回値を使用" : ""})`,
     `- LiteLLM: ${next.sources.litellm.commit}`,
+    ...(next.sources.modelsDev ? [`- models.dev: ${next.sources.modelsDev.url} SHA-256=${next.sources.modelsDev.sha256}、取得 ${next.sources.modelsDev.fetchedAt}、${next.sources.modelsDev.bytes} bytes${next.sources.modelsDev.stale ? "（前回値）" : ""}`,
+      `- models.dev取得件数: ${JSON.stringify(next.sources.modelsDev.counts ?? {})}`] : []),
     "",
     "### 止めた理由",
     list(gate.stop),
     "",
     "### 記録すること",
-    list([...gate.notes, ...extra.mismatches]),
+    list([...gate.notes, ...extra.mismatches], Infinity),
     "",
     "### 新モデル",
     list(d.added.map((m) => m.id)),
@@ -70,6 +80,12 @@ export function diffMarkdown(
     "",
     "### 値下げ",
     list(d.down),
+    "",
+    "### 料金の補完・採用元変更",
+    list(d.sourceChanges ?? [], Infinity),
+    "",
+    "### モデル情報の変更",
+    list(d.metadataChanges ?? [], Infinity),
     "",
     "### 解析できなかったキー(catalog.yaml の見直し候補)",
     list(extra.unparsed, 20),
