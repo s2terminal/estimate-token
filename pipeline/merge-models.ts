@@ -1,7 +1,7 @@
 import type { Model, PriceRule, ValueSource } from "../shared/types.ts";
 import type { Catalog } from "./config.ts";
 import { displayName, parseKey, vendorOf } from "./normalize.ts";
-import { MODELS_DEV_URL, type ModelsDevOffer, type NormalizedModelsDev } from "./models-dev.ts";
+import { MODELS_DEV_URL, type ModelsDevOffer, type NormalizedModelsDev, type Skip } from "./models-dev.ts";
 import { releaseDate, releaseInterval } from "./recommend.ts";
 
 export interface VerifiedOffer {
@@ -115,8 +115,8 @@ function enrich(m: Model, matches: ModelsDevOffer[], data: NormalizedModelsDev, 
   }
 }
 export function mergeModels(models: Model[], data: NormalizedModelsDev, policy: ModelsDevPolicy, catalog: Catalog, today: string,
-  options: { blockedOffers?: Set<string> } = {}): { models: Model[]; notes: string[] } {
-  const notes = [...data.notes];
+  options: { blockedOffers?: Set<string> } = {}): { models: Model[]; notes: string[]; skipped: Skip[] } {
+  const notes = [...data.notes], skipped = [...data.skipped];
   const byApp = new Map<string, ModelsDevOffer[]>();
   for (const o of data.offers) byApp.set(o.appId, [...(byApp.get(o.appId) ?? []), o]);
   for (const m of models) {
@@ -128,19 +128,19 @@ export function mergeModels(models: Model[], data: NormalizedModelsDev, policy: 
     for (let i = 0; i < matches.length; i++) for (let j = i + 1; j < matches.length; j++) {
       if (rulesConflict(matches[i].rules, matches[j].rules)) {
         conflict = true;
-        notes.push(`${m.id}: models.dev内の価格競合 ${matches[i].providerId}/${matches[i].modelId} / ${matches[j].providerId}/${matches[j].modelId}。補完を保留`);
+        skipped.push({ reason: "models.dev内の価格競合のため補完を保留", item: `${m.id}: ${matches[i].providerId}/${matches[i].modelId} / ${matches[j].providerId}/${matches[j].modelId}` });
         for (const a of matches[i].rules) {
           const b = matches[j].rules.find(r => r.minPromptTokens === a.minPromptTokens && r.tier === a.tier);
           if (!b) continue;
           for (const f of FIELDS) if (a[f] !== undefined && b[f] !== undefined && !pricesEqual(a[f]!, b[f]!))
-            notes.push(`${m.id} ${a.tier} >${a.minPromptTokens} ${f}: ${matches[i].providerId}/${matches[i].modelId}=${a[f]}, ${matches[j].providerId}/${matches[j].modelId}=${b[f]} USD/1M (提供条件の同一性は未確認)`);
+            skipped.push({ reason: "models.dev内の価格差(提供条件の同一性は未確認)", item: `${m.id} ${a.tier} >${a.minPromptTokens} ${f}: ${matches[i].providerId}/${matches[i].modelId}=${a[f]}, ${matches[j].providerId}/${matches[j].modelId}=${b[f]} USD/1M` });
         }
       }
     }
     for (const o of matches) {
       const comparable = eligible(o, verified(o, policy), today);
       if (!["openai", "anthropic", "google"].includes(o.providerId))
-        notes.push(`${m.id}: ${o.providerId}/${o.modelId} の地域・サービス条件は未確認、価格は自動採用しない`);
+        skipped.push({ reason: "地域・サービス条件が未確認のため価格は自動採用しない", item: `${m.id}: ${o.providerId}/${o.modelId}` });
       for (const rule of o.rules) {
         const existing = m.prices.find(r => r.tier === "standard" && r.minPromptTokens === rule.minPromptTokens);
         if (!existing) continue;
@@ -154,7 +154,7 @@ export function mergeModels(models: Model[], data: NormalizedModelsDev, policy: 
               existing.comparedSources[field]!.push(ref(o));
           } else if (!pricesEqual(a, b)) {
             conflict = true;
-            notes.push(`${m.id} standard >${rule.minPromptTokens} ${field}: LiteLLM=${a}, models.dev ${o.providerId}/${o.modelId}=${b} USD/1M。既存値を維持`);
+            skipped.push({ reason: "LiteLLMとmodels.devの価格が不一致のため既存値を維持", item: `${m.id} standard >${rule.minPromptTokens} ${field}: LiteLLM=${a}, models.dev ${o.providerId}/${o.modelId}=${b} USD/1M` });
           }
         }
       }
@@ -184,15 +184,15 @@ export function mergeModels(models: Model[], data: NormalizedModelsDev, policy: 
   for (const o of data.offers) {
     if (ids.has(o.appId)) continue;
     if (options.blockedOffers?.has(o.platform + "/" + o.modelId)) {
-      notes.push(`${o.providerId}/${o.modelId}: LiteLLMで既知の廃止・対象外条件を維持し、新規追加を保留`); continue;
+      skipped.push({ reason: "LiteLLMで既知の廃止・対象外条件のため新規追加を保留", item: `${o.providerId}/${o.modelId}` }); continue;
     }
     const v = verified(o, policy);
     if (!v?.allowNew || !eligible(o, v, today) || catalog.excludeKeyPatterns.some(p => new RegExp(p).test(o.modelId))) {
-      notes.push(`${o.providerId}/${o.modelId}: 追加候補 (提供条件・公開APIでの利用可能性を未確認)`); continue;
+      skipped.push({ reason: "追加候補(提供条件・公開APIでの利用可能性を未確認)", item: `${o.providerId}/${o.modelId}` }); continue;
     }
     const group = byApp.get(o.appId) ?? [];
     if (group.some(other => other.modelId !== o.modelId || rulesConflict(o.rules, other.rules))) {
-      notes.push(`${o.appId}: 別名・provider競合のため新規追加を保留`); continue;
+      skipped.push({ reason: "別名・provider競合のため新規追加を保留", item: o.appId }); continue;
     }
     const parsed = parseKey(o.modelId, o.platform)!;
     const m: Model = { id: o.appId, family: parsed.family, name: displayName(parsed.family, catalog.names),
@@ -210,5 +210,5 @@ export function mergeModels(models: Model[], data: NormalizedModelsDev, policy: 
     notes.push(`${m.id}: models.devから確認済みモデルを追加`);
   }
   models.sort((a,b) => a.id.localeCompare(b.id));
-  return { models, notes };
+  return { models, notes, skipped };
 }

@@ -56,13 +56,13 @@ describe("models.devの正規化・価格補完", () => {
     const result = merge([m], { openai: [offering("gpt-6.1-sol", { cost: { input: 2.2, output: 10 } })] });
     expect(base(m).input).toBe(2);
     expect(base(m).output).toBeUndefined();
-    expect(result.notes.some(n => n.includes("2.2") && n.includes("既存値を維持"))).toBe(true);
+    expect(result.skipped.some(s => s.item.includes("2.2") && s.reason.includes("既存値を維持"))).toBe(true);
   });
   it("確認済みモデルはLiteLLM未収録でも追加し、未確認Sparkは候補に留める", () => {
     const result = merge([], { openai: [offering("gpt-6.1-sol"), offering("gpt-5.3-codex-spark")] });
     expect(result.models.map(m => m.id)).toEqual(["gpt-6.1-sol@openai:global"]);
     expect(base(result.models[0]).provenance?.input?.source).toBe("models.dev");
-    expect(result.notes.some(n => n.includes("spark") && n.includes("追加候補"))).toBe(true);
+    expect(result.skipped.some(s => s.item.includes("spark") && s.reason.includes("追加候補"))).toBe(true);
   });
   it("総context・入力・出力上限を別々に保持し、input欠損を総contextで埋めない", () => {
     const m = sol();
@@ -79,7 +79,7 @@ describe("models.devの正規化・価格補完", () => {
       offering("gpt-4o-2024-05-13", { cost: { input: 5, output: 15 } }),
     ] });
     expect(base(models[0]).input).toBe(2.5);
-    expect(result.notes.some(n => n.includes("LiteLLM=2.5"))).toBe(false);
+    expect(result.skipped.some(s => s.item.includes("LiteLLM=2.5"))).toBe(false);
     expect(models[0].sources.filter(s => s.modelsDev).map(s => s.modelsDev!.modelId)).toEqual(["gpt-4o"]);
   });
   it.each([
@@ -93,14 +93,14 @@ describe("models.devの正規化・価格補完", () => {
       [providers[1]]: [offering(id, { cost: { input: 2, output: 10, cache_read: 0.2 } })],
     });
     expect(base(models[0]).cacheRead).toBeUndefined();
-    expect(result.notes.some(n => n.includes("models.dev内の価格競合"))).toBe(true);
+    expect(result.skipped.some(s => s.reason.includes("models.dev内の価格競合"))).toBe(true);
     expect(models[0].sources.filter(s => s.modelsDev)).toHaveLength(2);
   });
   it("Bedrockのbare IDは地域不明として価格採用を保留する", () => {
     const { models } = normalize([["bedrock/anthropic.claude-sonnet-4-6", { litellm_provider: "bedrock", mode: "chat", input_cost_per_token: 0.000003, output_cost_per_token: 0.000015 }]], catalog);
     const result = merge(models, { "amazon-bedrock": [offering("anthropic.claude-sonnet-4-6", { cost: { input: 3.3, output: 16.5 } })] });
     expect(base(models[0]).input).toBe(3);
-    expect(result.notes.some(n => n.includes("地域・サービス条件は未確認"))).toBe(true);
+    expect(result.skipped.some(s => s.reason.includes("地域・サービス条件が未確認"))).toBe(true);
   });
   it("動画との混合出力や画像の汎用outputをテキスト・画像単価へ転用しない", () => {
     const m = sampleModel("gpt-image-2@openai:global");
@@ -116,7 +116,7 @@ describe("models.devの正規化・価格補完", () => {
     const m = sol(); delete base(m).output; delete base(m).provenance?.output;
     const result = merge([m], { openai: [offering("gpt-6.1-sol", { cost: { input: 2, output: 10, context_over_200k: { input: 4, output: 15 } } })] });
     expect(base(m).output).toBeUndefined();
-    expect(result.notes.some(n => n.includes("正確な境界が不明"))).toBe(true);
+    expect(result.skipped.some(s => s.reason.includes("正確な境界が不明"))).toBe(true);
   });
 });
 
@@ -189,7 +189,7 @@ describe("日付・公開状態・API検証", () => {
     const data = normalizeModelsDev(catalogOf({ openai: [offering("gpt-6.1-sol", {
       cost: { input: 2, output: 10, reasoning: 3 }, experimental: { modes: { fast: { provider: { body: { service_tier: "priority" } } } } },
     })] }));
-    expect(data.notes.some(n => n.includes("cost.reasoning"))).toBe(true);
-    expect(data.notes.some(n => n.includes("サービスモード fast"))).toBe(true);
+    expect(data.skipped.some(s => s.item.includes("cost.reasoning"))).toBe(true);
+    expect(data.skipped.some(s => s.reason.includes("サービスモード") && s.item.endsWith(": fast"))).toBe(true);
   });
 });

@@ -99,6 +99,6 @@ describe("models.devの取得・前回値維持", () => {
     } };
     const result = assembleModels(src, null, loadCatalog(), loadModelsDevPolicy(), "2026-10-18");
     expect(result.models.some(m => m.id === "gpt-6.1-sol@openai:global")).toBe(false);
-    expect(result.notes.some(n => n.includes("既知の廃止"))).toBe(true);
+    expect(result.skipped.some(s => s.reason.includes("既知の廃止"))).toBe(true);
   });
 });

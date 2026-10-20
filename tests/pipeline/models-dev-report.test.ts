@@ -47,6 +47,35 @@ describe("models.devの公開スキーマ・差分・出典", () => {
     expect(report).toContain("採用元変更");
     expect(evaluateGates(a, b, loadGates()).stop.some(n => n.includes("cacheWrite1h"))).toBe(true);
   });
+  it("LiteLLMのコミットが進んだだけの採用元URLの違いは採用元変更にしない", () => {
+    const litellm = (commit: string) => ({ source: "litellm" as const, modelId: "gpt-6.1-sol",
+      url: `https://github.com/BerriAI/litellm/blob/${commit}/model_prices_and_context_window.json` });
+    const a = enriched(), b = structuredClone(a);
+    a.models[0].prices[0].provenance = { input: litellm("aaa111") };
+    b.models[0].prices[0].provenance = { input: litellm("bbb222") };
+    a.models[0].releaseDateSource = { ...litellm("aaa111"), precision: "day" };
+    b.models[0].releaseDateSource = { ...litellm("bbb222"), precision: "day" };
+    expect(diffData(a, b).sourceChanges).toEqual([]);
+    expect(diffData(a, b).metadataChanges).toEqual([]);
+    b.models[0].prices[0].provenance = { input: { ...litellm("bbb222"), modelId: "openai/gpt-6.1-sol" } };
+    expect(diffData(a, b).sourceChanges).toHaveLength(1);
+  });
+  it("models.devの採用見送りは理由ごとの件数にまとめ、明細は詳細版にだけ出す", () => {
+    const data = enriched();
+    const skipped = [
+      { reason: "追加候補(提供条件・公開APIでの利用可能性を未確認)", item: "openai/gpt-x" },
+      { reason: "追加候補(提供条件・公開APIでの利用可能性を未確認)", item: "google/gemini-x" },
+      { reason: "未対応の料金項目", item: "google/gemini-x: cost.input_audio" },
+    ];
+    const extra = { mismatches: [], candidates: [], unparsed: [], unsupportedImages: [], skipped };
+    const summary = diffMarkdown(diffData(data, data), { stop: [], notes: [] }, data, extra);
+    expect(summary).toContain("- 追加候補(提供条件・公開APIでの利用可能性を未確認): 2 件");
+    expect(summary).toContain("- 未対応の料金項目: 1 件");
+    expect(summary).not.toContain("openai/gpt-x");
+    const full = diffMarkdown(diffData(data, data), { stop: [], notes: [] }, data, extra, { detail: true });
+    expect(full).toContain("#### 追加候補(提供条件・公開APIでの利用可能性を未確認)\n- openai/gpt-x\n- google/gemini-x");
+    expect(full).toContain("- google/gemini-x: cost.input_audio");
+  });
   it("models.devのサイズ・provider別件数・source欠落を統合モデル総数とは別に検出する", () => {
     const a = enriched(), b = structuredClone(a);
     b.sources.modelsDev!.counts = { openai: 1 };

@@ -34,7 +34,7 @@ async function main() {
   const promotions = args.has("--offline") ? readPromotions(RAW_DIR) : (await fetchPromotions(RAW_DIR)).promotions;
   const notes = [...src.warnings];
 
-  const { models, unparsed, frozen, notes: mergeNotes } = assembleModels(src, prev, catalog, loadModelsDevPolicy(), today);
+  const { models, unparsed, frozen, skipped, notes: mergeNotes } = assembleModels(src, prev, catalog, loadModelsDevPolicy(), today);
   notes.push(...mergeNotes);
   const cc = src.openrouter
     ? crossCheck(models, src.openrouter.data, { mismatchPct: gates.crosscheck.mismatchPct, recentDays: gates.newModel.openrouterRecentDays, now })
@@ -89,12 +89,15 @@ async function main() {
   if (args.has("--force-stop")) gate.stop.push("テスト用の強制フラグ(--force-stop)");
 
   const changed = !prev || contentHash(prev) !== contentHash(next);
-  const report = diffMarkdown(diffData(prev, next), gate, next, {
+  const extra = {
     mismatches: cc.mismatches.map((id) => `照合の不一致(要確認): ${id}`),
     candidates: cc.candidates.map((c) => `${c.family}(${c.platform})`),
     unparsed,
     unsupportedImages: unsupported.all.map((m) => `${m.id} — ${m.reason}`),
-  });
+    skipped,
+  };
+  const diff = diffData(prev, next);
+  const report = diffMarkdown(diff, gate, next, extra);
 
   mkdirSync(OUT_DIR, { recursive: true });
   if (changed) {
@@ -105,7 +108,7 @@ async function main() {
   const env = process.env;
   const runUrl = env.GITHUB_RUN_ID ? `${env.GITHUB_SERVER_URL}/${env.GITHUB_REPOSITORY}/actions/runs/${env.GITHUB_RUN_ID}` : undefined;
   writeFileSync(`${OUT_DIR}/report.md`, fitMarkdown(report, runUrl));
-  writeFileSync(`${OUT_DIR}/report-full.md`, report);
+  writeFileSync(`${OUT_DIR}/report-full.md`, diffMarkdown(diff, gate, next, extra, { detail: true }));
   const status = gate.stop.length ? "stop" : "pass";
   const hasNotes = gate.notes.length + cc.mismatches.length + cc.candidates.length > 0;
   writeFileSync(`${OUT_DIR}/gate.json`, JSON.stringify({ status, changed, hasNotes, ...gate }, null, 2));

@@ -2,6 +2,7 @@ import type { Model, PriceData } from "../shared/types.ts";
 import type { GateResult } from "./validate.ts";
 import { fmtPct, ruleValues } from "./validate.ts";
 import { pickRule } from "../src/lib/calc.ts";
+import type { Skip } from "./models-dev.ts";
 
 export interface DiffSummary {
   added: Model[];
@@ -11,6 +12,12 @@ export interface DiffSummary {
   sourceChanges: string[];
   metadataChanges: string[];
 }
+
+/** LiteLLM の採用元URLはコミットを含むため、コミットが進んだだけの違いを採用元変更とみなさない */
+const sameSource = (a: unknown, b: unknown) => {
+  const key = (v: unknown) => JSON.stringify(v)?.replace(/(github\.com\/BerriAI\/litellm\/blob\/)[^/"]+\//g, "$1-/");
+  return key(a) === key(b);
+};
 
 export function diffData(prev: PriceData | null, next: PriceData): DiffSummary {
   const prevById = new Map((prev?.models ?? []).map((m) => [m.id, m]));
@@ -33,7 +40,7 @@ export function diffData(prev: PriceData | null, next: PriceData): DiffSummary {
         else if (x === undefined) out.sourceChanges.push(`${m.id} ${r.tier} >${r.minPromptTokens} ${field}: 料金を補完 ${y}`);
       }
       if (prior?.source !== r.source) out.sourceChanges.push(`${m.id} ${r.tier}: 公式料金の採用元 ${prior?.source ?? "なし"} → ${r.source ?? "なし"}`);
-      if (JSON.stringify(prior?.provenance) !== JSON.stringify(r.provenance))
+      if (!sameSource(prior?.provenance, r.provenance))
         out.sourceChanges.push(`${m.id} ${r.tier} >${r.minPromptTokens}: 採用元 ${JSON.stringify(prior?.provenance ?? {})} → ${JSON.stringify(r.provenance ?? {})}`);
     }
     // 価格ルール自体が同じでも、割引終了で適用単価が変わる日を記録する。
@@ -49,7 +56,7 @@ export function diffData(prev: PriceData | null, next: PriceData): DiffSummary {
       }
     }
     for (const field of ["canonicalModelId", "releaseDate", "releaseDateSource", "inputLimit", "totalContext", "outputLimit", "providerStatus"] as const)
-      if (JSON.stringify(p[field]) !== JSON.stringify(m[field])) out.metadataChanges.push(`${m.id} ${field}: ${JSON.stringify(p[field]) ?? "不明"} → ${JSON.stringify(m[field]) ?? "不明"}`);
+      if (!sameSource(p[field], m[field])) out.metadataChanges.push(`${m.id} ${field}: ${JSON.stringify(p[field]) ?? "不明"} → ${JSON.stringify(m[field]) ?? "不明"}`);
   }
   for (const p of prev.models) if (!nextIds.has(p.id)) out.removed.push(p);
   return out;
@@ -63,8 +70,11 @@ export function diffMarkdown(
   d: DiffSummary,
   gate: GateResult,
   next: PriceData,
-  extra: { mismatches: string[]; candidates: string[]; unparsed: string[]; unsupportedImages: string[] },
+  extra: { mismatches: string[]; candidates: string[]; unparsed: string[]; unsupportedImages: string[]; skipped?: Skip[] },
+  options: { detail?: boolean } = {},
 ): string {
+  const skipped = new Map<string, Skip[]>();
+  for (const s of extra.skipped ?? []) skipped.set(s.reason, [...(skipped.get(s.reason) ?? []), s]);
   return [
     `## 価格更新 ${next.snapshot}`,
     "",
@@ -108,6 +118,10 @@ export function diffMarkdown(
     "### 画像トークン換算が未対応のモデル(config/image-tokens.json の見直し候補)",
     list(extra.unsupportedImages),
     "",
+    "### models.dev で採用を見送った件数(毎回ほぼ同じ。明細は report-full.md)",
+    list([...skipped].map(([reason, items]) => `${reason}: ${items.length} 件`), Infinity),
+    "",
+    ...(options.detail ? [...skipped].flatMap(([reason, items]) => [`#### ${reason}`, list(items.map((s) => s.item), Infinity), ""]) : []),
   ].join("\n");
 }
 

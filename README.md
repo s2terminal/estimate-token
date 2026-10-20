@@ -37,7 +37,7 @@ npm run pipeline -- --offline     # raw/ に置いた前回の生データで再
 npm run pipeline -- --force-stop  # 品質ゲートで止めた扱いにする(動作確認用)
 ```
 
-パイプラインは `out/report.md`(差分と判定。Issue/PR 用に GitHub の文字数上限内へ切り詰め)、`out/report-full.md`(全文)と `out/gate.json` も出力します。
+パイプラインは `out/report.md`(差分と判定。models.dev で採用を見送った候補は理由ごとの件数だけ。Issue/PR 用に GitHub の文字数上限内へ切り詰め)、`out/report-full.md`(全文。models.dev で採用を見送った候補の明細も含む)と `out/gate.json` も出力します。
 `build` は型チェックを含み、`check` とCIでも型チェックは1回だけ実行します。
 
 公式ドキュメントの料金計算例を固定期待値として検証するテストは `tests/reference/official-pricing-examples.test.ts`。出典・採用範囲・資料の丸め値の扱いは [docs/official-pricing-examples.md](docs/official-pricing-examples.md) を参照。

@@ -106,14 +106,17 @@ export interface ModelsDevOffer {
   textOnly: boolean;
   url: string;
 }
+/** 採用条件を満たさず見送った候補。取得のたびにほぼ同じ内容が出るため、レポートでは理由ごとの件数にまとめる */
+export interface Skip { reason: string; item: string }
 export interface NormalizedModelsDev {
   catalog: ModelsDevCatalog;
   offers: ModelsDevOffer[];
   notes: string[];
+  skipped: Skip[];
   counts: Record<string, number>;
 }
 export function normalizeModelsDev(catalog: ModelsDevCatalog): NormalizedModelsDev {
-  const offers: ModelsDevOffer[] = [], notes: string[] = [];
+  const offers: ModelsDevOffer[] = [], notes: string[] = [], skipped: Skip[] = [];
   for (const [id, m] of Object.entries(catalog.models))
     if (m.release_date && !releaseDate(m.release_date)) notes.push(`models/${id}: 不正なリリース日 ${m.release_date}`);
   const counts: Record<string, number> = { models: Object.keys(catalog.models).length };
@@ -139,20 +142,21 @@ export function normalizeModelsDev(catalog: ModelsDevCatalog): NormalizedModelsD
         rules.push(rule(m.cost, 0));
         for (const t of m.cost.tiers ?? []) rules.push(rule(t, t.tier.size));
         if (!m.cost.tiers?.length && m.cost.context_over_200k)
-          notes.push(`${label}: context_over_200k の正確な境界が不明、価格採用を保留`);
+          skipped.push({ reason: "context_over_200k の正確な境界が不明なため価格採用を保留", item: label });
         for (const field of Object.keys(m.cost))
           if (!["input", "output", "cache_read", "cache_write", "tiers", "context_over_200k"].includes(field))
-            notes.push(`${label}: 未対応の料金項目 cost.${field}`);
+            skipped.push({ reason: "未対応の料金項目", item: `${label}: cost.${field}` });
         for (const t of m.cost.tiers ?? []) for (const field of Object.keys(t))
           if (!["input", "output", "cache_read", "cache_write", "tier"].includes(field))
-            notes.push(`${label}: 未対応の長文料金項目 cost.tiers[${t.tier.size}].${field}`);
-      } else if (m.cost) notes.push(`${label}: 汎用costの出力モダリティがtext単独ではないため価格採用を保留`);
-      for (const mode of Object.keys(m.experimental?.modes ?? {})) notes.push(`${label}: 未対応のサービスモード ${mode} (LiteLLMの既存料金を維持)`);
+            skipped.push({ reason: "未対応の長文料金項目", item: `${label}: cost.tiers[${t.tier.size}].${field}` });
+      } else if (m.cost) skipped.push({ reason: "汎用costの出力モダリティがtext単独ではないため価格採用を保留", item: label });
+      for (const mode of Object.keys(m.experimental?.modes ?? {}))
+        skipped.push({ reason: "未対応のサービスモード(LiteLLMの既存料金を維持)", item: `${label}: ${mode}` });
       rules.sort((a, b) => a.minPromptTokens - b.minPromptTokens);
       offers.push({ providerId, modelId: id, platform, appId: modelId(parsed.family, platform, parsed.region), canonicalModelId,
         commonReleaseDate: canonicalModelId ? catalog.models[canonicalModelId]?.release_date : undefined, model: m, rules, textOnly,
         url: MODELS_DEV_URL });
     }
   }
-  return { catalog, offers, notes, counts };
+  return { catalog, offers, notes, skipped, counts };
 }
