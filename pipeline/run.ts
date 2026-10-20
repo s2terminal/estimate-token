@@ -1,13 +1,13 @@
 /* 日次更新パイプライン: fetch → select → normalize → cross-check → validate → diff
    使い方: npm run pipeline [-- --offline] [-- --force-stop]
-   出力: public/data/latest.json(中身が変わったときだけ)、out/report.md、out/gate.json */
+   出力: public/data/latest.json(中身が変わったときだけ)、out/report.md(GitHub 上限内)、out/report-full.md、out/gate.json */
 import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import type { PriceData } from "../shared/types.ts";
 import { ROOT, loadCatalog, loadGates, loadModelsDevPolicy } from "./config.ts";
 import { assembleModels } from "./assemble.ts";
 import { contentHash } from "./content.ts";
 import { crossCheck } from "./crosscheck.ts";
-import { diffData, diffMarkdown } from "./diff.ts";
+import { diffData, diffMarkdown, fitMarkdown } from "./diff.ts";
 import { fetchAll, readRaw, fetchPromotions, readPromotions } from "./fetch.ts";
 import { unsupportedImageModels } from "./image-tokens.ts";
 import { applyPromotions } from "./promotions.ts";
@@ -101,7 +101,11 @@ async function main() {
     mkdirSync(`${ROOT}public/data`, { recursive: true });
     writeFileSync(DATA_PATH, JSON.stringify(next, null, 1) + "\n");
   }
-  writeFileSync(`${OUT_DIR}/report.md`, report);
+  // report.md は Issue コメント・PR 本文に使うので GitHub の上限に収め、全文は artifact に残す
+  const env = process.env;
+  const runUrl = env.GITHUB_RUN_ID ? `${env.GITHUB_SERVER_URL}/${env.GITHUB_REPOSITORY}/actions/runs/${env.GITHUB_RUN_ID}` : undefined;
+  writeFileSync(`${OUT_DIR}/report.md`, fitMarkdown(report, runUrl));
+  writeFileSync(`${OUT_DIR}/report-full.md`, report);
   const status = gate.stop.length ? "stop" : "pass";
   const hasNotes = gate.notes.length + cc.mismatches.length + cc.candidates.length > 0;
   writeFileSync(`${OUT_DIR}/gate.json`, JSON.stringify({ status, changed, hasNotes, ...gate }, null, 2));
