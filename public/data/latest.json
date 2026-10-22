@@ -1,41 +1,41 @@
 {
  "schemaVersion": 1,
- "snapshot": "2026-10-22",
- "generatedAt": "2026-10-21T21:27:07.420Z",
+ "snapshot": "2026-10-23",
+ "generatedAt": "2026-10-22T21:26:10.985Z",
  "baseline": "2026-10-11",
  "sources": {
   "litellm": {
    "commit": "159b5b2f7243bba757c08e4ddc45a2514e4cd037",
-   "fetchedAt": "2026-10-21T21:27:08.357Z",
+   "fetchedAt": "2026-10-22T21:26:11.948Z",
    "bytes": 2967850,
    "records": 4245
   },
   "modelsDev": {
    "url": "https://models.dev/catalog.json",
-   "fetchedAt": "2026-10-21T21:27:07.880Z",
-   "sha256": "8fcb3dd9c6945b8bb9cdc796a35fa1ed074382433e9668337596d6312eaacb49",
-   "bytes": 6590074,
+   "fetchedAt": "2026-10-22T21:26:11.583Z",
+   "sha256": "9e16ab6114d8fa6bc984cfd7fa5bcb735134288b6578a5277672cf4782e3a690",
+   "bytes": 6561466,
    "counts": {
     "models": 602,
     "openai": 51,
     "anthropic": 17,
-    "google": 41,
+    "google": 38,
     "google-vertex": 61,
     "google-vertex-anthropic": 17,
     "amazon-bedrock": 199,
     "azure": 97,
     "azure-cognitive-services": 97
    },
-   "etag": "W/\"8fcb3dd9c6945b8bb9cdc796a35fa1ed\""
+   "etag": "W/\"9e16ab6114d8fa6bc984cfd7fa5bcb73\""
   },
   "openrouter": {
-   "fetchedAt": "2026-10-21T21:27:07.682Z",
-   "bytes": 788369
+   "fetchedAt": "2026-10-22T21:26:11.383Z",
+   "bytes": 787619
   },
   "fx": {
    "pair": "USDJPY",
-   "rate": 157.88,
-   "date": "2026-10-21"
+   "rate": 157.05,
+   "date": "2026-10-22"
   },
   "promotions": [
    {
@@ -45,7 +45,7 @@
     "url": "https://ai.google.dev/gemini-api/docs/pricing",
     "license": "CC-BY-4.0",
     "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
-    "checkedOn": "2026-10-21",
+    "checkedOn": "2026-10-22",
     "modifications": "有料トークン料金と適用日を抜粋・構造化。保存料金・ツール料金・招待制プランを除外。"
    }
   ]
@@ -23808,7 +23808,7 @@
      "image"
     ]
    },
-   "reasoning": true,
+   "reasoning": false,
    "toolCall": false
   },
   {
@@ -30737,112 +30737,6 @@
     "url": "https://models.dev/catalog.json",
     "precision": "day"
    }
-  },
-  {
-   "id": "gemini-omni-flash-preview@gemini-api:global",
-   "family": "gemini-omni-flash-preview",
-   "name": "Gemini Omni Flash Preview",
-   "vendor": "Google",
-   "platform": "gemini-api",
-   "region": "global",
-   "category": "llm",
-   "firstSeen": "2026-10-11",
-   "status": "active",
-   "prices": [
-    {
-     "tier": "standard",
-     "minPromptTokens": 0,
-     "input": 1.5,
-     "output": 9,
-     "provenance": {
-      "input": {
-       "source": "litellm",
-       "modelId": "gemini/gemini-omni-flash-preview",
-       "url": "https://github.com/BerriAI/litellm/blob/159b5b2f7243bba757c08e4ddc45a2514e4cd037/model_prices_and_context_window.json"
-      },
-      "output": {
-       "source": "litellm",
-       "modelId": "gemini/gemini-omni-flash-preview",
-       "url": "https://github.com/BerriAI/litellm/blob/159b5b2f7243bba757c08e4ddc45a2514e4cd037/model_prices_and_context_window.json"
-      }
-     }
-    }
-   ],
-   "sources": [
-    {
-     "litellm": "gemini/gemini-omni-flash-preview",
-     "url": "https://ai.google.dev/gemini-api/docs/pricing"
-    },
-    {
-     "modelsDev": {
-      "providerId": "google",
-      "modelId": "gemini-omni-flash-preview"
-     },
-     "url": "https://models.dev/catalog.json"
-    }
-   ],
-   "metadataSources": {
-    "inputLimit": {
-     "source": "litellm",
-     "modelId": "gemini/gemini-omni-flash-preview",
-     "url": "https://github.com/BerriAI/litellm/blob/159b5b2f7243bba757c08e4ddc45a2514e4cd037/model_prices_and_context_window.json"
-    },
-    "outputLimit": {
-     "source": "litellm",
-     "modelId": "gemini/gemini-omni-flash-preview",
-     "url": "https://github.com/BerriAI/litellm/blob/159b5b2f7243bba757c08e4ddc45a2514e4cd037/model_prices_and_context_window.json"
-    },
-    "totalContext": {
-     "source": "models.dev",
-     "providerId": "google",
-     "modelId": "gemini-omni-flash-preview",
-     "url": "https://models.dev/catalog.json"
-    },
-    "modalities": {
-     "source": "models.dev",
-     "providerId": "google",
-     "modelId": "gemini-omni-flash-preview",
-     "url": "https://models.dev/catalog.json"
-    },
-    "reasoning": {
-     "source": "models.dev",
-     "providerId": "google",
-     "modelId": "gemini-omni-flash-preview",
-     "url": "https://models.dev/catalog.json"
-    },
-    "toolCall": {
-     "source": "models.dev",
-     "providerId": "google",
-     "modelId": "gemini-omni-flash-preview",
-     "url": "https://models.dev/catalog.json"
-    }
-   },
-   "contextWindow": 131072,
-   "inputLimit": 131072,
-   "outputLimit": 65536,
-   "deprecationDate": "2026-10-22",
-   "canonicalModelId": "google/gemini-omni-flash-preview",
-   "releaseDate": "2026-06-30",
-   "releaseDateSource": {
-    "source": "models.dev",
-    "modelId": "google/gemini-omni-flash-preview",
-    "url": "https://models.dev/catalog.json",
-    "precision": "day"
-   },
-   "totalContext": 131072,
-   "modalities": {
-    "input": [
-     "text",
-     "image",
-     "video"
-    ],
-    "output": [
-     "video"
-    ]
-   },
-   "reasoning": true,
-   "toolCall": false,
-   "recommendationEligible": false
   },
   {
    "id": "gemini-omni-flash-preview@vertex-ai:global",
