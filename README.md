@@ -86,7 +86,7 @@ Settings → Pages → Build and deployment の Source を **GitHub Actions** �
 2. [Settings → Secrets and variables → Actions](https://github.com/s2terminal/estimate-token/settings/secrets/actions) に **Repository secret** `AUTOMATION_TOKEN` として登録する。`pull_request_target` と日次更新が使うため、Dependabot secretsではなくActions secretsへ登録する。トークンの値はコードに書かない。
 3. [Settings → General → Pull Requests](https://github.com/s2terminal/estimate-token/settings) で **Allow auto-merge** と **Allow merge commits** を有効にする。
 4. [Settings → Rules → Rulesets](https://github.com/s2terminal/estimate-token/settings/rules) でmain向けのBranch rulesetを作成または編集する。Enforcement statusを **Active**、Target branchesを **main** とし、**Require status checks to pass** にCIの **check**（提供元GitHub Actions）を追加する。CI実行後でないと候補に出ない場合がある。auto-merge用のバイパスは追加しない。日次更新もPRを経由するので **Require a pull request before merging** と両立する。レビュー必須やmerge queueは、この構成のために追加する必要はない。
-5. 上記の設定後にこのPRをマージする。既存のDependabot PRは画面で **Enable auto-merge** を選ぶか、そのブランチを更新してワークフローを起動する。以後の新規・更新PRでは自動的に有効化される。
+5. 上記の設定後にこのPRをマージする。既存のDependabot PRはCI待ちなら画面で **Enable auto-merge** を選び、すでに全要件を満たしていれば通常のマージが可能。以後の新規・更新PRでは自動的に有効化される。
 
 必須チェックを設定せずにauto-mergeを有効化すると、CI完了を待たずにマージできてしまいます。必ず `check` を必須にしてください。トークンの所有者もこのルールを満たす運用にし、`--admin` によるバイパスは使いません。
 
