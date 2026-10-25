@@ -43,7 +43,7 @@ npm run pipeline -- --force-stop  # 品質ゲートで止めた扱いにする(�
 パイプラインは `out/report.md`(差分と判定。Issue/PR 用に GitHub の文字数上限内へ切り詰め)、`out/report-full.md`(全文)と `out/gate.json` も出力します。
 `build` は型チェックを含み、`check` とCIでも型チェックは1回だけ実行します。
 
-CI・公開・日次更新は `.node-version` を参照し、毎回最新の22系を確認します。依存インストール後には `npm run audit` も実行します。DependabotがnpmとGitHub Actionsの更新PRを毎週作成します。Node.jsの新たなセキュリティ修正が出た際は `package.json` の最低バージョンも見直してください。npm監査はNode.js本体やOSの証明書ストアを検査しないため、それぞれの更新も必要です。
+CI・公開・日次更新は `.node-version` を参照し、毎回最新の22系を確認します。`npm run audit` はCIで実行します。公開・日次更新は `npm ci --no-audit` を使い、監査での検出や監査APIの障害で公開処理が止まることを避けます。DependabotがnpmとGitHub Actionsの更新PRを毎週作成します。Node.jsの新たなセキュリティ修正が出た際は `package.json` の最低バージョンも見直してください。npm監査はNode.js本体やOSの証明書ストアを検査しないため、それぞれの更新も必要です。
 
 公式ドキュメントの料金計算例を固定期待値として検証するテストは `tests/reference/official-pricing-examples.test.ts`。出典・採用範囲・資料の丸め値の扱いは [docs/official-pricing-examples.md](docs/official-pricing-examples.md) を参照。
 
