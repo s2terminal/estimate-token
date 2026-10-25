@@ -25,6 +25,8 @@ Geminiの画像生成は公式の解像度別トークン数と画像出力単�
 
 ## 開発
 
+Node.js は最新の22系を推奨します（`.node-version`）。[eMudhraの中間CA秘密鍵漏えい](https://emudhra.we-have-a-problem.com/)への対策を含む22.23.4以上、または24.22.1以上の24系・26.12.1以上の26系が必要です。`.npmrc` の `engine-strict` で未対応のNode.jsによる依存インストールを止めます。
+
 ```sh
 npm ci
 npm run dev          # 画面(http://localhost:5173)
@@ -32,6 +34,7 @@ npm test             # テスト
 npm run typecheck
 npm run build        # dist/ に静的ファイルを出力
 npm run check        # CIと同じ検証: テスト → 型チェック → ビルド
+npm run audit        # npm依存を監査（moderate以上で失敗、ネットワーク接続が必要）
 npm run pipeline     # 価格を取得して public/data/latest.json を更新
 npm run pipeline -- --offline     # raw/ に置いた前回の生データで再実行
 npm run pipeline -- --force-stop  # 品質ゲートで止めた扱いにする(動作確認用)
@@ -39,6 +42,8 @@ npm run pipeline -- --force-stop  # 品質ゲートで止めた扱いにする(�
 
 パイプラインは `out/report.md`(差分と判定。Issue/PR 用に GitHub の文字数上限内へ切り詰め)、`out/report-full.md`(全文)と `out/gate.json` も出力します。
 `build` は型チェックを含み、`check` とCIでも型チェックは1回だけ実行します。
+
+CI・公開・日次更新は `.node-version` を参照し、毎回最新の22系を確認します。依存インストール後には `npm run audit` も実行します。DependabotがnpmとGitHub Actionsの更新PRを毎週作成します。Node.jsの新たなセキュリティ修正が出た際は `package.json` の最低バージョンも見直してください。npm監査はNode.js本体やOSの証明書ストアを検査しないため、それぞれの更新も必要です。
 
 公式ドキュメントの料金計算例を固定期待値として検証するテストは `tests/reference/official-pricing-examples.test.ts`。出典・採用範囲・資料の丸め値の扱いは [docs/official-pricing-examples.md](docs/official-pricing-examples.md) を参照。
 

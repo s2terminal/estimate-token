@@ -21,15 +21,19 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         # 起動待ち・再実行中に main が進んでも、古いイベント SHA から生成しない。
         with: { ref: main }
-      - uses: actions/setup-node@v4
-        with: { node-version: 22, cache: npm }
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .node-version
+          check-latest: true
+          cache: npm
       - run: npm ci
+      - run: npm run audit
 
       # 前回の正常rawを維持し、片方の取得障害でも提供条件を変えない。
-      - uses: actions/cache/restore@v4
+      - uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: |
             raw/litellm.json
@@ -48,7 +52,7 @@ jobs:
       - run: npm run check
 
       # OpenRouter の生データは規約上再配布しないため artifact に含めない
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
           name: raw-${{ github.run_id }}
@@ -63,7 +67,7 @@ jobs:
             out/
           retention-days: 14
 
-      - uses: actions/cache/save@v4
+      - uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         if: always()
         with:
           path: |
