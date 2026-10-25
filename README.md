@@ -68,6 +68,9 @@ OpenRouter の利用規約はサイト・API上の情報のコピーや譲渡を
 - `update-prices.yml`: 毎朝 06:17 JST。ゲート通過なら main へコミット、止めた日はPRを作成、値変わり・照合の不一致はIssue「価格更新ログ」にコメント。Slack設定時は実行結果も通知
 - `deploy-pages.yml`: main への push と日次更新の完了で GitHub Pages に公開
 - `ci.yml`: PRで型チェック・テスト・ビルド
+- `dependabot-auto-merge.yml`: Dependabot本人のmain向けPRについて、最新コミットのCI（監査・テスト・型チェック・ビルド）が成功したら自動マージし、Pages公開を起動。npm・GitHub Actionsともメジャー更新を含めて対象。別リポジトリからのPR、draft、CIが失敗・スキップされたPRは対象外
+
+自動マージはmain上のワークフローでGitHub APIだけを使い、PRのコードやartifactは実行しません。マージ時にもCIで検証したコミットSHAを指定し、途中で更新されたPRはマージしません。追加のPATやリポジトリの「Allow auto-merge」設定は不要です。ブランチ保護でレビューなどが必須の場合は、その要件を満たすまでマージされません。
 
 ### 初回の設定
 
