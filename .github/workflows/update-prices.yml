@@ -23,7 +23,9 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         # 起動待ち・再実行中に main が進んでも、古いイベント SHA から生成しない。
-        with: { ref: main }
+        with:
+          ref: main
+          token: ${{ secrets.AUTOMATION_TOKEN }}
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version-file: .node-version
@@ -76,19 +78,27 @@ jobs:
             raw/models-dev.meta.json
           key: prices-raw-${{ github.run_id }}-${{ github.run_attempt }}
 
-      - name: Publish (gate passed → commit to main)
+      - name: Publish (gate passed → PR with GitHub auto-merge)
         if: steps.pipeline.outputs.status == 'pass' && steps.pipeline.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.AUTOMATION_TOKEN }}
         run: |
+          branch="prices/${{ steps.pipeline.outputs.snapshot }}-${{ github.run_id }}-${{ github.run_attempt }}"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$branch"
           git add public/data/latest.json
           git commit -m "chore(data): 価格データを更新 ${{ steps.pipeline.outputs.snapshot }}"
-          git push origin HEAD:main
+          git push origin "$branch"
+          pr_url=$(gh pr create --base main --head "$branch" \
+            --title "価格データの更新(${{ steps.pipeline.outputs.snapshot }})" \
+            --body-file out/report.md)
+          gh pr merge --auto --merge "$pr_url"
 
       - name: Hold (gate stopped → open a PR)
         if: steps.pipeline.outputs.status == 'stop' && steps.pipeline.outputs.changed == 'true'
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.AUTOMATION_TOKEN }}
         run: |
           branch="prices/${{ steps.pipeline.outputs.snapshot }}-${{ github.run_id }}"
           git config user.name "github-actions[bot]"
@@ -154,7 +164,7 @@ jobs:
               result="$result 確認用PRを作成しました。"
             fi
           elif [ "$CHANGED" = "true" ]; then
-            result="✅ 日次の価格更新をmainへ反映しました。"
+            result="✅ 価格データの更新PRを作成し、自動マージを予約しました。"
           else
             result="✅ 日次の価格更新が完了しました（変更なし）。"
           fi
