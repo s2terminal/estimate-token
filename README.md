@@ -70,7 +70,7 @@ OpenRouter の利用規約はサイト・API上の情報のコピーや譲渡を
 - `ci.yml`: PRで型チェック・テスト・ビルド
 - `dependabot-auto-merge.yml`: Dependabot本人のmain向けPRについて、最新コミットのCI（監査・テスト・型チェック・ビルド）が成功したら自動マージし、Pages公開を起動。npm・GitHub Actionsともメジャー更新を含めて対象。別リポジトリからのPR、draft、CIが失敗・スキップされたPRは対象外
 
-自動マージはmain上のワークフローでGitHub APIだけを使い、PRのコードやartifactは実行しません。マージ時にもCIで検証したコミットSHAを指定し、途中で更新されたPRはマージしません。追加のPATやリポジトリの「Allow auto-merge」設定は不要です。ブランチ保護でレビューなどが必須の場合は、その要件を満たすまでマージされません。
+自動マージの処理は `scripts/dependabot-auto-merge.ts` に置き、YAMLは起動条件・権限・スクリプトの呼び出しを定義します。`workflow_run` のmain側コミットからスクリプトだけを取得し、PRのコードやartifactは実行しません。Node.jsの組み込み機能だけでGitHub APIを呼び出し、依存インストールも行いません。マージ時にもCIで検証したコミットSHAを指定し、途中で更新されたPRはマージしません。追加のPATやリポジトリの「Allow auto-merge」設定は不要です。ブランチ保護でレビューなどが必須の場合は、その要件を満たすまでマージされません。
 
 ### 初回の設定
 

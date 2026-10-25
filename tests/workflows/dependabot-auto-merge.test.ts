@@ -1,10 +1,7 @@
-import { readFileSync } from "node:fs";
-import { parse } from "yaml";
 import { describe, expect, it, vi } from "vitest";
 
-const workflow = parse(readFileSync(".github/workflows/dependabot-auto-merge.yml", "utf8"));
-const AsyncFunction = Object.getPrototypeOf(async () => {}).constructor;
-const execute = new AsyncFunction("github", "context", "core", workflow.jobs.merge.steps[0].with.script);
+import { autoMerge, createGitHubApi } from "../../scripts/dependabot-auto-merge.ts";
+
 const repository = "s2terminal/estimate-token";
 
 function scenario() {
@@ -28,26 +25,19 @@ function scenario() {
     head: { sha: "tested-commit", repo: { full_name: repository } },
   };
   const jobs = [{ name: "check", conclusion: "success" }];
-  const merge = vi.fn().mockResolvedValue({ data: { merged: true } });
+  const merge = vi.fn().mockResolvedValue({ merged: true });
   const dispatch = vi.fn().mockResolvedValue({});
-  const github = {
-    rest: {
-      actions: {
-        getWorkflowRun: vi.fn().mockResolvedValue({ data: run }),
-        listJobsForWorkflowRunAttempt: vi.fn(),
-        createWorkflowDispatch: dispatch,
-      },
-      pulls: { get: vi.fn().mockResolvedValue({ data: pull }), merge },
-    },
-    paginate: vi.fn().mockResolvedValue(jobs),
+  const api = {
+    getWorkflowRun: vi.fn().mockResolvedValue(run),
+    getJobs: vi.fn().mockResolvedValue(jobs),
+    getPull: vi.fn().mockResolvedValue(pull),
+    mergePull: merge,
+    dispatchPages: dispatch,
   };
-  const context = {
-    repo: { owner: "s2terminal", repo: "estimate-token" },
-    payload: { workflow_run: { id: run.id, run_attempt: run.run_attempt } },
-  };
+  const completed = { id: run.id, run_attempt: run.run_attempt };
   return {
-    run, pull, jobs, github, context, merge, dispatch,
-    execute: () => execute(github, context, { info: vi.fn(), notice: vi.fn() }),
+    run, pull, jobs, merge, dispatch,
+    execute: () => autoMerge({ api, repository, completed, log: vi.fn() }),
   };
 }
 
@@ -55,13 +45,8 @@ describe("Dependabot auto-merge", () => {
   it("merges the tested Dependabot commit before requesting Pages deployment", async () => {
     const s = scenario();
     await s.execute();
-    expect(s.merge).toHaveBeenCalledExactlyOnceWith({
-      owner: "s2terminal", repo: "estimate-token", pull_number: 42,
-      sha: "tested-commit", merge_method: "merge",
-    });
-    expect(s.dispatch).toHaveBeenCalledExactlyOnceWith({
-      owner: "s2terminal", repo: "estimate-token", workflow_id: "deploy-pages.yml", ref: "main",
-    });
+    expect(s.merge).toHaveBeenCalledExactlyOnceWith(42, "tested-commit");
+    expect(s.dispatch).toHaveBeenCalledExactlyOnceWith();
     expect(s.merge.mock.invocationCallOrder[0]).toBeLessThan(s.dispatch.mock.invocationCallOrder[0]);
   });
 
@@ -93,7 +78,7 @@ describe("Dependabot auto-merge", () => {
 
   it("does not deploy when GitHub refuses the merge", async () => {
     const s = scenario();
-    s.merge.mockResolvedValue({ data: { merged: false } });
+    s.merge.mockResolvedValue({ merged: false });
     await expect(s.execute()).rejects.toThrow("was not merged");
     expect(s.dispatch).not.toHaveBeenCalled();
   });
@@ -103,5 +88,46 @@ describe("Dependabot auto-merge", () => {
     s.merge.mockRejectedValue(new Error("Head SHA changed or branch protection failed"));
     await expect(s.execute()).rejects.toThrow("Head SHA changed or branch protection failed");
     expect(s.dispatch).not.toHaveBeenCalled();
+  });
+});
+
+describe("GitHub API client", () => {
+  it("sends the tested SHA on merge and dispatches Pages without dependencies", async () => {
+    const fetcher = vi.fn<typeof fetch>()
+      .mockResolvedValueOnce(new Response(JSON.stringify({ merged: true })))
+      .mockResolvedValueOnce(new Response(null, { status: 204 }));
+    const api = createGitHubApi(repository, "test-token", "https://api.github.com", fetcher);
+    await expect(api.mergePull(42, "tested-commit")).resolves.toEqual({ merged: true });
+    await expect(api.dispatchPages()).resolves.toBeUndefined();
+    expect(fetcher).toHaveBeenNthCalledWith(1, `https://api.github.com/repos/${repository}/pulls/42/merge`, {
+      method: "PUT",
+      headers: expect.objectContaining({ Authorization: "Bearer test-token" }),
+      body: JSON.stringify({ sha: "tested-commit", merge_method: "merge" }),
+    });
+    expect(fetcher).toHaveBeenNthCalledWith(2, `https://api.github.com/repos/${repository}/actions/workflows/deploy-pages.yml/dispatches`, {
+      method: "POST",
+      headers: expect.any(Object),
+      body: JSON.stringify({ ref: "main" }),
+    });
+  });
+
+  it("reads every page of jobs for the specified CI attempt", async () => {
+    const skipped = Array.from({ length: 100 }, () => ({ name: "other", conclusion: "skipped" }));
+    const check = { name: "check", conclusion: "success" };
+    const fetcher = vi.fn<typeof fetch>()
+      .mockResolvedValueOnce(new Response(JSON.stringify({ jobs: skipped })))
+      .mockResolvedValueOnce(new Response(JSON.stringify({ jobs: [check] })));
+    const api = createGitHubApi(repository, "test-token", "https://api.github.com", fetcher);
+    await expect(api.getJobs(123, 2)).resolves.toEqual([...skipped, check]);
+    expect(fetcher.mock.calls.map(([url]) => url)).toEqual([
+      `https://api.github.com/repos/${repository}/actions/runs/123/attempts/2/jobs?per_page=100&page=1`,
+      `https://api.github.com/repos/${repository}/actions/runs/123/attempts/2/jobs?per_page=100&page=2`,
+    ]);
+  });
+
+  it("stops on API errors without exposing the token or response body", async () => {
+    const fetcher = vi.fn<typeof fetch>().mockResolvedValue(new Response("private error details", { status: 403 }));
+    const api = createGitHubApi(repository, "test-token", "https://api.github.com", fetcher);
+    await expect(api.getWorkflowRun(123)).rejects.toThrow(/^GitHub API GET actions\/runs\/123 failed \(403\)\.$/);
   });
 });

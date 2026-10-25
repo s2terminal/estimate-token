@@ -20,57 +20,20 @@ jobs:
       contents: write
       pull-requests: write
     steps:
-      # workflow_run はmain上の定義で実行する。PRのコードやartifactを読み込まない。
-      - uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+      # workflow_runのGITHUB_SHAはmain側のコミット。PRのrefは取得しない。
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          script: |
-            const { owner, repo } = context.repo;
-            const repository = `${owner}/${repo}`;
-            const completed = context.payload.workflow_run;
-            const { data: run } = await github.rest.actions.getWorkflowRun({
-              owner, repo, run_id: completed.id,
-            });
-
-            // 古い成功イベントや、CIと同名の別ワークフローではマージしない。
-            if (run.path !== '.github/workflows/ci.yml' ||
-                run.event !== 'pull_request' ||
-                run.head_repository?.full_name !== repository ||
-                run.status !== 'completed' || run.conclusion !== 'success' ||
-                run.run_attempt !== completed.run_attempt) {
-              core.info('Current CI run is not eligible for auto-merge.');
-              return;
-            }
-
-            const jobs = await github.paginate(github.rest.actions.listJobsForWorkflowRunAttempt, {
-              owner, repo, run_id: run.id, attempt_number: run.run_attempt, per_page: 100,
-            });
-            if (!jobs.some(job => job.name === 'check' && job.conclusion === 'success')) {
-              core.info('CI check job did not succeed.');
-              return;
-            }
-
-            for (const candidate of run.pull_requests ?? []) {
-              const { data: pull } = await github.rest.pulls.get({
-                owner, repo, pull_number: candidate.number,
-              });
-              if (pull.user.login !== 'dependabot[bot]' || pull.user.type !== 'Bot' ||
-                  pull.state !== 'open' || pull.draft || pull.base.ref !== 'main' ||
-                  pull.base.repo.full_name !== repository ||
-                  pull.head.repo?.full_name !== repository || pull.head.sha !== run.head_sha) {
-                core.info(`PR #${pull.number} is not eligible for auto-merge.`);
-                continue;
-              }
-
-              // shaを指定し、検証後にPRが更新された場合はGitHub側で拒否する。
-              // ブランチ保護の要件もGitHub側で適用される。
-              const { data: result } = await github.rest.pulls.merge({
-                owner, repo, pull_number: pull.number, sha: pull.head.sha, merge_method: 'merge',
-              });
-              if (!result.merged) throw new Error(`PR #${pull.number} was not merged.`);
-
-              // GITHUB_TOKENによるマージではpushワークフローが起動しない。
-              await github.rest.actions.createWorkflowDispatch({
-                owner, repo, workflow_id: 'deploy-pages.yml', ref: 'main',
-              });
-              core.notice(`Merged Dependabot PR #${pull.number} and requested Pages deployment.`);
-            }
+          ref: ${{ github.sha }}
+          persist-credentials: false
+          sparse-checkout: |
+            scripts/dependabot-auto-merge.ts
+            .node-version
+          sparse-checkout-cone-mode: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .node-version
+          check-latest: true
+          package-manager-cache: false
+      - run: node scripts/dependabot-auto-merge.ts
+        env:
+          GH_TOKEN: ${{ github.token }}
