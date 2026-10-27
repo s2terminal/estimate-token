@@ -68,9 +68,11 @@ OpenRouter の利用規約はサイト・API上の情報のコピーや譲渡を
 - `update-prices.yml`: 毎朝 06:17 JST。ゲート通過なら更新PRを作成して標準auto-mergeを有効化し、止めた日は確認用PRを作成。値変わり・照合の不一致はIssue「価格更新ログ」にコメント。Slack設定時は実行結果も通知
 - `deploy-pages.yml`: main への push または手動実行で GitHub Pages に公開
 - `ci.yml`: PRで型チェック・テスト・ビルド
-- `dependabot-auto-merge.yml`: Dependabot本人のmain向けPRでGitHub標準のauto-mergeを有効化するだけのワークフロー。npm・GitHub Actionsともメジャー更新を含めて対象。別リポジトリからのPRやdraftは対象外
+- `dependabot-auto-merge.yml`: Dependabot本人のmain向けPRのうち、npmのpatch/minor更新だけGitHub標準のauto-mergeを有効化。npmのメジャー更新とGitHub Actions更新はPRを作成し、手動確認・マージする。別リポジトリからのPRやdraftは対象外
 
 チェック待ち・マージ可否の判定・マージ実行はGitHubに任せます。独自のマージスクリプトは使いません。auto-mergeを有効化する処理ではPRのコードを取得・実行しません。mainの必須チェック `check`（CIの監査・テスト・型チェック・ビルド）が通るとGitHubがマージします。レビューが必須の場合は承認も必要です。
+
+更新対象と種別は、コミット検証を有効にした `dependabot/fetch-metadata` の出力で判定します。グループPRは最も大きな更新種別を使うため、メジャー更新を含む場合も自動マージしません。メタデータを取得・検証できない場合や更新種別が不明な場合も予約しません。`npm-minor-patch` グループはPRをまとめるための設定で、自動マージの対象制限はワークフロー側で行います。
 
 日次価格更新もPRを経由するため、mainの必須チェックを設定しても直接pushが拒否されて更新が止まることを避けられます。ゲート停止の確認用PRはauto-mergeを有効化しません。
 
@@ -82,11 +84,11 @@ Settings → Pages → Build and deployment の Source を **GitHub Actions** �
 
 このPRをマージする前に、次を設定してください。リポジトリ設定はソースコードだけでは有効になりません。
 
-1. [Fine-grained personal access tokens](https://github.com/settings/personal-access-tokens) でトークンを作る。Resource ownerはこのリポジトリの所有者、Repository accessは **Only select repositories → estimate-token** とし、Repository permissionsの **Contents / Pull requests / Workflows** をそれぞれ **Read and write** にする。Dependabotによるワークフロー更新も対象なのでWorkflows権限を含める。
+1. [Fine-grained personal access tokens](https://github.com/settings/personal-access-tokens) でトークンを作る。Resource ownerはこのリポジトリの所有者、Repository accessは **Only select repositories → estimate-token** とし、Repository permissionsの **Contents / Pull requests** をそれぞれ **Read and write** にする。GitHub Actions更新は手動でマージするため、トークンの **Workflows書き込み権限は不要**。すでに付与している場合は外す。
 2. [Settings → Secrets and variables → Actions](https://github.com/s2terminal/estimate-token/settings/secrets/actions) に **Repository secret** `AUTOMATION_TOKEN` として登録する。`pull_request_target` と日次更新が使うため、Dependabot secretsではなくActions secretsへ登録する。トークンの値はコードに書かない。
 3. [Settings → General → Pull Requests](https://github.com/s2terminal/estimate-token/settings) で **Allow auto-merge** と **Allow merge commits** を有効にする。
 4. [Settings → Rules → Rulesets](https://github.com/s2terminal/estimate-token/settings/rules) でmain向けのBranch rulesetを作成または編集する。Enforcement statusを **Active**、Target branchesを **main** とし、**Require status checks to pass** にCIの **check**（提供元GitHub Actions）を追加する。CI実行後でないと候補に出ない場合がある。auto-merge用のバイパスは追加しない。日次更新もPRを経由するので **Require a pull request before merging** と両立する。レビュー必須やmerge queueは、この構成のために追加する必要はない。
-5. 上記の設定後にこのPRをマージする。既存のDependabot PRはCI待ちなら画面で **Enable auto-merge** を選び、すでに全要件を満たしていれば通常のマージが可能。以後の新規・更新PRでは自動的に有効化される。
+5. 上記の設定後にこのPRをマージする。既存PRでauto-mergeを手動予約する場合もnpmのpatch/minorだけを対象とする。メジャー更新・GitHub Actions更新でauto-mergeが予約済みなら **Disable auto-merge** にする。以後のnpmのpatch/minor更新はワークフローが有効化する。メジャー更新・GitHub Actions更新は差分とCIを確認して手動でマージする。
 
 必須チェックを設定せずにauto-mergeを有効化すると、CI完了を待たずにマージできてしまいます。必ず `check` を必須にしてください。トークンの所有者もこのルールを満たす運用にし、`--admin` によるバイパスは使いません。
 
