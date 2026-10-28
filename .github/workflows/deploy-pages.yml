@@ -2,6 +2,10 @@ name: Deploy Pages
 on:
   push:
     branches: [main]
+  # GITHUB_TOKEN による push では push イベントが起きないので、日次更新の完了でも走らせる
+  workflow_run:
+    workflows: [Update prices]
+    types: [completed]
   workflow_dispatch: {}
 permissions:
   contents: read
@@ -12,6 +16,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   build:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
