@@ -23,7 +23,7 @@ Google Cloudの料金ページはMarkdown用URLでも取得を試したが、利
 
 ## 更新処理
 
-`pipeline/fetch.ts` はrobots.txtを確認したうえで、英語の公式ページへ `Accept: text/markdown, text/html;q=0.9` を指定する。Markdownなら直接、HTMLなら見出し・表をMarkdownへ変換して `pipeline/promotions.ts` で解析する。HTMLにも対応していることは、サーバーがMarkdownを提供するという保証ではない。
+`pipeline/fetch.ts` はrobots.txtの `User-agent: *` の規則を取得URLに照らして確認したうえで（RFC 9309に沿い最長一致・同長ならAllow優先。料金表に当てはまらない `Disallow` では止めない）、英語の公式ページへ `Accept: text/markdown, text/html;q=0.9` を指定する。Markdownなら直接、HTMLなら見出し・表をMarkdownへ変換して `pipeline/promotions.ts` で解析する。HTMLにも対応していることは、サーバーがMarkdownを提供するという保証ではない。
 
 対象モデル・プランはレビュー済みの許可リスト。無料列と有料列、単位、割引と通常価格の大小、適用日の連続性、入力・出力・キャッシュの期間一致を検証する。対象追加や未対応の長文条件はレビューが必要。CC表示・リンク、robotsの許可、対象料金表のいずれかを確認できなければ例外で終了し、`latest.json`を書き換えない。既存割引がなくなった際も自動でLiteLLMへ戻さず、公式ページと解析器を見直す。
 
