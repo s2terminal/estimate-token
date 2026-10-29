@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { PriceData } from "../../shared/types.ts";
 import { applyPromotions, GEMINI_PRICING_URL, parsePromotions } from "../../pipeline/promotions.ts";
-import { fetchPromotions } from "../../pipeline/fetch.ts";
+import { fetchPromotions, robotsAllows } from "../../pipeline/fetch.ts";
 import { evaluateGates, validateSchema } from "../../pipeline/validate.ts";
 import { loadGates } from "../../pipeline/config.ts";
 import { pickRule, calcLlm } from "../../src/lib/calc.ts";
@@ -86,6 +86,24 @@ describe("取得時の中断条件", () => {
     vi.stubGlobal("fetch", fetch);
     await expect(fetchPromotions()).rejects.toThrow(/robots/);
     expect(fetch).toHaveBeenCalledTimes(1);
+  });
+  it("料金表に当てはまらないDisallowでは中断しない", async () => {
+    const fetch = vi.fn().mockResolvedValueOnce(new Response("User-agent: *\nDisallow: /*?*authuser=\nSitemap: https://ai.google.dev/sitemap.xml"))
+      .mockResolvedValueOnce(new Response(reviewed));
+    vi.stubGlobal("fetch", fetch);
+    await expect(fetchPromotions()).resolves.toBeDefined();
+  });
+  it.each([
+    ["User-agent: *\nDisallow: /*?*authuser=", true],
+    ["User-agent: *\nDisallow: /*?*hl=", false],
+    ["User-agent: *\nDisallow: /gemini-api/", false],
+    ["User-agent: *\nDisallow: /gemini-api/\nAllow: /gemini-api/docs/pricing", true],
+    ["User-agent: *\nDisallow: /gemini-api/docs/pricing$", true],
+    ["User-agent: other\nDisallow: /\n\nUser-agent: *\nDisallow:", true],
+    ["User-agent: other\nUser-agent: *\nDisallow: /", false],
+    ["User-agent: other\nDisallow:", false],
+  ])("robots.txtを取得URLに照らして判定する: %j", (robots, allowed) => {
+    expect(robotsAllows(robots, `${GEMINI_PRICING_URL}?hl=en`)).toBe(allowed);
   });
   it.each([new Response("Unavailable", { status: 503 }), new Response("No license")])("取得・ライセンス確認失敗を握りつぶさない", async (response) => {
     vi.stubGlobal("fetch", vi.fn().mockResolvedValueOnce(new Response("User-agent: *\nDisallow:\n"))

@@ -41,12 +41,38 @@ async function latestCommit(): Promise<string | null> {
   } catch { return null; }
 }
 
+/** `User-agent: *` グループの規則で判定する（RFC 9309: 最長一致、同長ならAllow優先）。グループがなければ不許可。 */
+export function robotsAllows(robots: string, url: string): boolean {
+  const { pathname, search } = new URL(url), target = pathname + search;
+  const rules: { allow: boolean; pattern: string }[] = [];
+  let found = false, inGroup = false, inAgents = false;
+  for (const raw of robots.split(/\r?\n/)) {
+    const m = raw.replace(/#.*/, "").match(/^\s*([A-Za-z-]+)\s*:\s*(.*?)\s*$/);
+    if (!m) continue;
+    const key = m[1].toLowerCase();
+    if (key === "user-agent") {
+      if (!inAgents) inGroup = false;
+      inAgents = true;
+      if (m[2] === "*") inGroup = found = true;
+      continue;
+    }
+    inAgents = false;
+    if (inGroup && (key === "allow" || key === "disallow") && m[2]) rules.push({ allow: key === "allow", pattern: m[2] });
+  }
+  if (!found) return false;
+  const matches = (pattern: string) =>
+    new RegExp("^" + pattern.replace(/[.+?^${}()|[\]\\]/g, "\\$&").replace(/\*/g, ".*").replace(/\\\$$/, "$")).test(target);
+  const best = rules.filter((r) => matches(r.pattern))
+    .sort((a, b) => b.pattern.length - a.pattern.length || Number(b.allow) - Number(a.allow))[0];
+  return best?.allow ?? true;
+}
+
 /** 公式割引は古い取得値へ戻さず、確認できなければ更新全体を中断する。 */
 export async function fetchPromotions(rawDir?: string): Promise<{ body: string; promotions: Promotions }> {
+  const url = `${GEMINI_PRICING_URL}?hl=en`;
   const { text: robots } = await get("https://ai.google.dev/robots.txt");
-  if (!/User-agent:\s*\*/i.test(robots) || /^[ \t]*Disallow:[ \t]*[^\s#]/mi.test(robots))
-    throw new Error("Gemini料金表のrobots.txtを再確認してください");
-  const { text: body } = await get(`${GEMINI_PRICING_URL}?hl=en`, { accept: "text/markdown, text/html;q=0.9" });
+  if (!robotsAllows(robots, url)) throw new Error("Gemini料金表のrobots.txtを再確認してください");
+  const { text: body } = await get(url, { accept: "text/markdown, text/html;q=0.9" });
   const promotions = parsePromotions(body, new Date().toISOString().slice(0, 10));
   if (rawDir) {
     mkdirSync(rawDir, { recursive: true });
