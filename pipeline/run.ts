@@ -1,6 +1,7 @@
 /* 日次更新パイプライン: fetch → select → normalize → cross-check → validate → diff
    使い方: npm run pipeline [-- --offline] [-- --force-stop]
    出力: public/data/latest.json(中身が変わったときだけ)、out/report.md(GitHub 上限内)、out/report-full.md、out/gate.json */
+import { createHash } from "node:crypto";
 import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import type { PriceData } from "../shared/types.ts";
 import { ROOT, loadCatalog, loadGates, loadModelsDevPolicy } from "./config.ts";
@@ -12,7 +13,7 @@ import { fetchAll, readRaw, fetchPromotions, readPromotions } from "./fetch.ts";
 import { unsupportedImageModels } from "./image-tokens.ts";
 import { applyPromotions } from "./promotions.ts";
 import { applyRecommendations } from "./recommend.ts";
-import { checkFx, evaluateGates } from "./validate.ts";
+import { checkFx, dropZeroedRetiring, evaluateGates } from "./validate.ts";
 
 const args = new Set(process.argv.slice(2));
 const option = (name: string, fallback: string) => process.argv.find(a => a.startsWith(name + "="))?.slice(name.length + 1) ?? fallback;
@@ -83,6 +84,7 @@ async function main() {
     models,
   };
 
+  notes.push(...dropZeroedRetiring(prev, next, gates));
   const gate = evaluateGates(prev, next, gates);
   gate.stop.push(...src.rejected);
   gate.notes.unshift(...notes);
@@ -109,8 +111,10 @@ async function main() {
   const status = gate.stop.length ? "stop" : "pass";
   const hasNotes = gate.notes.length + cc.mismatches.length + cc.candidates.length > 0;
   writeFileSync(`${OUT_DIR}/gate.json`, JSON.stringify({ status, changed, hasNotes, ...gate }, null, 2));
+  // 止めた理由が同じなら同じ確認用PRを使い回すための鍵
+  const stopKey = createHash("sha256").update(JSON.stringify([...gate.stop].sort())).digest("hex").slice(0, 12);
   if (process.env.GITHUB_OUTPUT)
-    appendFileSync(process.env.GITHUB_OUTPUT, `status=${status}\nchanged=${changed}\nnotes=${hasNotes}\nsnapshot=${today}\n`);
+    appendFileSync(process.env.GITHUB_OUTPUT, `status=${status}\nchanged=${changed}\nnotes=${hasNotes}\nsnapshot=${today}\nstop_key=${stopKey}\n`);
 
   console.log(`snapshot=${today} models=${models.length} (review ${cc.mismatches.length}, candidates ${cc.candidates.length}) changed=${changed} status=${status}`);
   for (const s of gate.stop) console.log(`STOP: ${s}`);

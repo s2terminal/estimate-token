@@ -27,6 +27,7 @@ export interface Gates {
   crosscheck: { mismatchPct: number };
   fx: { maxChangePct: number };
   newModel: { days: number; openrouterRecentDays: number };
+  retire: { minAgeMonths: number };
 }
 
 const root = fileURLToPath(new URL("..", import.meta.url));

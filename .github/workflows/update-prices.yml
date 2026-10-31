@@ -85,24 +85,40 @@ jobs:
           git commit -m "chore(data): 価格データを更新 ${{ steps.pipeline.outputs.snapshot }}"
           git push origin HEAD:main
 
-      - name: Hold (gate stopped → open a PR)
+      # 止めた理由が同じなら新しいPRは作らない: 開いているPRは最新データで更新し、閉じたPRは作り直さずIssueに記録する
+      - id: hold
+        name: Hold (gate stopped → open or update a PR)
         if: steps.pipeline.outputs.status == 'stop' && steps.pipeline.outputs.changed == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SNAPSHOT: ${{ steps.pipeline.outputs.snapshot }}
+          STOP_KEY: ${{ steps.pipeline.outputs.stop_key }}
         run: |
-          branch="prices/${{ steps.pipeline.outputs.snapshot }}-${{ github.run_id }}"
+          branch="prices/hold-$STOP_KEY"
+          title="価格データの更新を止めました($SNAPSHOT)"
+          read -r num state < <(gh pr list --state all --head "$branch" --limit 1 --json number,state \
+            --jq '.[0] // empty | "\(.number) \(.state)"') || true
+          if [ -n "${state:-}" ] && [ "$state" != "OPEN" ]; then
+            echo "同じ理由のPR #$num は $state のため作り直しません"
+            echo "result=skipped" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -b "$branch"
           git add public/data/latest.json
-          git commit -m "chore(data): 価格データの更新(要確認) ${{ steps.pipeline.outputs.snapshot }}"
-          git push origin "$branch"
-          gh pr create --base main --head "$branch" \
-            --title "価格データの更新を止めました(${{ steps.pipeline.outputs.snapshot }})" \
-            --body-file out/report.md
+          git commit -m "chore(data): 価格データの更新(要確認) $SNAPSHOT"
+          git push --force origin "$branch"
+          if [ -n "${num:-}" ]; then
+            gh pr edit "$num" --title "$title" --body-file out/report.md
+            echo "result=updated" >> "$GITHUB_OUTPUT"
+          else
+            gh pr create --base main --head "$branch" --title "$title" --body-file out/report.md
+            echo "result=created" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Log notes or unchanged gate failure to issue
-        if: (steps.pipeline.outputs.status == 'pass' && steps.pipeline.outputs.notes == 'true') || (steps.pipeline.outputs.status == 'stop' && steps.pipeline.outputs.changed == 'false')
+        if: (steps.pipeline.outputs.status == 'pass' && steps.pipeline.outputs.notes == 'true') || (steps.pipeline.outputs.status == 'stop' && (steps.pipeline.outputs.changed == 'false' || steps.hold.outputs.result == 'skipped'))
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -136,6 +152,7 @@ jobs:
           CHANGED: ${{ steps.pipeline.outputs.changed }}
           HAS_NOTES: ${{ steps.pipeline.outputs.notes }}
           SNAPSHOT: ${{ steps.pipeline.outputs.snapshot }}
+          HOLD_RESULT: ${{ steps.hold.outputs.result }}
           REPOSITORY: ${{ github.repository }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
@@ -150,9 +167,11 @@ jobs:
             result="⏹️ 日次の価格更新がキャンセルされました。"
           elif [ "$PIPELINE_STATUS" = "stop" ]; then
             result="⚠️ 品質ゲートで価格更新を停止しました。"
-            if [ "$CHANGED" = "true" ]; then
-              result="$result 確認用PRを作成しました。"
-            fi
+            case "$HOLD_RESULT" in
+              created) result="$result 確認用PRを作成しました。" ;;
+              updated) result="$result 同じ理由の確認用PRを更新しました。" ;;
+              skipped) result="$result 同じ理由のPRは閉じられているため作り直していません。" ;;
+            esac
           elif [ "$CHANGED" = "true" ]; then
             result="✅ 日次の価格更新をmainへ反映しました。"
           else

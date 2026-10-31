@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { PriceData } from "../../shared/types.ts";
 import { loadGates } from "../../pipeline/config.ts";
-import { checkFx, evaluateGates, validateSchema } from "../../pipeline/validate.ts";
+import { checkFx, dropZeroedRetiring, evaluateGates, isRetiring, validateSchema } from "../../pipeline/validate.ts";
 import { findModel, sampleData } from "../support/fixtures.ts";
 
 const gates = loadGates();
@@ -67,6 +67,50 @@ describe("evaluateGates", () => {
     const next = structuredClone(prev);
     next.sources.litellm.bytes = 40_000;
     expect(evaluateGates(prev, next, gates).stop.some((s) => s.startsWith("取得失敗"))).toBe(true);
+  });
+});
+
+describe("古い・提供終了モデル", () => {
+  it("リリースから12か月以上か提供終了なら対象", () => {
+    const m = target(sampleData());
+    expect(isRetiring({ ...m, releaseDate: "2025-10-11" }, "2026-10-11", gates)).toBe(true);
+    expect(isRetiring({ ...m, releaseDate: "2025-10" }, "2026-10-11", gates)).toBe(true);
+    expect(isRetiring({ ...m, releaseDate: "2025-10-12" }, "2026-10-11", gates)).toBe(false);
+    expect(isRetiring({ ...m, releaseDate: undefined }, "2026-10-11", gates)).toBe(false);
+    expect(isRetiring({ ...m, providerStatus: "deprecated" }, "2026-10-11", gates)).toBe(true);
+    expect(isRetiring({ ...m, deprecationDate: "2026-10-11" }, "2026-10-11", gates)).toBe(true);
+  });
+
+  it("単価が欠落しても止めずに記録する", () => {
+    const prev = sampleData(), next = structuredClone(prev);
+    target(prev).releaseDate = target(next).releaseDate = "2025-08-07";
+    const rule = target(next).prices[0];
+    delete rule.input; delete rule.provenance?.input;
+    const r = evaluateGates(prev, next, gates);
+    expect(r.stop).toEqual([]);
+    expect(r.notes).toEqual([expect.stringContaining("古い・提供終了モデルの単価が0・欠落(掲載から外す): gpt-6.1-sol@openai:global standard input")]);
+  });
+
+  it("単価が0になった価格ルールを外し、ルールが残らなければ掲載から外す", () => {
+    const prev = sampleData(), next = structuredClone(prev);
+    target(prev).providerStatus = target(next).providerStatus = "deprecated";
+    const count = target(next).prices.length;
+    target(next).prices[0].input = 0;
+    expect(dropZeroedRetiring(prev, next, gates)).toHaveLength(1);
+    expect(target(next).prices).toHaveLength(count - 1);
+    expect(evaluateGates(prev, next, gates).stop).toEqual([]);
+
+    for (const r of target(next).prices) r.input = 0;
+    expect(dropZeroedRetiring(prev, next, gates).at(-1)).toContain("掲載から外した: gpt-6.1-sol@openai:global");
+    expect(next.models.some((m) => m.id === "gpt-6.1-sol@openai:global")).toBe(false);
+    expect(evaluateGates(prev, next, gates).stop).toEqual([]);
+  });
+
+  it("新しいモデルは従来どおり止める", () => {
+    const prev = sampleData(), next = structuredClone(prev);
+    target(next).prices[0].input = 0;
+    expect(dropZeroedRetiring(prev, next, gates)).toEqual([]);
+    expect(evaluateGates(prev, next, gates).stop).toHaveLength(1);
   });
 });
 
