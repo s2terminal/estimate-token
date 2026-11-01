@@ -67,7 +67,7 @@ OpenRouter の利用規約はサイト・API上の情報のコピーや譲渡を
 
 - `update-prices.yml`: 毎朝 06:17 JST。ゲート通過なら main へコミット、止めた日はPRを作成(理由が同じなら既存PRを更新し、新しいPRは作らない)、値変わり・照合の不一致はIssue「価格更新ログ」にコメント。Slack設定時は実行結果も通知
 - `deploy-pages.yml`: main への push と日次更新の完了で GitHub Pages に公開
-- `ci.yml`: PRで型チェック・テスト・ビルド
+- `ci.yml`: PRとmainへのpushで型チェック・テスト・ビルド・Actions lockfile検証
 - `dependabot-auto-merge.yml`: Dependabot本人のnpm patch/minor更新について、読み取り専用ジョブで該当コミットのCI成功を確認し、別ジョブで再確認後にそのコミットをマージする
 
 作成者が `dependabot[bot]`（Bot）、同一リポジトリのmain向け、非draftのPRだけが対象です。更新種別はコミット検証を有効にした `dependabot/fetch-metadata` で確認します。グループにメジャー更新が含まれる場合、GitHub Actions更新、検証失敗・情報不明の場合は自動マージしません。通常のPRのCIは従来どおり実行し、人や日次Botが作ったPRは自動マージしません。日次更新とPages公開も従来の処理を維持します。
@@ -75,6 +75,21 @@ OpenRouter の利用規約はサイト・API上の情報のコピーや譲渡を
 処理は `scripts/dependabot-auto-merge.ts` に置き、YAMLは起動条件・権限・呼び出しを定義します。既存の `ci.yml` の `check` ジョブ（監査・テスト・型チェック・ビルド）が成功したことを、PRのhead SHA・CIの実行ID・再実行番号とともに確認します。CIを待つジョブは読み取り専用で、書き込みトークンを渡しません。マージ用の別ジョブで作成者・PRの状態・対象ファイル・最新CIの成功を再確認し、GitHubのマージAPIにも検証済みSHAを指定します。PR更新、CI失敗・スキップ・未実行、再実行による結果変更はマージを止めます。変更ファイルもルートの `package.json` と `package-lock.json` に限定します。
 
 両ジョブはmain側のコミットからスクリプトと `.node-version` だけを取得し、PRのコードやartifactは取得・実行しません。Node.jsの組み込み機能だけでAPIを呼び出し、依存インストールは行いません。CIの待機は最大20分です。CI失敗後に手動でCIを再実行した場合は、成功後に **Merge Dependabot after CI → Re-run all jobs** も実行してください。
+
+### Actions依存の更新
+
+全ワークフローの直接・推移的なActions依存を `gh actions-lock` で `.github/workflows/actions.lock` に固定します。CIの `gh actions-lock --verify` は全ワークフローを対象に、lockfileとの整合性と上流のコミットを検証します。
+
+認証済みのGitHub CLIで、ワークフローを追加したときや `uses:` を変更したとき（Dependabotの更新PRを含む）は、リポジトリのルートで次を実行してください。
+
+```sh
+gh extension install github/gh-actions-lock --pin v0.2.0
+gh actions-lock
+gh actions-lock --verify
+git add .github/workflows/
+```
+
+ワークフローとlockfileの差分を確認し、同じPRにコミットします。ローカルでネットワークなしに網羅性だけを確認する場合は `gh actions-lock --verify-local` を使えます（上流検証はCIで行います）。拡張のバージョンを更新するときは、CIの `--pin` と上記の手順を揃えてください。
 
 ### 初回の設定
 
