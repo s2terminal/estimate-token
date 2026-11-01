@@ -59,6 +59,7 @@ function render() {
   $<HTMLInputElement>("permalink").value = link;
   history.replaceState(null, "", "#" + encodeState(S));
   $("selCount").textContent = `${S.sel[S.t].length}件を選択中`;
+  $("selCountJump").textContent = `(${S.sel[S.t].length}件を選択中)`;
 }
 function segSet(id: string, v: string) {
   document.querySelectorAll<HTMLButtonElement>(`#${id} button`).forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.v === v)));
@@ -117,7 +118,7 @@ function renderModelList() {
               const tags = modelFlags(m, DATA)
                 .map((f) => `<span class="tag ${f.k === "warn" ? "warn" : ""}">${esc(f.t.replace(/\(.*\)$/, ""))}</span>`)
                 .join("");
-              return `<label><input type="checkbox" data-id="${esc(m.id)}" ${sel.has(m.id) ? "checked" : ""}>${esc(m.name)} <span class="sub">${esc(regionLabel(m.region))}</span>${tags}</label>`;
+              return `<label><input type="checkbox" data-id="${esc(m.id)}" ${sel.has(m.id) ? "checked" : ""}>${esc(m.name)} <span class="sub">${esc(where(m))}</span>${tags}</label>`;
             })
             .join(""),
       )
@@ -260,6 +261,16 @@ function bind() {
     S.sel[S.t] = [];
     renderModelList();
     render();
+  });
+  const scrollBehavior = (): ScrollBehavior => (window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth");
+  $("toModels").addEventListener("click", () => {
+    const box = $("modelsBox") as HTMLDetailsElement;
+    box.open = true;
+    box.scrollIntoView({ behavior: scrollBehavior(), block: "start" });
+    $<HTMLInputElement>("mSearch").focus({ preventScroll: true });
+  });
+  $("toResults").addEventListener("click", () => {
+    $("summary").scrollIntoView({ behavior: scrollBehavior(), block: "start" });
   });
   $("copyLink").addEventListener("click", async () => {
     const input = $<HTMLInputElement>("permalink");

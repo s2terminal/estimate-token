@@ -33,7 +33,7 @@ h1{font-family:var(--f-display);font-weight:900;font-size:30px;margin:0;letter-s
 @media (max-width:900px){.grid{grid-template-columns:minmax(0,1fr)}}
 .panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r)}
 .form{padding:16px;display:flex;flex-direction:column;gap:16px}
-@media (min-width:901px){.form{position:sticky;top:calc(env(safe-area-inset-top,0px) + 12px)}}
+@media (min-width:901px){.form{position:sticky;top:calc(env(safe-area-inset-top,0px) + 12px);max-height:calc(100dvh - env(safe-area-inset-top,0px) - 24px);overflow-y:auto;overscroll-behavior:contain;scrollbar-gutter:stable}}
 .tabs{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
 .tabs button{appearance:none;border:0;background:transparent;color:var(--muted);font:inherit;font-weight:700;padding:8px 4px;cursor:pointer;border-left:1px solid var(--line)}
 .tabs button:first-child{border-left:0}
@@ -150,3 +150,49 @@ body{-webkit-text-size-adjust:100%}
 .flag.new{background:var(--promo-soft);color:var(--promo)}
 #loadError{margin-bottom:16px}
 .notes a,.mmeta a{color:var(--accent)}
+/* ---- UI改善: モデル選択へ少ないスクロールで届くように ---- */
+/* フォーム先頭からモデル選択へ移動するボタン */
+.to-models{appearance:none;display:flex;justify-content:space-between;align-items:center;gap:8px;width:100%;font:inherit;font-size:13px;font-weight:700;padding:9px 12px;border:1px dashed var(--accent);border-radius:var(--r);background:var(--accent-soft);color:var(--accent);cursor:pointer;text-align:left}
+.to-models .mmeta{color:var(--accent);font-weight:400}
+.to-models:hover{filter:brightness(1.04)}
+/* モデル選択は独立した枠として見つけやすくし、移動先では上端に余白を取る */
+details.models{border:1px solid var(--line);border-radius:var(--r);padding:10px 12px;scroll-margin-top:16px}
+details.models summary{min-height:28px}
+#summary{scroll-margin-top:12px}
+.mactions .to-results{margin-left:auto}
+/* 絞り込みのセレクトは狭いカラムで横並びだと文言が切れるため縦に並べる */
+.mselects{grid-template-columns:minmax(0,1fr)}
+.mselects select{width:100%}
+/* 共有リンクのコピーボタンが2行に折り返して縦長にならないようにする */
+.linkrow .btn{flex:none;white-space:nowrap}
+/* 小さな文字リンクボタンにも最低限のタップ範囲を持たせる */
+.mini{padding-block:5px}
+.mactions{flex-wrap:wrap}
+.mlist label .tag,.flag{font-size:11px}
+@media (max-width:900px){
+  /* 単価一覧は横スクロール時にモデル名を見失わないようにする */
+  #unitTable th:first-child,#unitTable td:first-child{position:sticky;left:0;background:var(--surface);z-index:1}
+}
+@media (max-width:520px){
+  /* セレクトは狭い列だと「Standard(同期)」のように文言が切れるため、ラベルの下に全幅で置く */
+  .field:has(select){grid-template-columns:minmax(0,1fr)}
+  .linkrow{flex-direction:column;align-items:stretch}
+  #resTable td:nth-child(2),#unitTable td:first-child{min-width:120px}
+}
+/* 一覧は画面の高さに合わせて広げ、グループ名を見失わないようにする */
+.mlist{max-height:min(480px,55dvh);overscroll-behavior:contain}
+.mgroup{position:sticky;top:0;background:var(--surface);padding-block:4px;z-index:1}
+.mlist label{padding:6px;border-radius:4px}
+.mlist label:hover{background:var(--accent-soft)}
+.mlist input{width:17px;height:17px;flex:none}
+.check input{width:17px;height:17px;flex:none}
+@media (max-width:900px){
+  /* モバイルでは入力時の自動ズームを避け、タップ範囲を広げる */
+  input[type=number],input[type=text],input[type=search],input[type=date],select{font-size:16px}
+  .tabs button{padding-block:11px}
+  .seg button{padding:8px 12px}
+  .presets button{padding:7px 12px}
+  .mlist{max-height:60dvh}
+  .mlist label{padding-block:8px}
+  th,td{padding:8px}
+}
