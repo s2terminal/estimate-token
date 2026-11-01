@@ -65,7 +65,7 @@ OpenRouter の利用規約はサイト・API上の情報のコピーや譲渡を
 
 ## GitHub Actions
 
-- `update-prices.yml`: 毎朝 06:17 JST。ゲート通過なら main へコミット、止めた日はPRを作成、値変わり・照合の不一致はIssue「価格更新ログ」にコメント。Slack設定時は実行結果も通知
+- `update-prices.yml`: 毎朝 06:17 JST。ゲート通過なら main へコミット、止めた日はPRを作成(理由が同じなら既存PRを更新し、新しいPRは作らない)、値変わり・照合の不一致はIssue「価格更新ログ」にコメント。Slack設定時は実行結果も通知
 - `deploy-pages.yml`: main への push と日次更新の完了で GitHub Pages に公開
 - `ci.yml`: PRで型チェック・テスト・ビルド
 
@@ -79,7 +79,7 @@ OpenRouter の利用規約はサイト・API上の情報のコピーや譲渡を
 1. Slackアプリで **Incoming Webhooks** を有効にし、通知先チャンネルのWebhook URLを発行する
 2. GitHubリポジトリの Settings → Secrets and variables → Actions → **New repository secret** で、`SLACK_WEBHOOK_URL` にそのURLを登録する（URLはリポジトリへコミットしない）
 
-日次実行・手動実行の終了時に、更新成功・変更なし・品質ゲート停止・失敗・キャンセルの結果、対象日（取得できた場合）、Actionsの実行ログへのリンクを通知します。品質ゲート停止時に差分があれば、確認用PRを作成したことも知らせます。注意事項がある場合はレポートの確認を案内します。
+日次実行・手動実行の終了時に、更新成功・変更なし・品質ゲート停止・失敗・キャンセルの結果、対象日（取得できた場合）、Actionsの実行ログへのリンクを通知します。品質ゲート停止時に差分があれば、確認用PRを作成・更新したことも知らせます。注意事項がある場合はレポートの確認を案内します。
 
 Secret未設定なら通知をスキップします。通知の送信に失敗しても価格更新の成否には影響しません。設定後はActionsの **Update prices → Run workflow** で通知を確認できます。
 

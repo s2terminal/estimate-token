@@ -83,6 +83,37 @@ export interface GateResult {
   notes: string[];
 }
 
+/** 十分古い(リリースから retire.minAgeMonths 以上)か提供終了のモデル。単価が0・欠落になったら止めずに掲載から外す */
+export function isRetiring(m: Model, today: string, gates: Gates): boolean {
+  if (m.status === "deprecated" || m.providerStatus === "deprecated" || (m.deprecationDate && m.deprecationDate <= today)) return true;
+  if (!m.releaseDate) return false;
+  const limit = new Date(`${m.releaseDate.length === 7 ? m.releaseDate + "-01" : m.releaseDate.slice(0, 10)}T00:00:00Z`);
+  limit.setUTCMonth(limit.getUTCMonth() + gates.retire.minAgeMonths);
+  return limit.toISOString().slice(0, 10) <= today;
+}
+
+/** 古い・提供終了モデルで前回は正だった単価が0になった価格ルールを外し、ルールが残らないモデルは掲載から外す */
+export function dropZeroedRetiring(prev: PriceData | null, next: PriceData, gates: Gates): string[] {
+  const notes: string[] = [];
+  const prevById = new Map((prev?.models ?? []).map((m) => [m.id, m]));
+  next.models = next.models.filter((nm) => {
+    const pm = prevById.get(nm.id);
+    if (!pm || !isRetiring(nm, next.snapshot, gates)) return true;
+    const prevRules = new Map(pm.prices.map((r) => [ruleKey(r), r]));
+    nm.prices = nm.prices.filter((nr) => {
+      const pr = prevRules.get(ruleKey(nr));
+      const before = pr ? ruleValues(pr) : {};
+      const zeroed = Object.entries(ruleValues(nr)).some(([f, b]) => b === 0 && (before[f] ?? 0) > 0);
+      if (zeroed) notes.push(`古い・提供終了モデルの単価が0になったため価格ルールを外した: ${nm.id} ${nr.tier}`);
+      return !zeroed;
+    });
+    if (nm.prices.length) return true;
+    notes.push(`古い・提供終了モデルの価格がなくなったため掲載から外した: ${nm.id}`);
+    return false;
+  });
+  return notes;
+}
+
 const ruleKey = (r: PriceRule) => `${r.tier}|${r.minPromptTokens}|${!!r.promo}|${r.validFrom ?? ""}|${r.validTo ?? ""}`;
 const changePct = (a: number, b: number) => ((b - a) / a) * 100;
 
@@ -114,6 +145,7 @@ export function evaluateGates(prev: PriceData | null, next: PriceData, gates: Ga
   for (const pm of prev.models) {
     const nm = nextById.get(pm.id);
     if (!nm) continue;
+    const retiring = isRetiring(nm, next.snapshot, gates);
     const rules = new Map(nm.prices.map((r) => [ruleKey(r), r]));
     for (const pr of pm.prices) {
       const nr = rules.get(ruleKey(pr));
@@ -122,7 +154,8 @@ export function evaluateGates(prev: PriceData | null, next: PriceData, gates: Ga
         const b = nr ? ruleValues(nr)[f] : undefined;
         const label = `${pm.id} ${pr.tier}${pr.minPromptTokens ? `(>${pr.minPromptTokens / 1000}K)` : ""} ${f}`;
         if (!b) {
-          stop.push(`単価が0になった: ${label} ${a} → ${b ?? "欠落"}`);
+          if (retiring) notes.push(`古い・提供終了モデルの単価が0・欠落(掲載から外す): ${label} ${a} → ${b ?? "欠落"}`);
+          else stop.push(`単価が0になった: ${label} ${a} → ${b ?? "欠落"}`);
           continue;
         }
         const c = changePct(a, b);
