@@ -1,0 +1,86 @@
+name: Merge Dependabot after CI
+on:
+  pull_request_target:
+    branches: [main]
+    types: [opened, reopened, synchronize, ready_for_review]
+permissions: {}
+concurrency:
+  group: dependabot-merge-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+jobs:
+  verify:
+    if: >-
+      github.event.pull_request.user.login == 'dependabot[bot]' &&
+      github.event.pull_request.user.type == 'Bot' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      !github.event.pull_request.draft
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    permissions:
+      actions: read
+      contents: read
+      pull-requests: read
+    outputs:
+      head-sha: ${{ steps.ci.outputs.head-sha }}
+      ci-run-id: ${{ steps.ci.outputs.ci-run-id }}
+      ci-run-attempt: ${{ steps.ci.outputs.ci-run-attempt }}
+    steps:
+      - name: Fetch Dependabot metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@25dd0e34f4fe68f24cc83900b1fe3fe149efef98 # v3.1.0
+        with:
+          github-token: ${{ github.token }}
+      # pull_request_targetのGITHUB_SHAはmain側。PRのコードは取得しない。
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+          sparse-checkout: |
+            scripts/dependabot-auto-merge.ts
+            .node-version
+          sparse-checkout-cone-mode: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .node-version
+          check-latest: true
+          package-manager-cache: false
+      - name: Wait for the matching CI run
+        id: ci
+        if: >-
+          steps.metadata.outputs.package-ecosystem == 'npm_and_yarn' &&
+          (steps.metadata.outputs.update-type == 'version-update:semver-patch' ||
+           steps.metadata.outputs.update-type == 'version-update:semver-minor')
+        run: node scripts/dependabot-auto-merge.ts wait
+        env:
+          GH_TOKEN: ${{ github.token }}
+  merge:
+    needs: verify
+    if: needs.verify.result == 'success' && needs.verify.outputs.head-sha != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      actions: read
+      contents: read
+      pull-requests: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+          sparse-checkout: |
+            scripts/dependabot-auto-merge.ts
+            .node-version
+          sparse-checkout-cone-mode: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .node-version
+          check-latest: true
+          package-manager-cache: false
+      - name: Recheck CI and merge the tested commit
+        run: node scripts/dependabot-auto-merge.ts merge
+        env:
+          GH_TOKEN: ${{ github.token }}
+          MERGE_TOKEN: ${{ secrets.AUTOMATION_TOKEN }}
+          TESTED_HEAD_SHA: ${{ needs.verify.outputs.head-sha }}
+          CI_RUN_ID: ${{ needs.verify.outputs.ci-run-id }}
+          CI_RUN_ATTEMPT: ${{ needs.verify.outputs.ci-run-attempt }}
