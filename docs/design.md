@@ -107,7 +107,7 @@
 
 1. **取得(fetch)**: LiteLLMの価格JSONの最新コミットSHAをGitHub APIで調べ、そのSHAのファイルを取得する(再現できるように)。OpenRouterとFrankfurterも取得し、生データを `raw/` に置く(コミットはしない、Actionsのartifactに14日保存)。
 2. **選別(select)**: `config/catalog.yaml` の規則で対象エントリを選ぶ。規則は「`litellm_provider` が許可リストにある」「`mode` が chat / responses / image\_generation」「`deprecation_date` が過ぎていない」。規則に合う新モデルは設定変更なしで自動的に入る。
-3. **正規化(normalize)**: キーの形から platform と region を切り出す(下の表)。日付付きの別名(`azure/gpt-6-astra-2026-09-03` など)と、同じ価格の重複エントリは1行にまとめる。単価を×1,000,000して価格ルールにする。
+3. **正規化(normalize)**: キーの形から platform と region を切り出す(下の表)。日付付きの別名(`azure/gpt-6-astra-2026-09-03` など)と、同じ価格の重複エントリは1行にまとめる。単価を×1,000,000して価格ルールにする。開発元は系列名の規則(`vendors`)で決め、決まらないときはキーの接頭辞(Bedrock の `deepseek.` など)から得た表記を `vendorAliases` で正式な表記にそろえる(大文字小文字・記号の違いは無視して照合)。大文字小文字だけが違う表記の混在や `catalog.yaml` に未登録の開発元は、差分レポートの「記録すること」に出す。
 4. **照合(cross-check)**: 直販モデルをOpenRouterの同名モデルと突き合わせ、差が大きいものに `needsReview: true` を付ける。OpenRouterにだけある主要ベンダーのモデルは、名前だけを差分レポートに「新モデル候補」として出す(公開データには入れない。下の「利用条件」を参照)。
 5. **検証と差分(validate / diff)**: 次節の品質ゲート。前日の `latest.json` との差分をMarkdownにまとめる(新モデル、値下げ、値上げ、廃止)。
 6. **公開(publish)**: 中身のハッシュが変わった日だけ `data/latest.json` を上書きして main にコミットする。過去の価格は書き残さない(必要ならgit履歴で追える)。main への push で Pages のデプロイが走る。

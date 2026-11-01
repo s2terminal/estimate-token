@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { crossCheck } from "../../pipeline/crosscheck.ts";
+import { loadCatalog } from "../../pipeline/config.ts";
+import { crossCheck, vendorNotes } from "../../pipeline/crosscheck.ts";
 import { TODAY, findModel, openrouterSample, sampleData } from "../support/fixtures.ts";
 
 describe("crossCheck", () => {
@@ -26,5 +27,24 @@ describe("crossCheck", () => {
     const before = sampleData().models.length;
     expect(candidates).toEqual([{ family: "example-new-model", platform: "openai" }]);
     expect(models).toHaveLength(before);
+  });
+});
+
+describe("vendorNotes", () => {
+  const catalog = loadCatalog();
+
+  it("登録済みの開発元だけなら何も出さない", () => {
+    expect(vendorNotes(sampleData().models, catalog)).toEqual([]);
+  });
+
+  it("大文字小文字だけが違う表記と未登録の開発元を検出する", () => {
+    const models = sampleData().models;
+    models[0].vendor = "Deepseek";
+    models[1].vendor = "DeepSeek";
+    models[2].vendor = "Newlab";
+    const notes = vendorNotes(models, catalog);
+    expect(notes).toContain("開発元の表記ゆれ: Deepseek(1件) / DeepSeek(1件)");
+    expect(notes).toContain(`catalog.yaml に未登録の開発元: Deepseek(1件、例: ${models[0].id})`);
+    expect(notes).toContain(`catalog.yaml に未登録の開発元: Newlab(1件、例: ${models[2].id})`);
   });
 });

@@ -51,10 +51,32 @@ vendors:
   - { pattern: "^(jamba|j2)", vendor: AI21 }
   - { pattern: "^(grok)", vendor: xAI }
   - { pattern: "^(stable|sd3|stability)", vendor: Stability AI }
+  - { pattern: "^kimi", vendor: Moonshot AI }
+  - { pattern: "^minimax", vendor: MiniMax }
+  - { pattern: "^glm", vendor: Z.ai }
+  - { pattern: "^nemotron", vendor: NVIDIA }
+
+# 系列名で決まらないとき、Bedrock の `deepseek.` のような接頭辞から得た開発元の表記を正式な表記にそろえる。
+# 照合は大文字小文字・空白・記号を無視する。ここにも vendors にもない開発元はレポートの「記録すること」に出る。
+vendorAliases:
+  deepseek: DeepSeek
+  minimax: MiniMax
+  moonshotai: Moonshot AI
+  moonshot: Moonshot AI
+  twelvelabs: TwelveLabs
+  nvidia: NVIDIA
+  zai: Z.ai
+  writer: Writer
 
 # 自動生成の表示名を上書きしたいとき(系列名 → 表示名)
 names:
   gemini-nano-banana-2.1: Nano Banana 2.1
+
+# 自動生成の表示名で単語の表記を上書きしたいとき(小文字の単語 → 表記)
+nameTokens:
+  deepseek: DeepSeek
+  minimax: MiniMax
+  glm: GLM
 
 # 初期選択: 同じ用途の系列から最新を1件。提供先・リージョン違いは重複選択しない。
 # release_date が取得できれば新しい日付を優先。不明な場合は数値バージョンで比較。

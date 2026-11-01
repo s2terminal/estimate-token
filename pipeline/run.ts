@@ -7,7 +7,7 @@ import type { PriceData } from "../shared/types.ts";
 import { ROOT, loadCatalog, loadGates, loadModelsDevPolicy } from "./config.ts";
 import { assembleModels } from "./assemble.ts";
 import { contentHash } from "./content.ts";
-import { crossCheck } from "./crosscheck.ts";
+import { crossCheck, vendorNotes } from "./crosscheck.ts";
 import { diffData, diffMarkdown, fitMarkdown } from "./diff.ts";
 import { fetchAll, readRaw, fetchPromotions, readPromotions } from "./fetch.ts";
 import { unsupportedImageModels } from "./image-tokens.ts";
@@ -36,7 +36,7 @@ async function main() {
   const notes = [...src.warnings];
 
   const { models, unparsed, frozen, notes: mergeNotes } = assembleModels(src, prev, catalog, loadModelsDevPolicy(), today);
-  notes.push(...mergeNotes);
+  notes.push(...mergeNotes, ...vendorNotes(models, catalog));
   const cc = src.openrouter
     ? crossCheck(models, src.openrouter.data, { mismatchPct: gates.crosscheck.mismatchPct, recentDays: gates.newModel.openrouterRecentDays, now })
     : { mismatches: [], candidates: [] };

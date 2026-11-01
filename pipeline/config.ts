@@ -16,7 +16,11 @@ export interface Catalog {
   modes: string[];
   excludeKeyPatterns: string[];
   vendors: { pattern: string; vendor: string }[];
+  /** 接頭辞などから得た開発元の表記 → 正式な表記(大文字小文字・記号の違いは無視して照合) */
+  vendorAliases?: Record<string, string>;
   names: Record<string, string>;
+  /** 表示名の単語ごとの表記(小文字の単語 → 表記) */
+  nameTokens?: Record<string, string>;
   recommendations: RecommendationGroup[];
 }
 

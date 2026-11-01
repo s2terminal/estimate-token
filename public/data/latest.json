@@ -21664,7 +21664,7 @@
   {
    "id": "deepseek-v3.2-speciale@azure:global",
    "family": "deepseek-v3.2-speciale",
-   "name": "Deepseek V3.2 Speciale",
+   "name": "DeepSeek V3.2 Speciale",
    "vendor": "DeepSeek",
    "platform": "azure",
    "region": "global",
@@ -21738,7 +21738,7 @@
   {
    "id": "deepseek-v3.2@azure:global",
    "family": "deepseek-v3.2",
-   "name": "Deepseek V3.2",
+   "name": "DeepSeek V3.2",
    "vendor": "DeepSeek",
    "platform": "azure",
    "region": "global",
@@ -21812,7 +21812,7 @@
   {
    "id": "deepseek-v4-flash-0731@azure:global",
    "family": "deepseek-v4-flash-0731",
-   "name": "Deepseek V4 Flash 0731",
+   "name": "DeepSeek V4 Flash 0731",
    "vendor": "DeepSeek",
    "platform": "azure",
    "region": "global",
@@ -21871,7 +21871,7 @@
   {
    "id": "deepseek-v4-flash@azure:global",
    "family": "deepseek-v4-flash",
-   "name": "Deepseek V4 Flash",
+   "name": "DeepSeek V4 Flash",
    "vendor": "DeepSeek",
    "platform": "azure",
    "region": "global",
@@ -21952,7 +21952,7 @@
   {
    "id": "deepseek-v4-pro@azure:global",
    "family": "deepseek-v4-pro",
-   "name": "Deepseek V4 Pro",
+   "name": "DeepSeek V4 Pro",
    "vendor": "DeepSeek",
    "platform": "azure",
    "region": "global",
@@ -22033,7 +22033,7 @@
   {
    "id": "deepseek-v4.1-flash@azure:global",
    "family": "deepseek-v4.1-flash",
-   "name": "Deepseek V4.1 Flash",
+   "name": "DeepSeek V4.1 Flash",
    "vendor": "DeepSeek",
    "platform": "azure",
    "region": "global",
@@ -22116,7 +22116,7 @@
   {
    "id": "deepseek-v4.1-flash@vertex-ai:global",
    "family": "deepseek-v4.1-flash",
-   "name": "Deepseek V4.1 Flash",
+   "name": "DeepSeek V4.1 Flash",
    "vendor": "DeepSeek",
    "platform": "vertex-ai",
    "region": "global",
@@ -22454,7 +22454,7 @@
   {
    "id": "fw-deepseek-v3.2@azure:global",
    "family": "fw-deepseek-v3.2",
-   "name": "Fw Deepseek V3.2",
+   "name": "Fw DeepSeek V3.2",
    "vendor": "その他",
    "platform": "azure",
    "region": "global",
@@ -22513,7 +22513,7 @@
   {
    "id": "fw-deepseek-v4-flash@azure:global",
    "family": "fw-deepseek-v4-flash",
-   "name": "Fw Deepseek V4 Flash",
+   "name": "Fw DeepSeek V4 Flash",
    "vendor": "その他",
    "platform": "azure",
    "region": "global",
@@ -22571,7 +22571,7 @@
   {
    "id": "fw-deepseek-v4-pro@azure:global",
    "family": "fw-deepseek-v4-pro",
-   "name": "Fw Deepseek V4 Pro",
+   "name": "Fw DeepSeek V4 Pro",
    "vendor": "その他",
    "platform": "azure",
    "region": "global",
@@ -22629,7 +22629,7 @@
   {
    "id": "fw-deepseek-v4.1-flash@azure:global",
    "family": "fw-deepseek-v4.1-flash",
-   "name": "Fw Deepseek V4.1 Flash",
+   "name": "Fw DeepSeek V4.1 Flash",
    "vendor": "その他",
    "platform": "azure",
    "region": "global",
@@ -22687,7 +22687,7 @@
   {
    "id": "fw-glm-5.1@azure:global",
    "family": "fw-glm-5.1",
-   "name": "Fw Glm 5.1",
+   "name": "Fw GLM 5.1",
    "vendor": "その他",
    "platform": "azure",
    "region": "global",
@@ -22746,7 +22746,7 @@
   {
    "id": "fw-glm-5.2-fast@azure:global",
    "family": "fw-glm-5.2-fast",
-   "name": "Fw Glm 5.2 Fast",
+   "name": "Fw GLM 5.2 Fast",
    "vendor": "その他",
    "platform": "azure",
    "region": "global",
@@ -22804,7 +22804,7 @@
   {
    "id": "fw-glm-5.2@azure:global",
    "family": "fw-glm-5.2",
-   "name": "Fw Glm 5.2",
+   "name": "Fw GLM 5.2",
    "vendor": "その他",
    "platform": "azure",
    "region": "global",
@@ -22862,7 +22862,7 @@
   {
    "id": "fw-glm-5.3-flash@azure:global",
    "family": "fw-glm-5.3-flash",
-   "name": "Fw Glm 5.3 Flash",
+   "name": "Fw GLM 5.3 Flash",
    "vendor": "その他",
    "platform": "azure",
    "region": "global",
@@ -22920,7 +22920,7 @@
   {
    "id": "fw-glm-5.3@azure:global",
    "family": "fw-glm-5.3",
-   "name": "Fw Glm 5.3",
+   "name": "Fw GLM 5.3",
    "vendor": "その他",
    "platform": "azure",
    "region": "global",
@@ -22978,7 +22978,7 @@
   {
    "id": "fw-glm-5@azure:global",
    "family": "fw-glm-5",
-   "name": "Fw Glm 5",
+   "name": "Fw GLM 5",
    "vendor": "その他",
    "platform": "azure",
    "region": "global",
@@ -23387,7 +23387,7 @@
   {
    "id": "fw-minimax-m2.5@azure:global",
    "family": "fw-minimax-m2.5",
-   "name": "Fw Minimax M2.5",
+   "name": "Fw MiniMax M2.5",
    "vendor": "その他",
    "platform": "azure",
    "region": "global",
@@ -23446,7 +23446,7 @@
   {
    "id": "fw-minimax-m3@azure:global",
    "family": "fw-minimax-m3",
-   "name": "Fw Minimax M3",
+   "name": "Fw MiniMax M3",
    "vendor": "その他",
    "platform": "azure",
    "region": "global",
@@ -32127,8 +32127,8 @@
   {
    "id": "glm-4.7-flash@bedrock:regional",
    "family": "glm-4.7-flash",
-   "name": "Glm 4.7 Flash",
-   "vendor": "Zai",
+   "name": "GLM 4.7 Flash",
+   "vendor": "Z.ai",
    "platform": "bedrock",
    "region": "regional",
    "category": "llm",
@@ -32287,8 +32287,8 @@
   {
    "id": "glm-4.7@bedrock:regional",
    "family": "glm-4.7",
-   "name": "Glm 4.7",
-   "vendor": "Zai",
+   "name": "GLM 4.7",
+   "vendor": "Z.ai",
    "platform": "bedrock",
    "region": "regional",
    "category": "llm",
@@ -32447,8 +32447,8 @@
   {
    "id": "glm-5.3@bedrock:global",
    "family": "glm-5.3",
-   "name": "Glm 5.3",
-   "vendor": "Zai",
+   "name": "GLM 5.3",
+   "vendor": "Z.ai",
    "platform": "bedrock",
    "region": "global",
    "category": "llm",
@@ -32651,8 +32651,8 @@
   {
    "id": "glm-5.3@bedrock:us",
    "family": "glm-5.3",
-   "name": "Glm 5.3",
-   "vendor": "Zai",
+   "name": "GLM 5.3",
+   "vendor": "Z.ai",
    "platform": "bedrock",
    "region": "us",
    "category": "llm",
@@ -32855,8 +32855,8 @@
   {
    "id": "glm-5@bedrock:regional",
    "family": "glm-5",
-   "name": "Glm 5",
-   "vendor": "Zai",
+   "name": "GLM 5",
+   "vendor": "Z.ai",
    "platform": "bedrock",
    "region": "regional",
    "category": "llm",
@@ -32993,8 +32993,8 @@
   {
    "id": "glm-5@bedrock:us-east-1",
    "family": "glm-5",
-   "name": "Glm 5",
-   "vendor": "Zai",
+   "name": "GLM 5",
+   "vendor": "Z.ai",
    "platform": "bedrock",
    "region": "us-east-1",
    "category": "llm",
@@ -33045,8 +33045,8 @@
   {
    "id": "glm-5@bedrock:us-west-2",
    "family": "glm-5",
-   "name": "Glm 5",
-   "vendor": "Zai",
+   "name": "GLM 5",
+   "vendor": "Z.ai",
    "platform": "bedrock",
    "region": "us-west-2",
    "category": "llm",
@@ -58173,7 +58173,7 @@
    "id": "kimi-k2-thinking@bedrock:ap-northeast-1",
    "family": "kimi-k2-thinking",
    "name": "Kimi K2 Thinking",
-   "vendor": "Moonshotai",
+   "vendor": "Moonshot AI",
    "platform": "bedrock",
    "region": "ap-northeast-1",
    "category": "llm",
@@ -58244,7 +58244,7 @@
    "id": "kimi-k2-thinking@bedrock:ap-south-1",
    "family": "kimi-k2-thinking",
    "name": "Kimi K2 Thinking",
-   "vendor": "Moonshotai",
+   "vendor": "Moonshot AI",
    "platform": "bedrock",
    "region": "ap-south-1",
    "category": "llm",
@@ -58315,7 +58315,7 @@
    "id": "kimi-k2-thinking@bedrock:regional",
    "family": "kimi-k2-thinking",
    "name": "Kimi K2 Thinking",
-   "vendor": "Moonshotai",
+   "vendor": "Moonshot AI",
    "platform": "bedrock",
    "region": "regional",
    "category": "llm",
@@ -58389,7 +58389,7 @@
    "id": "kimi-k2-thinking@bedrock:sa-east-1",
    "family": "kimi-k2-thinking",
    "name": "Kimi K2 Thinking",
-   "vendor": "Moonshotai",
+   "vendor": "Moonshot AI",
    "platform": "bedrock",
    "region": "sa-east-1",
    "category": "llm",
@@ -58460,7 +58460,7 @@
    "id": "kimi-k2-thinking@bedrock:us-east-1",
    "family": "kimi-k2-thinking",
    "name": "Kimi K2 Thinking",
-   "vendor": "Moonshotai",
+   "vendor": "Moonshot AI",
    "platform": "bedrock",
    "region": "us-east-1",
    "category": "llm",
@@ -58531,7 +58531,7 @@
    "id": "kimi-k2-thinking@bedrock:us-east-2",
    "family": "kimi-k2-thinking",
    "name": "Kimi K2 Thinking",
-   "vendor": "Moonshotai",
+   "vendor": "Moonshot AI",
    "platform": "bedrock",
    "region": "us-east-2",
    "category": "llm",
@@ -58602,7 +58602,7 @@
    "id": "kimi-k2-thinking@bedrock:us-west-2",
    "family": "kimi-k2-thinking",
    "name": "Kimi K2 Thinking",
-   "vendor": "Moonshotai",
+   "vendor": "Moonshot AI",
    "platform": "bedrock",
    "region": "us-west-2",
    "category": "llm",
@@ -58673,7 +58673,7 @@
    "id": "kimi-k2.5@azure:global",
    "family": "kimi-k2.5",
    "name": "Kimi K2.5",
-   "vendor": "その他",
+   "vendor": "Moonshot AI",
    "platform": "azure",
    "region": "global",
    "category": "llm",
@@ -58754,7 +58754,7 @@
    "id": "kimi-k2.5@bedrock:ap-northeast-1",
    "family": "kimi-k2.5",
    "name": "Kimi K2.5",
-   "vendor": "Moonshotai",
+   "vendor": "Moonshot AI",
    "platform": "bedrock",
    "region": "ap-northeast-1",
    "category": "llm",
@@ -58824,7 +58824,7 @@
    "id": "kimi-k2.5@bedrock:ap-south-1",
    "family": "kimi-k2.5",
    "name": "Kimi K2.5",
-   "vendor": "Moonshotai",
+   "vendor": "Moonshot AI",
    "platform": "bedrock",
    "region": "ap-south-1",
    "category": "llm",
@@ -58894,7 +58894,7 @@
    "id": "kimi-k2.5@bedrock:ap-southeast-3",
    "family": "kimi-k2.5",
    "name": "Kimi K2.5",
-   "vendor": "Moonshotai",
+   "vendor": "Moonshot AI",
    "platform": "bedrock",
    "region": "ap-southeast-3",
    "category": "llm",
@@ -58964,7 +58964,7 @@
    "id": "kimi-k2.5@bedrock:eu-north-1",
    "family": "kimi-k2.5",
    "name": "Kimi K2.5",
-   "vendor": "Moonshotai",
+   "vendor": "Moonshot AI",
    "platform": "bedrock",
    "region": "eu-north-1",
    "category": "llm",
@@ -59034,7 +59034,7 @@
    "id": "kimi-k2.5@bedrock:regional",
    "family": "kimi-k2.5",
    "name": "Kimi K2.5",
-   "vendor": "Moonshotai",
+   "vendor": "Moonshot AI",
    "platform": "bedrock",
    "region": "regional",
    "category": "llm",
@@ -59158,7 +59158,7 @@
    "id": "kimi-k2.5@bedrock:sa-east-1",
    "family": "kimi-k2.5",
    "name": "Kimi K2.5",
-   "vendor": "Moonshotai",
+   "vendor": "Moonshot AI",
    "platform": "bedrock",
    "region": "sa-east-1",
    "category": "llm",
@@ -59228,7 +59228,7 @@
    "id": "kimi-k2.5@bedrock:us-east-1",
    "family": "kimi-k2.5",
    "name": "Kimi K2.5",
-   "vendor": "Moonshotai",
+   "vendor": "Moonshot AI",
    "platform": "bedrock",
    "region": "us-east-1",
    "category": "llm",
@@ -59298,7 +59298,7 @@
    "id": "kimi-k2.5@bedrock:us-east-2",
    "family": "kimi-k2.5",
    "name": "Kimi K2.5",
-   "vendor": "Moonshotai",
+   "vendor": "Moonshot AI",
    "platform": "bedrock",
    "region": "us-east-2",
    "category": "llm",
@@ -59368,7 +59368,7 @@
    "id": "kimi-k2.5@bedrock:us-west-2",
    "family": "kimi-k2.5",
    "name": "Kimi K2.5",
-   "vendor": "Moonshotai",
+   "vendor": "Moonshot AI",
    "platform": "bedrock",
    "region": "us-west-2",
    "category": "llm",
@@ -59438,7 +59438,7 @@
    "id": "kimi-k2.6@azure:global",
    "family": "kimi-k2.6",
    "name": "Kimi K2.6",
-   "vendor": "その他",
+   "vendor": "Moonshot AI",
    "platform": "azure",
    "region": "global",
    "category": "llm",
@@ -59519,7 +59519,7 @@
    "id": "kimi-k2.7-code@azure:global",
    "family": "kimi-k2.7-code",
    "name": "Kimi K2.7 Code",
-   "vendor": "その他",
+   "vendor": "Moonshot AI",
    "platform": "azure",
    "region": "global",
    "category": "llm",
@@ -59600,7 +59600,7 @@
    "id": "kimi-k3@bedrock:global",
    "family": "kimi-k3",
    "name": "Kimi K3",
-   "vendor": "Moonshotai",
+   "vendor": "Moonshot AI",
    "platform": "bedrock",
    "region": "global",
    "category": "llm",
@@ -59772,10 +59772,134 @@
    "toolCall": true
   },
   {
+   "id": "kimi-k3@bedrock:in",
+   "family": "kimi-k3",
+   "name": "Kimi K3",
+   "vendor": "Moonshot AI",
+   "platform": "bedrock",
+   "region": "in",
+   "category": "llm",
+   "firstSeen": "2026-10-11",
+   "status": "active",
+   "prices": [
+    {
+     "tier": "standard",
+     "minPromptTokens": 0,
+     "cacheWrite": 4.125,
+     "cacheRead": 0.33,
+     "input": 3.3,
+     "output": 16.5,
+     "provenance": {
+      "input": {
+       "source": "litellm",
+       "modelId": "in.moonshotai.kimi-k3",
+       "url": "https://github.com/BerriAI/litellm/blob/4846d9c2ed38795b931cd397e70705e45090b280/model_prices_and_context_window.json"
+      },
+      "output": {
+       "source": "litellm",
+       "modelId": "in.moonshotai.kimi-k3",
+       "url": "https://github.com/BerriAI/litellm/blob/4846d9c2ed38795b931cd397e70705e45090b280/model_prices_and_context_window.json"
+      },
+      "cacheRead": {
+       "source": "litellm",
+       "modelId": "in.moonshotai.kimi-k3",
+       "url": "https://github.com/BerriAI/litellm/blob/4846d9c2ed38795b931cd397e70705e45090b280/model_prices_and_context_window.json"
+      },
+      "cacheWrite": {
+       "source": "litellm",
+       "modelId": "in.moonshotai.kimi-k3",
+       "url": "https://github.com/BerriAI/litellm/blob/4846d9c2ed38795b931cd397e70705e45090b280/model_prices_and_context_window.json"
+      }
+     }
+    },
+    {
+     "tier": "flex",
+     "minPromptTokens": 0,
+     "cacheWrite": 2.0625,
+     "cacheRead": 0.165,
+     "input": 1.65,
+     "output": 8.25,
+     "provenance": {
+      "input": {
+       "source": "litellm",
+       "modelId": "in.moonshotai.kimi-k3",
+       "url": "https://github.com/BerriAI/litellm/blob/4846d9c2ed38795b931cd397e70705e45090b280/model_prices_and_context_window.json"
+      },
+      "output": {
+       "source": "litellm",
+       "modelId": "in.moonshotai.kimi-k3",
+       "url": "https://github.com/BerriAI/litellm/blob/4846d9c2ed38795b931cd397e70705e45090b280/model_prices_and_context_window.json"
+      },
+      "cacheRead": {
+       "source": "litellm",
+       "modelId": "in.moonshotai.kimi-k3",
+       "url": "https://github.com/BerriAI/litellm/blob/4846d9c2ed38795b931cd397e70705e45090b280/model_prices_and_context_window.json"
+      },
+      "cacheWrite": {
+       "source": "litellm",
+       "modelId": "in.moonshotai.kimi-k3",
+       "url": "https://github.com/BerriAI/litellm/blob/4846d9c2ed38795b931cd397e70705e45090b280/model_prices_and_context_window.json"
+      }
+     }
+    },
+    {
+     "tier": "priority",
+     "minPromptTokens": 0,
+     "cacheWrite": 7.21875,
+     "cacheRead": 0.5775,
+     "input": 5.775,
+     "output": 28.875,
+     "provenance": {
+      "input": {
+       "source": "litellm",
+       "modelId": "in.moonshotai.kimi-k3",
+       "url": "https://github.com/BerriAI/litellm/blob/4846d9c2ed38795b931cd397e70705e45090b280/model_prices_and_context_window.json"
+      },
+      "output": {
+       "source": "litellm",
+       "modelId": "in.moonshotai.kimi-k3",
+       "url": "https://github.com/BerriAI/litellm/blob/4846d9c2ed38795b931cd397e70705e45090b280/model_prices_and_context_window.json"
+      },
+      "cacheRead": {
+       "source": "litellm",
+       "modelId": "in.moonshotai.kimi-k3",
+       "url": "https://github.com/BerriAI/litellm/blob/4846d9c2ed38795b931cd397e70705e45090b280/model_prices_and_context_window.json"
+      },
+      "cacheWrite": {
+       "source": "litellm",
+       "modelId": "in.moonshotai.kimi-k3",
+       "url": "https://github.com/BerriAI/litellm/blob/4846d9c2ed38795b931cd397e70705e45090b280/model_prices_and_context_window.json"
+      }
+     }
+    }
+   ],
+   "sources": [
+    {
+     "litellm": "in.moonshotai.kimi-k3",
+     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-moonshot-ai-kimi-k3.md"
+    }
+   ],
+   "metadataSources": {
+    "inputLimit": {
+     "source": "litellm",
+     "modelId": "in.moonshotai.kimi-k3",
+     "url": "https://github.com/BerriAI/litellm/blob/4846d9c2ed38795b931cd397e70705e45090b280/model_prices_and_context_window.json"
+    },
+    "outputLimit": {
+     "source": "litellm",
+     "modelId": "in.moonshotai.kimi-k3",
+     "url": "https://github.com/BerriAI/litellm/blob/4846d9c2ed38795b931cd397e70705e45090b280/model_prices_and_context_window.json"
+    }
+   },
+   "contextWindow": 1000000,
+   "inputLimit": 1000000,
+   "outputLimit": 131072
+  },
+  {
    "id": "kimi-k3@bedrock:regional",
    "family": "kimi-k3",
    "name": "Kimi K3",
-   "vendor": "Moonshotai",
+   "vendor": "Moonshot AI",
    "platform": "bedrock",
    "region": "regional",
    "category": "llm",
@@ -59899,7 +60023,7 @@
    "id": "kimi-k3@bedrock:us",
    "family": "kimi-k3",
    "name": "Kimi K3",
-   "vendor": "Moonshotai",
+   "vendor": "Moonshot AI",
    "platform": "bedrock",
    "region": "us",
    "category": "llm",
@@ -64235,8 +64359,8 @@
   {
    "id": "minimax-m2.1@bedrock:ap-northeast-1",
    "family": "minimax-m2.1",
-   "name": "Minimax M2.1",
-   "vendor": "Minimax",
+   "name": "MiniMax M2.1",
+   "vendor": "MiniMax",
    "platform": "bedrock",
    "region": "ap-northeast-1",
    "category": "llm",
@@ -64306,8 +64430,8 @@
   {
    "id": "minimax-m2.1@bedrock:ap-south-1",
    "family": "minimax-m2.1",
-   "name": "Minimax M2.1",
-   "vendor": "Minimax",
+   "name": "MiniMax M2.1",
+   "vendor": "MiniMax",
    "platform": "bedrock",
    "region": "ap-south-1",
    "category": "llm",
@@ -64377,8 +64501,8 @@
   {
    "id": "minimax-m2.1@bedrock:ap-southeast-3",
    "family": "minimax-m2.1",
-   "name": "Minimax M2.1",
-   "vendor": "Minimax",
+   "name": "MiniMax M2.1",
+   "vendor": "MiniMax",
    "platform": "bedrock",
    "region": "ap-southeast-3",
    "category": "llm",
@@ -64448,8 +64572,8 @@
   {
    "id": "minimax-m2.1@bedrock:eu-central-1",
    "family": "minimax-m2.1",
-   "name": "Minimax M2.1",
-   "vendor": "Minimax",
+   "name": "MiniMax M2.1",
+   "vendor": "MiniMax",
    "platform": "bedrock",
    "region": "eu-central-1",
    "category": "llm",
@@ -64519,8 +64643,8 @@
   {
    "id": "minimax-m2.1@bedrock:eu-north-1",
    "family": "minimax-m2.1",
-   "name": "Minimax M2.1",
-   "vendor": "Minimax",
+   "name": "MiniMax M2.1",
+   "vendor": "MiniMax",
    "platform": "bedrock",
    "region": "eu-north-1",
    "category": "llm",
@@ -64590,8 +64714,8 @@
   {
    "id": "minimax-m2.1@bedrock:eu-south-1",
    "family": "minimax-m2.1",
-   "name": "Minimax M2.1",
-   "vendor": "Minimax",
+   "name": "MiniMax M2.1",
+   "vendor": "MiniMax",
    "platform": "bedrock",
    "region": "eu-south-1",
    "category": "llm",
@@ -64661,8 +64785,8 @@
   {
    "id": "minimax-m2.1@bedrock:eu-west-1",
    "family": "minimax-m2.1",
-   "name": "Minimax M2.1",
-   "vendor": "Minimax",
+   "name": "MiniMax M2.1",
+   "vendor": "MiniMax",
    "platform": "bedrock",
    "region": "eu-west-1",
    "category": "llm",
@@ -64732,8 +64856,8 @@
   {
    "id": "minimax-m2.1@bedrock:eu-west-2",
    "family": "minimax-m2.1",
-   "name": "Minimax M2.1",
-   "vendor": "Minimax",
+   "name": "MiniMax M2.1",
+   "vendor": "MiniMax",
    "platform": "bedrock",
    "region": "eu-west-2",
    "category": "llm",
@@ -64803,8 +64927,8 @@
   {
    "id": "minimax-m2.1@bedrock:regional",
    "family": "minimax-m2.1",
-   "name": "Minimax M2.1",
-   "vendor": "Minimax",
+   "name": "MiniMax M2.1",
+   "vendor": "MiniMax",
    "platform": "bedrock",
    "region": "regional",
    "category": "llm",
@@ -64963,8 +65087,8 @@
   {
    "id": "minimax-m2.1@bedrock:sa-east-1",
    "family": "minimax-m2.1",
-   "name": "Minimax M2.1",
-   "vendor": "Minimax",
+   "name": "MiniMax M2.1",
+   "vendor": "MiniMax",
    "platform": "bedrock",
    "region": "sa-east-1",
    "category": "llm",
@@ -65034,8 +65158,8 @@
   {
    "id": "minimax-m2.1@bedrock:us-east-1",
    "family": "minimax-m2.1",
-   "name": "Minimax M2.1",
-   "vendor": "Minimax",
+   "name": "MiniMax M2.1",
+   "vendor": "MiniMax",
    "platform": "bedrock",
    "region": "us-east-1",
    "category": "llm",
@@ -65105,8 +65229,8 @@
   {
    "id": "minimax-m2.1@bedrock:us-east-2",
    "family": "minimax-m2.1",
-   "name": "Minimax M2.1",
-   "vendor": "Minimax",
+   "name": "MiniMax M2.1",
+   "vendor": "MiniMax",
    "platform": "bedrock",
    "region": "us-east-2",
    "category": "llm",
@@ -65176,8 +65300,8 @@
   {
    "id": "minimax-m2.1@bedrock:us-west-2",
    "family": "minimax-m2.1",
-   "name": "Minimax M2.1",
-   "vendor": "Minimax",
+   "name": "MiniMax M2.1",
+   "vendor": "MiniMax",
    "platform": "bedrock",
    "region": "us-west-2",
    "category": "llm",
@@ -65247,8 +65371,8 @@
   {
    "id": "minimax-m2.5@bedrock:ap-northeast-1",
    "family": "minimax-m2.5",
-   "name": "Minimax M2.5",
-   "vendor": "Minimax",
+   "name": "MiniMax M2.5",
+   "vendor": "MiniMax",
    "platform": "bedrock",
    "region": "ap-northeast-1",
    "category": "llm",
@@ -65317,8 +65441,8 @@
   {
    "id": "minimax-m2.5@bedrock:ap-south-1",
    "family": "minimax-m2.5",
-   "name": "Minimax M2.5",
-   "vendor": "Minimax",
+   "name": "MiniMax M2.5",
+   "vendor": "MiniMax",
    "platform": "bedrock",
    "region": "ap-south-1",
    "category": "llm",
@@ -65387,8 +65511,8 @@
   {
    "id": "minimax-m2.5@bedrock:ap-southeast-2",
    "family": "minimax-m2.5",
-   "name": "Minimax M2.5",
-   "vendor": "Minimax",
+   "name": "MiniMax M2.5",
+   "vendor": "MiniMax",
    "platform": "bedrock",
    "region": "ap-southeast-2",
    "category": "llm",
@@ -65457,8 +65581,8 @@
   {
    "id": "minimax-m2.5@bedrock:ap-southeast-3",
    "family": "minimax-m2.5",
-   "name": "Minimax M2.5",
-   "vendor": "Minimax",
+   "name": "MiniMax M2.5",
+   "vendor": "MiniMax",
    "platform": "bedrock",
    "region": "ap-southeast-3",
    "category": "llm",
@@ -65527,8 +65651,8 @@
   {
    "id": "minimax-m2.5@bedrock:eu-central-1",
    "family": "minimax-m2.5",
-   "name": "Minimax M2.5",
-   "vendor": "Minimax",
+   "name": "MiniMax M2.5",
+   "vendor": "MiniMax",
    "platform": "bedrock",
    "region": "eu-central-1",
    "category": "llm",
@@ -65597,8 +65721,8 @@
   {
    "id": "minimax-m2.5@bedrock:eu-north-1",
    "family": "minimax-m2.5",
-   "name": "Minimax M2.5",
-   "vendor": "Minimax",
+   "name": "MiniMax M2.5",
+   "vendor": "MiniMax",
    "platform": "bedrock",
    "region": "eu-north-1",
    "category": "llm",
@@ -65667,8 +65791,8 @@
   {
    "id": "minimax-m2.5@bedrock:eu-south-1",
    "family": "minimax-m2.5",
-   "name": "Minimax M2.5",
-   "vendor": "Minimax",
+   "name": "MiniMax M2.5",
+   "vendor": "MiniMax",
    "platform": "bedrock",
    "region": "eu-south-1",
    "category": "llm",
@@ -65737,8 +65861,8 @@
   {
    "id": "minimax-m2.5@bedrock:eu-west-1",
    "family": "minimax-m2.5",
-   "name": "Minimax M2.5",
-   "vendor": "Minimax",
+   "name": "MiniMax M2.5",
+   "vendor": "MiniMax",
    "platform": "bedrock",
    "region": "eu-west-1",
    "category": "llm",
@@ -65807,8 +65931,8 @@
   {
    "id": "minimax-m2.5@bedrock:eu-west-2",
    "family": "minimax-m2.5",
-   "name": "Minimax M2.5",
-   "vendor": "Minimax",
+   "name": "MiniMax M2.5",
+   "vendor": "MiniMax",
    "platform": "bedrock",
    "region": "eu-west-2",
    "category": "llm",
@@ -65877,8 +66001,8 @@
   {
    "id": "minimax-m2.5@bedrock:regional",
    "family": "minimax-m2.5",
-   "name": "Minimax M2.5",
-   "vendor": "Minimax",
+   "name": "MiniMax M2.5",
+   "vendor": "MiniMax",
    "platform": "bedrock",
    "region": "regional",
    "category": "llm",
@@ -66033,8 +66157,8 @@
   {
    "id": "minimax-m2.5@bedrock:sa-east-1",
    "family": "minimax-m2.5",
-   "name": "Minimax M2.5",
-   "vendor": "Minimax",
+   "name": "MiniMax M2.5",
+   "vendor": "MiniMax",
    "platform": "bedrock",
    "region": "sa-east-1",
    "category": "llm",
@@ -66103,8 +66227,8 @@
   {
    "id": "minimax-m2.5@bedrock:us-east-1",
    "family": "minimax-m2.5",
-   "name": "Minimax M2.5",
-   "vendor": "Minimax",
+   "name": "MiniMax M2.5",
+   "vendor": "MiniMax",
    "platform": "bedrock",
    "region": "us-east-1",
    "category": "llm",
@@ -66173,8 +66297,8 @@
   {
    "id": "minimax-m2.5@bedrock:us-east-2",
    "family": "minimax-m2.5",
-   "name": "Minimax M2.5",
-   "vendor": "Minimax",
+   "name": "MiniMax M2.5",
+   "vendor": "MiniMax",
    "platform": "bedrock",
    "region": "us-east-2",
    "category": "llm",
@@ -66243,8 +66367,8 @@
   {
    "id": "minimax-m2.5@bedrock:us-west-2",
    "family": "minimax-m2.5",
-   "name": "Minimax M2.5",
-   "vendor": "Minimax",
+   "name": "MiniMax M2.5",
+   "vendor": "MiniMax",
    "platform": "bedrock",
    "region": "us-west-2",
    "category": "llm",
@@ -66313,8 +66437,8 @@
   {
    "id": "minimax-m2@bedrock:regional",
    "family": "minimax-m2",
-   "name": "Minimax M2",
-   "vendor": "Minimax",
+   "name": "MiniMax M2",
+   "vendor": "MiniMax",
    "platform": "bedrock",
    "region": "regional",
    "category": "llm",
@@ -68790,130 +68914,6 @@
    }
   },
   {
-   "id": "moonshotai.kimi-k3@bedrock:regional",
-   "family": "moonshotai.kimi-k3",
-   "name": "Moonshotai.kimi K3",
-   "vendor": "In",
-   "platform": "bedrock",
-   "region": "regional",
-   "category": "llm",
-   "firstSeen": "2026-10-11",
-   "status": "active",
-   "prices": [
-    {
-     "tier": "standard",
-     "minPromptTokens": 0,
-     "cacheWrite": 4.125,
-     "cacheRead": 0.33,
-     "input": 3.3,
-     "output": 16.5,
-     "provenance": {
-      "input": {
-       "source": "litellm",
-       "modelId": "in.moonshotai.kimi-k3",
-       "url": "https://github.com/BerriAI/litellm/blob/4846d9c2ed38795b931cd397e70705e45090b280/model_prices_and_context_window.json"
-      },
-      "output": {
-       "source": "litellm",
-       "modelId": "in.moonshotai.kimi-k3",
-       "url": "https://github.com/BerriAI/litellm/blob/4846d9c2ed38795b931cd397e70705e45090b280/model_prices_and_context_window.json"
-      },
-      "cacheRead": {
-       "source": "litellm",
-       "modelId": "in.moonshotai.kimi-k3",
-       "url": "https://github.com/BerriAI/litellm/blob/4846d9c2ed38795b931cd397e70705e45090b280/model_prices_and_context_window.json"
-      },
-      "cacheWrite": {
-       "source": "litellm",
-       "modelId": "in.moonshotai.kimi-k3",
-       "url": "https://github.com/BerriAI/litellm/blob/4846d9c2ed38795b931cd397e70705e45090b280/model_prices_and_context_window.json"
-      }
-     }
-    },
-    {
-     "tier": "flex",
-     "minPromptTokens": 0,
-     "cacheWrite": 2.0625,
-     "cacheRead": 0.165,
-     "input": 1.65,
-     "output": 8.25,
-     "provenance": {
-      "input": {
-       "source": "litellm",
-       "modelId": "in.moonshotai.kimi-k3",
-       "url": "https://github.com/BerriAI/litellm/blob/4846d9c2ed38795b931cd397e70705e45090b280/model_prices_and_context_window.json"
-      },
-      "output": {
-       "source": "litellm",
-       "modelId": "in.moonshotai.kimi-k3",
-       "url": "https://github.com/BerriAI/litellm/blob/4846d9c2ed38795b931cd397e70705e45090b280/model_prices_and_context_window.json"
-      },
-      "cacheRead": {
-       "source": "litellm",
-       "modelId": "in.moonshotai.kimi-k3",
-       "url": "https://github.com/BerriAI/litellm/blob/4846d9c2ed38795b931cd397e70705e45090b280/model_prices_and_context_window.json"
-      },
-      "cacheWrite": {
-       "source": "litellm",
-       "modelId": "in.moonshotai.kimi-k3",
-       "url": "https://github.com/BerriAI/litellm/blob/4846d9c2ed38795b931cd397e70705e45090b280/model_prices_and_context_window.json"
-      }
-     }
-    },
-    {
-     "tier": "priority",
-     "minPromptTokens": 0,
-     "cacheWrite": 7.21875,
-     "cacheRead": 0.5775,
-     "input": 5.775,
-     "output": 28.875,
-     "provenance": {
-      "input": {
-       "source": "litellm",
-       "modelId": "in.moonshotai.kimi-k3",
-       "url": "https://github.com/BerriAI/litellm/blob/4846d9c2ed38795b931cd397e70705e45090b280/model_prices_and_context_window.json"
-      },
-      "output": {
-       "source": "litellm",
-       "modelId": "in.moonshotai.kimi-k3",
-       "url": "https://github.com/BerriAI/litellm/blob/4846d9c2ed38795b931cd397e70705e45090b280/model_prices_and_context_window.json"
-      },
-      "cacheRead": {
-       "source": "litellm",
-       "modelId": "in.moonshotai.kimi-k3",
-       "url": "https://github.com/BerriAI/litellm/blob/4846d9c2ed38795b931cd397e70705e45090b280/model_prices_and_context_window.json"
-      },
-      "cacheWrite": {
-       "source": "litellm",
-       "modelId": "in.moonshotai.kimi-k3",
-       "url": "https://github.com/BerriAI/litellm/blob/4846d9c2ed38795b931cd397e70705e45090b280/model_prices_and_context_window.json"
-      }
-     }
-    }
-   ],
-   "sources": [
-    {
-     "litellm": "in.moonshotai.kimi-k3",
-     "url": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-moonshot-ai-kimi-k3.md"
-    }
-   ],
-   "metadataSources": {
-    "inputLimit": {
-     "source": "litellm",
-     "modelId": "in.moonshotai.kimi-k3",
-     "url": "https://github.com/BerriAI/litellm/blob/4846d9c2ed38795b931cd397e70705e45090b280/model_prices_and_context_window.json"
-    },
-    "outputLimit": {
-     "source": "litellm",
-     "modelId": "in.moonshotai.kimi-k3",
-     "url": "https://github.com/BerriAI/litellm/blob/4846d9c2ed38795b931cd397e70705e45090b280/model_prices_and_context_window.json"
-    }
-   },
-   "contextWindow": 1000000,
-   "inputLimit": 1000000,
-   "outputLimit": 131072
-  },
-  {
    "id": "nano-banana-pro-preview@gemini-api:global",
    "family": "nano-banana-pro-preview",
    "name": "Nano Banana Pro Preview",
@@ -68975,7 +68975,7 @@
    "id": "nemotron-nano-12b@bedrock:regional",
    "family": "nemotron-nano-12b",
    "name": "Nemotron Nano 12b",
-   "vendor": "Nvidia",
+   "vendor": "NVIDIA",
    "platform": "bedrock",
    "region": "regional",
    "category": "llm",
@@ -69136,7 +69136,7 @@
    "id": "nemotron-nano-12b@bedrock:us-gov",
    "family": "nemotron-nano-12b",
    "name": "Nemotron Nano 12b",
-   "vendor": "Nvidia",
+   "vendor": "NVIDIA",
    "platform": "bedrock",
    "region": "us-gov",
    "category": "llm",
@@ -69189,7 +69189,7 @@
    "id": "nemotron-nano-12b@bedrock:us-gov-east-1",
    "family": "nemotron-nano-12b",
    "name": "Nemotron Nano 12b",
-   "vendor": "Nvidia",
+   "vendor": "NVIDIA",
    "platform": "bedrock",
    "region": "us-gov-east-1",
    "category": "llm",
@@ -69242,7 +69242,7 @@
    "id": "nemotron-nano-12b@bedrock:us-gov-west-1",
    "family": "nemotron-nano-12b",
    "name": "Nemotron Nano 12b",
-   "vendor": "Nvidia",
+   "vendor": "NVIDIA",
    "platform": "bedrock",
    "region": "us-gov-west-1",
    "category": "llm",
@@ -69295,7 +69295,7 @@
    "id": "nemotron-nano-3-30b@bedrock:regional",
    "family": "nemotron-nano-3-30b",
    "name": "Nemotron Nano 3 30b",
-   "vendor": "Nvidia",
+   "vendor": "NVIDIA",
    "platform": "bedrock",
    "region": "regional",
    "category": "llm",
@@ -69451,7 +69451,7 @@
    "id": "nemotron-nano-3-30b@bedrock:us-gov",
    "family": "nemotron-nano-3-30b",
    "name": "Nemotron Nano 3 30b",
-   "vendor": "Nvidia",
+   "vendor": "NVIDIA",
    "platform": "bedrock",
    "region": "us-gov",
    "category": "llm",
@@ -69503,7 +69503,7 @@
    "id": "nemotron-nano-3-30b@bedrock:us-gov-east-1",
    "family": "nemotron-nano-3-30b",
    "name": "Nemotron Nano 3 30b",
-   "vendor": "Nvidia",
+   "vendor": "NVIDIA",
    "platform": "bedrock",
    "region": "us-gov-east-1",
    "category": "llm",
@@ -69555,7 +69555,7 @@
    "id": "nemotron-nano-3-30b@bedrock:us-gov-west-1",
    "family": "nemotron-nano-3-30b",
    "name": "Nemotron Nano 3 30b",
-   "vendor": "Nvidia",
+   "vendor": "NVIDIA",
    "platform": "bedrock",
    "region": "us-gov-west-1",
    "category": "llm",
@@ -69607,7 +69607,7 @@
    "id": "nemotron-nano-9b@bedrock:regional",
    "family": "nemotron-nano-9b",
    "name": "Nemotron Nano 9b",
-   "vendor": "Nvidia",
+   "vendor": "NVIDIA",
    "platform": "bedrock",
    "region": "regional",
    "category": "llm",
@@ -69767,7 +69767,7 @@
    "id": "nemotron-nano-9b@bedrock:us-gov",
    "family": "nemotron-nano-9b",
    "name": "Nemotron Nano 9b",
-   "vendor": "Nvidia",
+   "vendor": "NVIDIA",
    "platform": "bedrock",
    "region": "us-gov",
    "category": "llm",
@@ -69820,7 +69820,7 @@
    "id": "nemotron-nano-9b@bedrock:us-gov-east-1",
    "family": "nemotron-nano-9b",
    "name": "Nemotron Nano 9b",
-   "vendor": "Nvidia",
+   "vendor": "NVIDIA",
    "platform": "bedrock",
    "region": "us-gov-east-1",
    "category": "llm",
@@ -69873,7 +69873,7 @@
    "id": "nemotron-nano-9b@bedrock:us-gov-west-1",
    "family": "nemotron-nano-9b",
    "name": "Nemotron Nano 9b",
-   "vendor": "Nvidia",
+   "vendor": "NVIDIA",
    "platform": "bedrock",
    "region": "us-gov-west-1",
    "category": "llm",
@@ -69926,7 +69926,7 @@
    "id": "nemotron-super-3-120b@bedrock:eu-west-2",
    "family": "nemotron-super-3-120b",
    "name": "Nemotron Super 3 120b",
-   "vendor": "Nvidia",
+   "vendor": "NVIDIA",
    "platform": "bedrock",
    "region": "eu-west-2",
    "category": "llm",
@@ -69996,7 +69996,7 @@
    "id": "nemotron-super-3-120b@bedrock:regional",
    "family": "nemotron-super-3-120b",
    "name": "Nemotron Super 3 120b",
-   "vendor": "Nvidia",
+   "vendor": "NVIDIA",
    "platform": "bedrock",
    "region": "regional",
    "category": "llm",
@@ -70152,7 +70152,7 @@
    "id": "nemotron-super-3-120b@bedrock:us-gov",
    "family": "nemotron-super-3-120b",
    "name": "Nemotron Super 3 120b",
-   "vendor": "Nvidia",
+   "vendor": "NVIDIA",
    "platform": "bedrock",
    "region": "us-gov",
    "category": "llm",
@@ -70204,7 +70204,7 @@
    "id": "nemotron-super-3-120b@bedrock:us-gov-east-1",
    "family": "nemotron-super-3-120b",
    "name": "Nemotron Super 3 120b",
-   "vendor": "Nvidia",
+   "vendor": "NVIDIA",
    "platform": "bedrock",
    "region": "us-gov-east-1",
    "category": "llm",
@@ -70256,7 +70256,7 @@
    "id": "nemotron-super-3-120b@bedrock:us-gov-west-1",
    "family": "nemotron-super-3-120b",
    "name": "Nemotron Super 3 120b",
-   "vendor": "Nvidia",
+   "vendor": "NVIDIA",
    "platform": "bedrock",
    "region": "us-gov-west-1",
    "category": "llm",
@@ -75658,7 +75658,7 @@
    "id": "pegasus-1-2@bedrock:eu",
    "family": "pegasus-1-2",
    "name": "Pegasus 1.2",
-   "vendor": "Twelvelabs",
+   "vendor": "TwelveLabs",
    "platform": "bedrock",
    "region": "eu",
    "category": "llm",
@@ -75691,7 +75691,7 @@
    "id": "pegasus-1-2@bedrock:global",
    "family": "pegasus-1-2",
    "name": "Pegasus 1.2",
-   "vendor": "Twelvelabs",
+   "vendor": "TwelveLabs",
    "platform": "bedrock",
    "region": "global",
    "category": "llm",
@@ -75724,7 +75724,7 @@
    "id": "pegasus-1-2@bedrock:regional",
    "family": "pegasus-1-2",
    "name": "Pegasus 1.2",
-   "vendor": "Twelvelabs",
+   "vendor": "TwelveLabs",
    "platform": "bedrock",
    "region": "regional",
    "category": "llm",
@@ -75757,7 +75757,7 @@
    "id": "pegasus-1-2@bedrock:us",
    "family": "pegasus-1-2",
    "name": "Pegasus 1.2",
-   "vendor": "Twelvelabs",
+   "vendor": "TwelveLabs",
    "platform": "bedrock",
    "region": "us",
    "category": "llm",
@@ -75790,7 +75790,7 @@
    "id": "pegasus-1-5@bedrock:global",
    "family": "pegasus-1-5",
    "name": "Pegasus 1.5",
-   "vendor": "Twelvelabs",
+   "vendor": "TwelveLabs",
    "platform": "bedrock",
    "region": "global",
    "category": "llm",
@@ -75836,7 +75836,7 @@
    "id": "pegasus-1-5@bedrock:regional",
    "family": "pegasus-1-5",
    "name": "Pegasus 1.5",
-   "vendor": "Twelvelabs",
+   "vendor": "TwelveLabs",
    "platform": "bedrock",
    "region": "regional",
    "category": "llm",
@@ -75882,7 +75882,7 @@
    "id": "pegasus-1-5@bedrock:us",
    "family": "pegasus-1-5",
    "name": "Pegasus 1.5",
-   "vendor": "Twelvelabs",
+   "vendor": "TwelveLabs",
    "platform": "bedrock",
    "region": "us",
    "category": "llm",
@@ -78523,7 +78523,7 @@
    "id": "r1@bedrock:regional",
    "family": "r1",
    "name": "R1",
-   "vendor": "Deepseek",
+   "vendor": "DeepSeek",
    "platform": "bedrock",
    "region": "regional",
    "category": "llm",
@@ -78629,7 +78629,7 @@
    "id": "r1@bedrock:us",
    "family": "r1",
    "name": "R1",
-   "vendor": "Deepseek",
+   "vendor": "DeepSeek",
    "platform": "bedrock",
    "region": "us",
    "category": "llm",
@@ -79387,7 +79387,7 @@
    "id": "v3.2@bedrock:ap-northeast-1",
    "family": "v3.2",
    "name": "V3.2",
-   "vendor": "Deepseek",
+   "vendor": "DeepSeek",
    "platform": "bedrock",
    "region": "ap-northeast-1",
    "category": "llm",
@@ -79457,7 +79457,7 @@
    "id": "v3.2@bedrock:ap-south-1",
    "family": "v3.2",
    "name": "V3.2",
-   "vendor": "Deepseek",
+   "vendor": "DeepSeek",
    "platform": "bedrock",
    "region": "ap-south-1",
    "category": "llm",
@@ -79527,7 +79527,7 @@
    "id": "v3.2@bedrock:ap-southeast-3",
    "family": "v3.2",
    "name": "V3.2",
-   "vendor": "Deepseek",
+   "vendor": "DeepSeek",
    "platform": "bedrock",
    "region": "ap-southeast-3",
    "category": "llm",
@@ -79597,7 +79597,7 @@
    "id": "v3.2@bedrock:eu",
    "family": "v3.2",
    "name": "V3.2",
-   "vendor": "Deepseek",
+   "vendor": "DeepSeek",
    "platform": "bedrock",
    "region": "eu",
    "category": "llm",
@@ -79666,7 +79666,7 @@
    "id": "v3.2@bedrock:eu-north-1",
    "family": "v3.2",
    "name": "V3.2",
-   "vendor": "Deepseek",
+   "vendor": "DeepSeek",
    "platform": "bedrock",
    "region": "eu-north-1",
    "category": "llm",
@@ -79736,7 +79736,7 @@
    "id": "v3.2@bedrock:regional",
    "family": "v3.2",
    "name": "V3.2",
-   "vendor": "Deepseek",
+   "vendor": "DeepSeek",
    "platform": "bedrock",
    "region": "regional",
    "category": "llm",
@@ -79892,7 +79892,7 @@
    "id": "v3.2@bedrock:sa-east-1",
    "family": "v3.2",
    "name": "V3.2",
-   "vendor": "Deepseek",
+   "vendor": "DeepSeek",
    "platform": "bedrock",
    "region": "sa-east-1",
    "category": "llm",
@@ -79962,7 +79962,7 @@
    "id": "v3.2@bedrock:us",
    "family": "v3.2",
    "name": "V3.2",
-   "vendor": "Deepseek",
+   "vendor": "DeepSeek",
    "platform": "bedrock",
    "region": "us",
    "category": "llm",
@@ -80068,7 +80068,7 @@
    "id": "v3.2@bedrock:us-east-1",
    "family": "v3.2",
    "name": "V3.2",
-   "vendor": "Deepseek",
+   "vendor": "DeepSeek",
    "platform": "bedrock",
    "region": "us-east-1",
    "category": "llm",
@@ -80138,7 +80138,7 @@
    "id": "v3.2@bedrock:us-east-2",
    "family": "v3.2",
    "name": "V3.2",
-   "vendor": "Deepseek",
+   "vendor": "DeepSeek",
    "platform": "bedrock",
    "region": "us-east-2",
    "category": "llm",
@@ -80208,7 +80208,7 @@
    "id": "v3.2@bedrock:us-west-2",
    "family": "v3.2",
    "name": "V3.2",
-   "vendor": "Deepseek",
+   "vendor": "DeepSeek",
    "platform": "bedrock",
    "region": "us-west-2",
    "category": "llm",
@@ -80278,7 +80278,7 @@
    "id": "v3@bedrock:regional",
    "family": "v3",
    "name": "V3",
-   "vendor": "Deepseek",
+   "vendor": "DeepSeek",
    "platform": "bedrock",
    "region": "regional",
    "category": "llm",

@@ -195,7 +195,7 @@ export function mergeModels(models: Model[], data: NormalizedModelsDev, policy: 
       notes.push(`${o.appId}: 別名・provider競合のため新規追加を保留`); continue;
     }
     const parsed = parseKey(o.modelId, o.platform)!;
-    const m: Model = { id: o.appId, family: parsed.family, name: displayName(parsed.family, catalog.names),
+    const m: Model = { id: o.appId, family: parsed.family, name: displayName(parsed.family, catalog.names, catalog.nameTokens),
       vendor: vendorOf(parsed.family, catalog, parsed.vendorHint), platform: o.platform, region: parsed.region,
       category: "llm", firstSeen: today, status: "active", prices: [], sources: [{ modelsDev: { providerId: o.providerId, modelId: o.modelId }, url: MODELS_DEV_URL }] };
     for (const r of o.rules) {

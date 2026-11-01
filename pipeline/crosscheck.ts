@@ -1,4 +1,6 @@
 import type { Model, Platform } from "../shared/types.ts";
+import type { Catalog } from "./config.ts";
+import { OTHER_VENDOR, knownVendors, vendorKey } from "./normalize.ts";
 
 export interface OpenRouterModel {
   id: string;
@@ -89,4 +91,27 @@ export function crossCheck(
   }
   candidates.sort((a, b) => a.family.localeCompare(b.family));
   return { mismatches, candidates };
+}
+
+/**
+ * 開発元の表記を点検する。大文字小文字・記号だけが違う表記の混在と、catalog.yaml に未登録の開発元をレポート用の文言で返す。
+ * 未登録の開発元は vendorAliases か vendors に加えると、次回から正式な表記にそろう。
+ */
+export function vendorNotes(models: Model[], catalog: Catalog): string[] {
+  const known = knownVendors(catalog);
+  const byKey = new Map<string, Map<string, Model[]>>();
+  for (const m of models) {
+    const spellings = byKey.get(vendorKey(m.vendor)) ?? new Map<string, Model[]>();
+    spellings.set(m.vendor, [...(spellings.get(m.vendor) ?? []), m]);
+    byKey.set(vendorKey(m.vendor), spellings);
+  }
+  const notes: string[] = [];
+  for (const spellings of byKey.values()) {
+    if (spellings.size > 1)
+      notes.push(`開発元の表記ゆれ: ${[...spellings].map(([v, ms]) => `${v}(${ms.length}件)`).join(" / ")}`);
+    for (const [vendor, ms] of spellings)
+      if (vendor !== OTHER_VENDOR && !known.has(vendor))
+        notes.push(`catalog.yaml に未登録の開発元: ${vendor}(${ms.length}件、例: ${ms[0].id})`);
+  }
+  return notes.sort();
 }
