@@ -36,6 +36,8 @@
             <button type="button" role="tab" data-tab="img">画像生成</button>
           </div>
 
+          <button type="button" class="to-models" id="toModels">比較するモデルを選ぶ <span class="mmeta" id="selCountJump"></span><span aria-hidden="true">↓</span></button>
+
           <fieldset id="fs-llm">
             <legend>使い方(1か月あたり)</legend>
             <div class="presets" id="presets" aria-label="よくある使い方"></div>
@@ -95,7 +97,7 @@
               </div>
               <p class="mmeta" id="mHint"></p>
             </div>
-            <div class="mactions"><button type="button" class="mini" id="selShown">表示中をすべて選ぶ</button><button type="button" class="mini" id="selNone">すべて外す</button></div>
+            <div class="mactions"><button type="button" class="mini" id="selShown">表示中をすべて選ぶ</button><button type="button" class="mini" id="selNone">すべて外す</button><button type="button" class="mini to-results" id="toResults">結果を見る ↓</button></div>
             <div class="mlist" id="mlist"></div>
           </details>
         </form>

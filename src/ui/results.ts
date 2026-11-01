@@ -30,7 +30,7 @@ export function renderResults(data: PriceData, state: State, ok: CalcOk[], na: C
     if (!ok.length) {
       box.innerHTML = state.sel[state.t].length
         ? `<div class="kpi"><div class="lab">この条件では試算できません</div><div class="sub">非対応のモデル・解像度の理由を比較表に表示しています。</div></div>`
-        : `<div class="kpi"><div class="lab">比較するモデルを選んでください</div><div class="sub">左の「比較するモデル」から追加できます。</div></div>`;
+        : `<div class="kpi"><div class="lab">比較するモデルを選んでください</div><div class="sub">フォーム上部の「比較するモデルを選ぶ」から追加できます。</div></div>`;
       return;
     }
     const lo = ok[0], hi = ok[ok.length - 1];
@@ -52,15 +52,16 @@ export function renderResults(data: PriceData, state: State, ok: CalcOk[], na: C
     $("resSub").textContent = "安い順。価格の比較であって、性能の順位ではありません";
     t.tHead!.innerHTML =
       state.t === "img"
-        ? `<tr><th>#</th><th>モデル</th><th class="num">1枚あたり</th><th class="num">月額</th><th class="num">年額</th><th></th></tr>`
-        : `<tr><th>#</th><th>モデル</th><th class="num">入力${unitLabel(state.unit)}</th><th class="num">出力${unitLabel(state.unit)}</th><th class="num">月額</th><th class="num">年額</th><th></th></tr>`;
+        ? `<tr><th>#</th><th>モデル</th><th class="num">月額</th><th class="num">1枚あたり</th><th class="num">年額</th><th></th></tr>`
+        : `<tr><th>#</th><th>モデル</th><th class="num">月額</th><th class="num">入力${unitLabel(state.unit)}</th><th class="num">出力${unitLabel(state.unit)}</th><th class="num">年額</th><th></th></tr>`;
     const rows = ok.map((x, i) => {
       const name = `<div class="mname">${esc(x.m.name)}</div><div class="mmeta">${esc(x.m.vendor)} ・ ${esc(where(x.m))}</div><div class="flags">${flagHtml(x)}</div>`;
       const w = Math.max((x.usd / max) * 100, x.usd > 0 ? 1.5 : 0);
       const bar = `<td class="barcell"><div class="bar ${x.usd === 0 ? "zero" : ""}" style="width:${w}%"></div></td>`;
-      const tail = `<td class="num cost">${money(x.usd)}</td><td class="num">${money(x.usd * 12)}</td>${bar}`;
-      if (state.t === "img") return `<tr><td class="rank">${i + 1}</td><td>${name}</td><td class="num">${money(x.perImage ?? 0)}</td>${tail}</tr>`;
-      return `<tr><td class="rank">${i + 1}</td><td>${name}</td><td class="num">${unitPrice(x.pin)}</td><td class="num">${unitPrice(x.pout)}</td>${tail}</tr>`;
+      const cost = `<td class="num cost">${money(x.usd)}</td>`;
+      const year = `<td class="num">${money(x.usd * 12)}</td>`;
+      if (state.t === "img") return `<tr><td class="rank">${i + 1}</td><td>${name}</td>${cost}<td class="num">${money(x.perImage ?? 0)}</td>${year}${bar}</tr>`;
+      return `<tr><td class="rank">${i + 1}</td><td>${name}</td>${cost}<td class="num">${unitPrice(x.pin)}</td><td class="num">${unitPrice(x.pout)}</td>${year}${bar}</tr>`;
     });
     t.tBodies[0].innerHTML = rows.join("") || `<tr class="na"><td colspan="${state.t === "img" ? 6 : 7}">${na.length ? "この条件では試算できません。" : "モデルが選ばれていません。"}</td></tr>`;
     $("pending").innerHTML = na.length
