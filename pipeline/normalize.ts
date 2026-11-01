@@ -7,7 +7,8 @@ import { releaseDate } from "./recommend.ts";
 export const perMillion = (v: number): number => Number((v * 1e6).toPrecision(6));
 export const round6 = (v: number): number => Number(v.toPrecision(6));
 
-const BEDROCK_PREFIX_REGIONS = ["global", "us", "eu", "jp", "au", "apac", "us-gov", "ca", "apne"];
+// in = インド域内のクロスリージョン推論(in.moonshotai.kimi-k3 など)。開発元の接頭辞と取り違えないよう列挙する
+const BEDROCK_PREFIX_REGIONS = ["global", "us", "eu", "jp", "au", "apac", "us-gov", "ca", "apne", "in"];
 const AZURE_ZONES = ["us", "eu", "apac", "global", "us-gov", "global-standard"];
 const DATE_SUFFIX = /-(\d{4}-\d{2}-\d{2}|\d{8})$/;
 
@@ -132,7 +133,7 @@ export function buildRules(e: LiteLLMEntry, category: Category): PriceRule[] {
 }
 
 /** 系列名から表示名を作る。例: claude-sonnet-5-5 → Claude Sonnet 5.5、gpt-6.1-sol → GPT-6.1 Sol */
-export function displayName(family: string, names: Record<string, string> = {}): string {
+export function displayName(family: string, names: Record<string, string> = {}, wordNames: Record<string, string> = {}): string {
   if (names[family]) return names[family];
   const tokens = family.split("-");
   const out: string[] = [];
@@ -143,19 +144,37 @@ export function displayName(family: string, names: Record<string, string> = {}):
       if (prev === "GPT") out[out.length - 1] = `GPT-${t}`;
       else if (i > 0 && /^\d+(\.\d+)?$/.test(tokens[i - 1]) && !tokens[i - 1].includes(".")) out[out.length - 1] += `.${t}`;
       else out.push(t);
-    } else if (t === "gpt") out.push("GPT");
+    } else if (wordNames[t]) out.push(wordNames[t]);
+    else if (t === "gpt") out.push("GPT");
     else if (/^o\d/.test(t)) out.push(t);
     else out.push(t.charAt(0).toUpperCase() + t.slice(1));
   }
   return out.join(" ");
 }
 
+/** 開発元の比較用キー。大文字小文字・空白・記号だけが違う表記を同じに扱う */
+export const vendorKey = (s: string): string => s.toLowerCase().replace(/[\s._-]/g, "");
+
+/** 開発元の表記を正規化する。vendorAliases → vendors の表記の順に照合し、未知なら先頭だけ大文字にする */
+export function canonicalVendor(raw: string, catalog: Catalog): string {
+  const key = vendorKey(raw);
+  for (const [alias, vendor] of Object.entries(catalog.vendorAliases ?? {})) if (vendorKey(alias) === key) return vendor;
+  for (const v of knownVendors(catalog)) if (vendorKey(v) === key) return v;
+  return raw.charAt(0).toUpperCase() + raw.slice(1);
+}
+
+/** catalog.yaml に登録済みの開発元の表記 */
+export const knownVendors = (catalog: Catalog): Set<string> =>
+  new Set([...catalog.vendors.map((v) => v.vendor), ...Object.values(catalog.vendorAliases ?? {})]);
+
+export const OTHER_VENDOR = "その他";
+
 export function vendorOf(family: string, catalog: Catalog, hint?: string, provider?: string): string {
   for (const v of catalog.vendors) if (new RegExp(v.pattern).test(family)) return v.vendor;
-  if (hint) return hint.charAt(0).toUpperCase() + hint.slice(1);
+  if (hint) return canonicalVendor(hint, catalog);
   const m = provider?.match(/^vertex_ai-(\w+?)_models$/);
-  if (m) return m[1].charAt(0).toUpperCase() + m[1].slice(1);
-  return "その他";
+  if (m) return canonicalVendor(m[1], catalog);
+  return OTHER_VENDOR;
 }
 
 /** 選別済みエントリを正規化スキーマのモデルにまとめる */
@@ -197,7 +216,7 @@ export function normalize(entries: [string, LiteLLMEntry][], catalog: Catalog, c
     const m: Model = {
       id,
       family,
-      name: displayName(family, catalog.names),
+      name: displayName(family, catalog.names, catalog.nameTokens),
       vendor: vendorOf(family, catalog, vendorHint, main.e.litellm_provider),
       platform: main.platform,
       region,

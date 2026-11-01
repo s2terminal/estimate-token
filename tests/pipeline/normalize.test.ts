@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { loadCatalog } from "../../pipeline/config.ts";
-import { buildRules, displayName, normalize, parseKey, perMillion } from "../../pipeline/normalize.ts";
+import { buildRules, canonicalVendor, displayName, normalize, parseKey, perMillion, vendorOf } from "../../pipeline/normalize.ts";
 import { select } from "../../pipeline/select.ts";
 import { applyRecommendations } from "../../pipeline/recommend.ts";
 import { TODAY, findModel, litellmSample } from "../support/fixtures.ts";
@@ -104,5 +104,36 @@ describe("helpers", () => {
 
   it("価格項目のない LLM はルールなし", () => {
     expect(buildRules({ mode: "chat" }, "llm")).toEqual([]);
+  });
+});
+
+describe("開発元の正規化", () => {
+  it("Bedrock の in. はリージョンとして扱い、開発元と取り違えない", () => {
+    expect(parseKey("in.moonshotai.kimi-k3", "bedrock")).toMatchObject({ family: "kimi-k3", region: "in", vendorHint: "moonshotai" });
+  });
+
+  it.each([
+    ["v3.2", "deepseek", "DeepSeek"],
+    ["r1", "DeepSeek", "DeepSeek"],
+    ["pegasus-1-2", "twelvelabs", "TwelveLabs"],
+    ["palmyra-x5", "writer", "Writer"],
+    ["kimi-k3", "moonshotai", "Moonshot AI"],
+    ["minimax-m2.5", "minimax", "MiniMax"],
+    ["glm-5", "zai", "Z.ai"],
+    ["nemotron-nano-9b", "nvidia", "NVIDIA"],
+    ["kimi-k2.5", undefined, "Moonshot AI"],
+  ])("%s (接頭辞 %s) → %s", (family, hint, vendor) => {
+    expect(vendorOf(family, catalog, hint)).toBe(vendor);
+  });
+
+  it("大文字小文字・記号だけが違う表記は登録済みの表記にそろえる", () => {
+    expect(canonicalVendor("stability-ai", catalog)).toBe("Stability AI");
+    expect(canonicalVendor("XAI", catalog)).toBe("xAI");
+    expect(canonicalVendor("newlab", catalog)).toBe("Newlab");
+  });
+
+  it("表示名の単語の表記を上書きする", () => {
+    expect(displayName("deepseek-v3.2", {}, catalog.nameTokens)).toBe("DeepSeek V3.2");
+    expect(displayName("glm-5.3-flash", {}, catalog.nameTokens)).toBe("GLM 5.3 Flash");
   });
 });

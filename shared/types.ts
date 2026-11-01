@@ -127,4 +127,5 @@ export const REGION_LABEL: Record<string, string> = {
   apac: "APAC",
   au: "オーストラリア",
   "us-gov": "US GovCloud",
+  in: "インド",
 };
