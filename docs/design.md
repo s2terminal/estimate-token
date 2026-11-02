@@ -103,7 +103,7 @@
 
 ## 日次更新パイプライン
 
-毎朝 06:17 JST に GitHub Actions が価格を取得し、品質ゲートを通れば main に直接コミットして GitHub Pages に公開する。ゲートに引っかかった日はPRを作って止め、公開中のデータは前日のままにする。
+毎朝 07:30 JST に GitHub Actions が価格を取得し、品質ゲートを通れば main に直接コミットして GitHub Pages に公開する。ゲートに引っかかった日はPRを作って止め、公開中のデータは前日のままにする。
 
 1. **取得(fetch)**: LiteLLMの価格JSONの最新コミットSHAをGitHub APIで調べ、そのSHAのファイルを取得する(再現できるように)。OpenRouterとFrankfurterも取得し、生データを `raw/` に置く(コミットはしない、Actionsのartifactに14日保存)。
 2. **選別(select)**: `config/catalog.yaml` の規則で対象エントリを選ぶ。規則は「`litellm_provider` が許可リストにある」「`mode` が chat / responses / image\_generation」「`deprecation_date` が過ぎていない」。規則に合う新モデルは設定変更なしで自動的に入る。
@@ -126,7 +126,7 @@
 ```yaml
 # .github/workflows/update-prices.yml(骨格)
 on:
-  schedule: [{ cron: "17 21 * * *" }]   # 06:17 JST
+  schedule: [{ cron: "30 22 * * *" }]   # 07:30 JST
   workflow_dispatch: {}
 permissions: { contents: write, pull-requests: write }
 concurrency: { group: update-prices, cancel-in-progress: false }
@@ -160,7 +160,7 @@ jobs:
 | 新モデル | 規則に合う新キー | 公開する(`firstSeen` を記録)。LiteLLMにないものはレポートに名前だけ出す |
 | 為替の異常 | USD/JPYが前日比±5%超、または取得失敗 | 為替だけ前日値を使い、価格は公開する |
 
-**通知**: 止めた日はPR(止めた理由が同じなら新しいPRは作らず、開いているPRを最新データで更新する。同じ理由のPRが閉じられていれば作り直さずIssueに記録する)、公開した日の値変わり・不一致は1本のIssue(「価格更新ログ」)へのコメントで知らせる。`SLACK_WEBHOOK_URL` を設定した場合は、Incoming Webhookで日次更新の実行結果とActionsの実行ログへのリンクも通知する。設定方法はREADMEを参照。ワークフロー自体が3日連続で失敗したときも同じIssueに書く。
+**通知**: 止めた日はPR(止めた理由が同じなら新しいPRは作らず、開いているPRを最新データで更新する。同じ理由のPRが閉じられていれば作り直さずIssueに記録する)、各実行のレポートは1本のIssue(「価格更新ログ」)へのコメントで知らせる。`SLACK_WEBHOOK_URL` を設定した場合は、Incoming Webhookで日次更新の実行結果とIssue「価格更新ログ」の該当コメントへの直接リンク（取得できない場合はIssueへのリンク）も通知する。設定方法はREADMEを参照。ワークフロー自体が3日連続で失敗したときも同じIssueに書く。
 
 しきい値は `config/gates.yaml` に置き、運用しながら調整する。上の数字は初期値の案。
 

@@ -1,6 +1,6 @@
 name: Update prices
 on:
-  schedule: [{ cron: "17 21 * * *" }] # 06:17 JST
+  schedule: [{ cron: "30 22 * * *" }] # 07:30 JST
   workflow_dispatch:
     inputs:
       force_stop:
@@ -117,8 +117,8 @@ jobs:
             echo "result=created" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Log notes or unchanged gate failure to issue
-        if: (steps.pipeline.outputs.status == 'pass' && steps.pipeline.outputs.notes == 'true') || (steps.pipeline.outputs.status == 'stop' && (steps.pipeline.outputs.changed == 'false' || steps.hold.outputs.result == 'skipped'))
+      - id: log
+        name: Log price update report to issue
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -130,9 +130,12 @@ jobs:
             url=$(gh issue create --title "$LOG_ISSUE_TITLE" --body "日次の価格更新で記録すべきこと(値変わり・照合の不一致など)をここにコメントします。")
             num=${url##*/}
           fi
-          gh issue comment "$num" --body-file out/report.md
+          echo "issue_url=${{ github.server_url }}/${{ github.repository }}/issues/$num" >> "$GITHUB_OUTPUT"
+          url=$(gh issue comment "$num" --body-file out/report.md)
+          echo "comment_url=$url" >> "$GITHUB_OUTPUT"
 
-      - name: Log failure to issue
+      - id: failure_log
+        name: Log failure to issue
         if: failure()
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -140,7 +143,13 @@ jobs:
           # --search は検索インデックス経由で反映が遅れるため使わず、一覧をタイトル完全一致で絞る
           num=$(gh issue list --state open --limit 200 --json number,title \
             --jq "map(select(.title == env.LOG_ISSUE_TITLE)) | .[0].number // empty")
-          [ -n "$num" ] && gh issue comment "$num" --body "日次更新が失敗しました: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" || true
+          if [ -z "$num" ]; then
+            url=$(gh issue create --title "$LOG_ISSUE_TITLE" --body "日次の価格更新の結果をここにコメントします。")
+            num=${url##*/}
+          fi
+          echo "issue_url=${{ github.server_url }}/${{ github.repository }}/issues/$num" >> "$GITHUB_OUTPUT"
+          url=$(gh issue comment "$num" --body "日次更新が失敗しました: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}")
+          echo "comment_url=$url" >> "$GITHUB_OUTPUT"
 
       - name: Notify Slack (Incoming Webhook)
         if: always()
@@ -154,7 +163,10 @@ jobs:
           SNAPSHOT: ${{ steps.pipeline.outputs.snapshot }}
           HOLD_RESULT: ${{ steps.hold.outputs.result }}
           REPOSITORY: ${{ github.repository }}
-          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COMMENT_URL: ${{ steps.failure_log.outputs.comment_url || steps.log.outputs.comment_url }}
+          ISSUE_URL: ${{ steps.failure_log.outputs.issue_url || steps.log.outputs.issue_url }}
+          ISSUES_URL: ${{ github.server_url }}/${{ github.repository }}/issues
         run: |
           if [ -z "$SLACK_WEBHOOK_URL" ]; then
             echo "SLACK_WEBHOOK_URL is not configured; skipping Slack notification."
@@ -179,11 +191,21 @@ jobs:
           fi
 
           if [ "$HAS_NOTES" = "true" ]; then
-            result="$result 要確認の記録があります（Actionsのレポートを参照）。"
+            result="$result 要確認の記録があります（価格更新ログを参照）。"
+          fi
+          # コメント投稿に失敗した場合やキャンセル時も、概要とIssueへのリンクを残す。
+          url="$COMMENT_URL"
+          if [ -z "$url" ]; then
+            url="$ISSUE_URL"
+            if [ -z "$url" ]; then
+              url=$(gh issue list --state open --limit 200 --json title,url \
+                --jq 'map(select(.title == env.LOG_ISSUE_TITLE)) | .[0].url // empty') || true
+            fi
+            url="${url:-$ISSUES_URL}"
           fi
           payload=$(jq -n --arg result "$result" --arg repository "$REPOSITORY" \
-            --arg snapshot "$SNAPSHOT" --arg url "$RUN_URL" \
-            '{text: ($result + "\nリポジトリ: " + $repository + (if $snapshot == "" then "" else "\n対象日: " + $snapshot end) + "\n実行ログ: " + $url)}')
+            --arg snapshot "$SNAPSHOT" --arg url "$url" \
+            '{text: ($result + "\nリポジトリ: " + $repository + (if $snapshot == "" then "" else "\n対象日: " + $snapshot end) + "\n価格更新ログ: " + $url)}')
           curl --fail --silent --show-error --connect-timeout 5 --max-time 15 \
             --header 'Content-Type: application/json' --data "$payload" \
             --output /dev/null "$SLACK_WEBHOOK_URL"
