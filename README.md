@@ -65,7 +65,7 @@ OpenRouter の利用規約はサイト・API上の情報のコピーや譲渡を
 
 ## GitHub Actions
 
-- `update-prices.yml`: 毎朝 07:30 JST。ゲート通過なら main へコミット、止めた日はPRを作成(理由が同じなら既存PRを更新し、新しいPRは作らない)、各実行のレポートはIssue「価格更新ログ」にコメント。Slack設定時は実行結果も通知
+- `update-prices.yml`: 毎朝 06:17 JST。ゲート通過なら main へコミット、止めた日はPRを作成(理由が同じなら既存PRを更新し、新しいPRは作らない)、各実行のレポートはIssue「価格更新ログ」にコメント。Slack設定時は実行結果も通知
 - `deploy-pages.yml`: main への push と日次更新の完了で GitHub Pages に公開
 - `ci.yml`: PRとmainへのpushで型チェック・テスト・ビルド・Actions lockfile検証
 - `dependabot-auto-merge.yml`: Dependabot本人のnpm patch/minor更新について、読み取り専用ジョブで該当コミットのCI成功を確認し、別ジョブで再確認後にそのコミットをマージする

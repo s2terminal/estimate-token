@@ -1,6 +1,6 @@
 name: Update prices
 on:
-  schedule: [{ cron: "30 22 * * *" }] # 07:30 JST
+  schedule: [{ cron: "17 21 * * *" }] # 06:17 JST
   workflow_dispatch:
     inputs:
       force_stop:

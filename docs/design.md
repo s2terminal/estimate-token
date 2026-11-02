@@ -103,7 +103,7 @@
 
 ## 日次更新パイプライン
 
-毎朝 07:30 JST に GitHub Actions が価格を取得し、品質ゲートを通れば main に直接コミットして GitHub Pages に公開する。ゲートに引っかかった日はPRを作って止め、公開中のデータは前日のままにする。
+毎朝 06:17 JST に GitHub Actions が価格を取得し、品質ゲートを通れば main に直接コミットして GitHub Pages に公開する。ゲートに引っかかった日はPRを作って止め、公開中のデータは前日のままにする。
 
 1. **取得(fetch)**: LiteLLMの価格JSONの最新コミットSHAをGitHub APIで調べ、そのSHAのファイルを取得する(再現できるように)。OpenRouterとFrankfurterも取得し、生データを `raw/` に置く(コミットはしない、Actionsのartifactに14日保存)。
 2. **選別(select)**: `config/catalog.yaml` の規則で対象エントリを選ぶ。規則は「`litellm_provider` が許可リストにある」「`mode` が chat / responses / image\_generation」「`deprecation_date` が過ぎていない」。規則に合う新モデルは設定変更なしで自動的に入る。
@@ -126,7 +126,7 @@
 ```yaml
 # .github/workflows/update-prices.yml(骨格)
 on:
-  schedule: [{ cron: "30 22 * * *" }]   # 07:30 JST
+  schedule: [{ cron: "17 21 * * *" }]   # 06:17 JST
   workflow_dispatch: {}
 permissions: { contents: write, pull-requests: write }
 concurrency: { group: update-prices, cancel-in-progress: false }
