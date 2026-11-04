@@ -114,10 +114,13 @@ export function diffMarkdown(
 /** GitHub の Issue コメント・PR 本文の上限(65536文字)。余裕を見て少し下回る長さで切る */
 export const GITHUB_BODY_LIMIT = 60000;
 
+/** 全文を artifact に残せるとき、Issue コメントに載せるレポートの長さ */
+export const ISSUE_COMMENT_LIMIT = 1000;
+
 /** 長すぎるレポートを行単位で切り詰め、全文の置き場所を末尾に添える */
 export function fitMarkdown(md: string, fullUrl?: string, max = GITHUB_BODY_LIMIT): string {
   if ([...md].length <= max) return md;
-  const note = `\n\n---\n文字数の上限を超えたため途中で省略しました。全文は ${fullUrl ? `[実行の artifact](${fullUrl}) の` : "artifact の "}out/report-full.md を見てください。\n`;
+  const note = `\n\n---\n長いため途中で省略しました。全文は ${fullUrl ? `[実行の artifact](${fullUrl}) の` : "artifact の "}out/report-full.md を見てください。\n`;
   const budget = max - [...note].length;
   const kept: string[] = [];
   let size = 0;

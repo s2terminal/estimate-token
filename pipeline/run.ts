@@ -1,6 +1,6 @@
 /* 日次更新パイプライン: fetch → select → normalize → cross-check → validate → diff
    使い方: npm run pipeline [-- --offline] [-- --force-stop]
-   出力: public/data/latest.json(中身が変わったときだけ)、out/report.md(GitHub 上限内)、out/report-full.md、out/gate.json */
+   出力: public/data/latest.json(中身が変わったときだけ)、out/report.md(Issue コメント用。Actions では約1000文字)、out/report-full.md、out/gate.json */
 import { createHash } from "node:crypto";
 import { appendFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import type { PriceData } from "../shared/types.ts";
@@ -8,7 +8,7 @@ import { ROOT, loadCatalog, loadGates, loadModelsDevPolicy } from "./config.ts";
 import { assembleModels } from "./assemble.ts";
 import { contentHash } from "./content.ts";
 import { crossCheck, vendorNotes } from "./crosscheck.ts";
-import { diffData, diffMarkdown, fitMarkdown } from "./diff.ts";
+import { diffData, diffMarkdown, fitMarkdown, GITHUB_BODY_LIMIT, ISSUE_COMMENT_LIMIT } from "./diff.ts";
 import { fetchAll, readRaw } from "./fetch.ts";
 import { unsupportedImageModels } from "./image-tokens.ts";
 import { applyRecommendations } from "./recommend.ts";
@@ -100,10 +100,11 @@ async function main() {
     mkdirSync(`${ROOT}public/data`, { recursive: true });
     writeFileSync(DATA_PATH, JSON.stringify(next, null, 1) + "\n");
   }
-  // report.md は Issue コメント・PR 本文に使うので GitHub の上限に収め、全文は artifact に残す
+  // report.md は Issue コメントに使う。Actions では全文(report-full.md)が artifact に残るので短く切り、
+  // artifact のないローカル実行では GitHub の上限まで載せる
   const env = process.env;
   const runUrl = env.GITHUB_RUN_ID ? `${env.GITHUB_SERVER_URL}/${env.GITHUB_REPOSITORY}/actions/runs/${env.GITHUB_RUN_ID}` : undefined;
-  writeFileSync(`${OUT_DIR}/report.md`, fitMarkdown(report, runUrl));
+  writeFileSync(`${OUT_DIR}/report.md`, fitMarkdown(report, runUrl, runUrl ? ISSUE_COMMENT_LIMIT : GITHUB_BODY_LIMIT));
   writeFileSync(`${OUT_DIR}/report-full.md`, report);
   const status = gate.stop.length ? "stop" : "pass";
   const hasNotes = gate.notes.length + cc.mismatches.length + cc.candidates.length > 0;

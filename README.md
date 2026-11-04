@@ -40,7 +40,7 @@ npm run pipeline -- --offline     # raw/ に置いた前回の生データで再
 npm run pipeline -- --force-stop  # 品質ゲートで止めた扱いにする(動作確認用)
 ```
 
-パイプラインは `out/report.md`(差分と判定。Issue/PR 用に GitHub の文字数上限内へ切り詰め)、`out/report-full.md`(全文)と `out/gate.json` も出力します。
+パイプラインは `out/report.md`(差分と判定。Issue コメント用で、Actions では約1000文字に切り詰め。止めたときはコメント冒頭に確認用PRへのリンクを付け、PR本文はそのコメントへのリンクだけ)、`out/report-full.md`(全文)と `out/gate.json` も出力します。
 `build` は型チェックを含み、`check` とCIでも型チェックは1回だけ実行します。
 
 CI・公開・日次更新は `.node-version` を参照し、毎回最新の22系を確認します。`npm run audit` はCIで実行します。公開・日次更新は `npm ci --no-audit` を使い、監査での検出や監査APIの障害で公開処理が止まることを避けます。DependabotがnpmとGitHub Actionsの更新PRを毎週作成します。Node.jsの新たなセキュリティ修正が出た際は `package.json` の最低バージョンも見直してください。npm監査はNode.js本体やOSの証明書ストアを検査しないため、それぞれの更新も必要です。
