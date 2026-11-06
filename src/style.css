@@ -180,8 +180,13 @@ details.models summary{min-height:28px}
   /* セレクトは狭い列だと「Standard(同期)」のように文言が切れるため、ラベルの下に全幅で置く */
   .field:has(select){grid-template-columns:minmax(0,1fr)}
   .linkrow{flex-direction:column;align-items:stretch}
-  #resTable td:nth-child(2),#unitTable td:first-child{min-width:120px}
+  /* モデル名が途中で改行されない幅を確保する(月額の列は初期表示に収まる) */
+  #resTable td:nth-child(2),#unitTable td:first-child{min-width:150px}
 }
+/* モデル一覧は「名前+タグ」と「経由・リージョン」を2段にして、補足の途中改行をなくす */
+.mlist label{flex-wrap:wrap}
+.mlist label .tag{order:2}
+.mlist label span.sub{order:3;flex-basis:calc(100% - 25px);margin-left:25px}
 /* 一覧は画面の高さに合わせて広げ、グループ名を見失わないようにする */
 .mlist{max-height:min(480px,55dvh);overscroll-behavior:contain}
 .mgroup{position:sticky;top:0;background:var(--surface);padding-block:4px;z-index:1}
