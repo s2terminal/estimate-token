@@ -151,6 +151,9 @@ body{-webkit-text-size-adjust:100%}
 #loadError{margin-bottom:16px}
 .notes a,.mmeta a{color:var(--accent)}
 /* ---- UI改善: モデル選択へ少ないスクロールで届くように ---- */
+/* スクロールするフォーム内では子要素を flex で縮ませない。
+   特に overflow:hidden の .tabs は最小の高さが0になるため、タブが2pxに潰れて次の要素に覆われ、選べなくなる */
+.form>*{flex:none}
 /* フォーム先頭からモデル選択へ移動するボタン */
 .to-models{appearance:none;display:flex;justify-content:space-between;align-items:center;gap:8px;width:100%;font:inherit;font-size:13px;font-weight:700;padding:9px 12px;border:1px dashed var(--accent);border-radius:var(--r);background:var(--accent-soft);color:var(--accent);cursor:pointer;text-align:left}
 .to-models .mmeta{color:var(--accent);font-weight:400}
