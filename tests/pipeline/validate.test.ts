@@ -96,7 +96,7 @@ describe("古い・提供終了・プレビュー版モデル", () => {
     delete rule.input; delete rule.provenance?.input;
     const r = evaluateGates(prev, next, gates);
     expect(r.stop).toEqual([]);
-    expect(r.notes).toEqual([expect.stringContaining("プレビュー版モデルの単価が0・欠落(掲載から外す): gpt-6.1-sol-preview@openai:global standard input")]);
+    expect(r.notes).toEqual([expect.stringContaining("プレビュー版モデルの単価が欠落(空欄のまま掲載): gpt-6.1-sol-preview@openai:global standard input")]);
   });
 
   it("単価が欠落しても止めずに記録する", () => {
@@ -106,7 +106,7 @@ describe("古い・提供終了・プレビュー版モデル", () => {
     delete rule.input; delete rule.provenance?.input;
     const r = evaluateGates(prev, next, gates);
     expect(r.stop).toEqual([]);
-    expect(r.notes).toEqual([expect.stringContaining("古い・提供終了・プレビュー版モデルの単価が0・欠落(掲載から外す): gpt-6.1-sol@openai:global standard input")]);
+    expect(r.notes).toEqual([expect.stringContaining("古い・提供終了・プレビュー版モデルの単価が欠落(空欄のまま掲載): gpt-6.1-sol@openai:global standard input")]);
   });
 
   it("単価が0になった価格ルールを外し、ルールが残らなければ掲載から外す", () => {
@@ -116,7 +116,9 @@ describe("古い・提供終了・プレビュー版モデル", () => {
     target(next).prices[0].input = 0;
     expect(dropZeroedRetiring(prev, next, gates)).toHaveLength(1);
     expect(target(next).prices).toHaveLength(count - 1);
-    expect(evaluateGates(prev, next, gates).stop).toEqual([]);
+    const r = evaluateGates(prev, next, gates);
+    expect(r.stop).toEqual([]);
+    expect(r.notes).toContainEqual(expect.stringContaining("価格ルールがなくなった(掲載から外した): gpt-6.1-sol@openai:global standard input"));
 
     for (const r of target(next).prices) r.input = 0;
     expect(dropZeroedRetiring(prev, next, gates).at(-1)).toContain("掲載から外した: gpt-6.1-sol@openai:global");

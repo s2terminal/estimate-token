@@ -14,4 +14,4 @@ newModel:
   days: 14                 # firstSeen がこの日数以内なら「新着」
   openrouterRecentDays: 60 # OpenRouterだけにあるモデルを「新モデル候補」としてレポートに出す対象(作成からの日数)
 retire:
-  minAgeMonths: 12         # リリースからこの月数以上 or 提供終了・プレビュー版(IDにpreview/alpha・beta)のモデルは、単価が0・欠落になっても止めずに掲載から外す
+  minAgeMonths: 12         # リリースからこの月数以上 or 提供終了・プレビュー版(IDにpreview/alpha・beta)のモデルは、単価が0・欠落になっても止めない(0の価格ルールは外し、欠落は空欄のまま掲載)
