@@ -83,16 +83,20 @@ export interface GateResult {
   notes: string[];
 }
 
-/** 十分古い(リリースから retire.minAgeMonths 以上)か提供終了のモデル。単価が0・欠落になったら止めずに掲載から外す */
+/** プレビュー版のモデル。予告なく単価が消える・提供が終わることがある */
+export const isPreview = (m: Model) => /preview/i.test(m.family) || m.providerStatus === "alpha" || m.providerStatus === "beta";
+
+/** 十分古い(リリースから retire.minAgeMonths 以上)か提供終了・プレビュー版のモデル。単価が0・欠落になっても止めない(0の価格ルールは外し、欠落は空欄のまま掲載) */
 export function isRetiring(m: Model, today: string, gates: Gates): boolean {
   if (m.status === "deprecated" || m.providerStatus === "deprecated" || (m.deprecationDate && m.deprecationDate <= today)) return true;
+  if (isPreview(m)) return true;
   if (!m.releaseDate) return false;
   const limit = new Date(`${m.releaseDate.length === 7 ? m.releaseDate + "-01" : m.releaseDate.slice(0, 10)}T00:00:00Z`);
   limit.setUTCMonth(limit.getUTCMonth() + gates.retire.minAgeMonths);
   return limit.toISOString().slice(0, 10) <= today;
 }
 
-/** 古い・提供終了モデルで前回は正だった単価が0になった価格ルールを外し、ルールが残らないモデルは掲載から外す */
+/** 古い・提供終了・プレビュー版モデルで前回は正だった単価が0になった価格ルールを外し、ルールが残らないモデルは掲載から外す */
 export function dropZeroedRetiring(prev: PriceData | null, next: PriceData, gates: Gates): string[] {
   const notes: string[] = [];
   const prevById = new Map((prev?.models ?? []).map((m) => [m.id, m]));
@@ -104,11 +108,11 @@ export function dropZeroedRetiring(prev: PriceData | null, next: PriceData, gate
       const pr = prevRules.get(ruleKey(nr));
       const before = pr ? ruleValues(pr) : {};
       const zeroed = Object.entries(ruleValues(nr)).some(([f, b]) => b === 0 && (before[f] ?? 0) > 0);
-      if (zeroed) notes.push(`古い・提供終了モデルの単価が0になったため価格ルールを外した: ${nm.id} ${nr.tier}`);
+      if (zeroed) notes.push(`古い・提供終了・プレビュー版モデルの単価が0になったため価格ルールを外した: ${nm.id} ${nr.tier}`);
       return !zeroed;
     });
     if (nm.prices.length) return true;
-    notes.push(`古い・提供終了モデルの価格がなくなったため掲載から外した: ${nm.id}`);
+    notes.push(`古い・提供終了・プレビュー版モデルの価格がなくなったため掲載から外した: ${nm.id}`);
     return false;
   });
   return notes;
@@ -154,7 +158,10 @@ export function evaluateGates(prev: PriceData | null, next: PriceData, gates: Ga
         const b = nr ? ruleValues(nr)[f] : undefined;
         const label = `${pm.id} ${pr.tier}${pr.minPromptTokens ? `(>${pr.minPromptTokens / 1000}K)` : ""} ${f}`;
         if (!b) {
-          if (retiring) notes.push(`古い・提供終了モデルの単価が0・欠落(掲載から外す): ${label} ${a} → ${b ?? "欠落"}`);
+          // 0の価格ルールは dropZeroedRetiring で外している。単価だけ欠落したルールは他の単価を活かすため空欄のまま掲載する
+          if (retiring) notes.push(!nr ? `古い・提供終了・プレビュー版モデルの価格ルールがなくなった(掲載から外した): ${label} ${a} → なし`
+            : b === 0 ? `古い・提供終了・プレビュー版モデルの単価が0になった(価格ルールを外す): ${label} ${a} → 0`
+            : `古い・提供終了・プレビュー版モデルの単価が欠落(空欄のまま掲載): ${label} ${a} → 欠落`);
           else stop.push(`単価が0になった: ${label} ${a} → ${b ?? "欠落"}`);
           continue;
         }
