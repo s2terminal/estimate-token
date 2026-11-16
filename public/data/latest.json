@@ -1,20 +1,20 @@
 {
  "schemaVersion": 1,
- "snapshot": "2026-11-15",
- "generatedAt": "2026-11-15T01:03:50.468Z",
+ "snapshot": "2026-11-16",
+ "generatedAt": "2026-11-16T01:02:28.601Z",
  "baseline": "2026-10-11",
  "sources": {
   "litellm": {
    "commit": "21215cebac633da4b2d4d0d29ef5557a240bf141",
-   "fetchedAt": "2026-11-15T01:03:51.392Z",
+   "fetchedAt": "2026-11-16T01:02:29.400Z",
    "bytes": 4083403,
    "records": 5994
   },
   "modelsDev": {
    "url": "https://models.dev/catalog.json",
-   "fetchedAt": "2026-11-15T01:03:50.934Z",
-   "sha256": "d7ae9488096ca8125cde8f6b15ebf989febc9ccc2e1f8da5ce56c77271ca16bc",
-   "bytes": 7279199,
+   "fetchedAt": "2026-11-16T01:02:29.003Z",
+   "sha256": "65d28eab191ca420c3b962ca733b1bf0455b18cf7262873c08a1b06e56bbd281",
+   "bytes": 7180853,
    "counts": {
     "models": 628,
     "openai": 51,
@@ -26,11 +26,11 @@
     "azure": 97,
     "azure-cognitive-services": 97
    },
-   "etag": "W/\"d7ae9488096ca8125cde8f6b15ebf989\""
+   "etag": "W/\"65d28eab191ca420c3b962ca733b1bf0\""
   },
   "openrouter": {
-   "fetchedAt": "2026-11-15T01:03:50.747Z",
-   "bytes": 852833
+   "fetchedAt": "2026-11-16T01:02:28.849Z",
+   "bytes": 845966
   },
   "fx": {
    "pair": "USDJPY",
@@ -22762,183 +22762,6 @@
    "contextWindow": 128000,
    "inputLimit": 128000,
    "outputLimit": 128000
-  },
-  {
-   "id": "codex-mini@azure:eu",
-   "family": "codex-mini",
-   "name": "Codex Mini",
-   "vendor": "OpenAI",
-   "platform": "azure",
-   "region": "eu",
-   "category": "llm",
-   "firstSeen": "2026-10-11",
-   "status": "active",
-   "prices": [
-    {
-     "tier": "standard",
-     "minPromptTokens": 0,
-     "cacheRead": 0.413,
-     "input": 1.65,
-     "output": 6.6,
-     "provenance": {
-      "input": {
-       "source": "litellm",
-       "modelId": "azure/eu/codex-mini",
-       "url": "https://github.com/BerriAI/litellm/blob/21215cebac633da4b2d4d0d29ef5557a240bf141/model_prices_and_context_window.json"
-      },
-      "output": {
-       "source": "litellm",
-       "modelId": "azure/eu/codex-mini",
-       "url": "https://github.com/BerriAI/litellm/blob/21215cebac633da4b2d4d0d29ef5557a240bf141/model_prices_and_context_window.json"
-      },
-      "cacheRead": {
-       "source": "litellm",
-       "modelId": "azure/eu/codex-mini",
-       "url": "https://github.com/BerriAI/litellm/blob/21215cebac633da4b2d4d0d29ef5557a240bf141/model_prices_and_context_window.json"
-      }
-     }
-    }
-   ],
-   "sources": [
-    {
-     "litellm": "azure/eu/codex-mini",
-     "url": "https://prices.azure.com/api/retail/prices?$filter=serviceName%20eq%20'Foundry%20Models'%20and%20armRegionName%20eq%20'eastus'%20and%20priceType%20eq%20'Consumption'"
-    }
-   ],
-   "metadataSources": {},
-   "deprecationDate": "2026-11-15"
-  },
-  {
-   "id": "codex-mini@azure:global",
-   "family": "codex-mini",
-   "name": "Codex Mini",
-   "vendor": "OpenAI",
-   "platform": "azure",
-   "region": "global",
-   "category": "llm",
-   "firstSeen": "2026-10-11",
-   "status": "active",
-   "prices": [
-    {
-     "tier": "standard",
-     "minPromptTokens": 0,
-     "cacheRead": 0.375,
-     "input": 1.5,
-     "output": 6,
-     "provenance": {
-      "input": {
-       "source": "litellm",
-       "modelId": "azure/codex-mini",
-       "url": "https://github.com/BerriAI/litellm/blob/21215cebac633da4b2d4d0d29ef5557a240bf141/model_prices_and_context_window.json"
-      },
-      "output": {
-       "source": "litellm",
-       "modelId": "azure/codex-mini",
-       "url": "https://github.com/BerriAI/litellm/blob/21215cebac633da4b2d4d0d29ef5557a240bf141/model_prices_and_context_window.json"
-      },
-      "cacheRead": {
-       "source": "litellm",
-       "modelId": "azure/codex-mini",
-       "url": "https://github.com/BerriAI/litellm/blob/21215cebac633da4b2d4d0d29ef5557a240bf141/model_prices_and_context_window.json"
-      }
-     }
-    }
-   ],
-   "sources": [
-    {
-     "litellm": "azure/codex-mini",
-     "aliases": [
-      "azure_ai/codex-mini"
-     ],
-     "url": "https://prices.azure.com/api/retail/prices?$filter=serviceName%20eq%20'Foundry%20Models'%20and%20armRegionName%20eq%20'eastus'%20and%20priceType%20eq%20'Consumption'"
-    },
-    {
-     "modelsDev": {
-      "providerId": "azure",
-      "modelId": "codex-mini",
-      "status": "deprecated"
-     },
-     "url": "https://models.dev/catalog.json"
-    },
-    {
-     "modelsDev": {
-      "providerId": "azure-cognitive-services",
-      "modelId": "codex-mini",
-      "status": "deprecated"
-     },
-     "url": "https://models.dev/catalog.json"
-    }
-   ],
-   "metadataSources": {
-    "inputLimit": {
-     "source": "litellm",
-     "modelId": "azure/codex-mini",
-     "url": "https://github.com/BerriAI/litellm/blob/21215cebac633da4b2d4d0d29ef5557a240bf141/model_prices_and_context_window.json"
-    },
-    "outputLimit": {
-     "source": "litellm",
-     "modelId": "azure/codex-mini",
-     "url": "https://github.com/BerriAI/litellm/blob/21215cebac633da4b2d4d0d29ef5557a240bf141/model_prices_and_context_window.json"
-    }
-   },
-   "contextWindow": 200000,
-   "inputLimit": 200000,
-   "outputLimit": 100000,
-   "deprecationDate": "2026-11-15",
-   "releaseDate": "2025-05-16",
-   "releaseDateSource": {
-    "source": "models.dev",
-    "modelId": "codex-mini",
-    "providerId": "azure",
-    "url": "https://models.dev/catalog.json",
-    "precision": "day"
-   },
-   "recommendationEligible": false
-  },
-  {
-   "id": "codex-mini@azure:us",
-   "family": "codex-mini",
-   "name": "Codex Mini",
-   "vendor": "OpenAI",
-   "platform": "azure",
-   "region": "us",
-   "category": "llm",
-   "firstSeen": "2026-10-11",
-   "status": "active",
-   "prices": [
-    {
-     "tier": "standard",
-     "minPromptTokens": 0,
-     "cacheRead": 0.413,
-     "input": 1.65,
-     "output": 6.6,
-     "provenance": {
-      "input": {
-       "source": "litellm",
-       "modelId": "azure/us/codex-mini",
-       "url": "https://github.com/BerriAI/litellm/blob/21215cebac633da4b2d4d0d29ef5557a240bf141/model_prices_and_context_window.json"
-      },
-      "output": {
-       "source": "litellm",
-       "modelId": "azure/us/codex-mini",
-       "url": "https://github.com/BerriAI/litellm/blob/21215cebac633da4b2d4d0d29ef5557a240bf141/model_prices_and_context_window.json"
-      },
-      "cacheRead": {
-       "source": "litellm",
-       "modelId": "azure/us/codex-mini",
-       "url": "https://github.com/BerriAI/litellm/blob/21215cebac633da4b2d4d0d29ef5557a240bf141/model_prices_and_context_window.json"
-      }
-     }
-    }
-   ],
-   "sources": [
-    {
-     "litellm": "azure/us/codex-mini",
-     "url": "https://prices.azure.com/api/retail/prices?$filter=serviceName%20eq%20'Foundry%20Models'%20and%20armRegionName%20eq%20'eastus'%20and%20priceType%20eq%20'Consumption'"
-    }
-   ],
-   "metadataSources": {},
-   "deprecationDate": "2026-11-15"
   },
   {
    "id": "cohere-command-a@azure:global",
