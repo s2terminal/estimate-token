@@ -52,7 +52,7 @@ npm run pipeline -- --offline --raw=/tmp/raw --data=/tmp/latest.json --out=/tmp/
 
 リリース日は共通モデル情報を優先し、なければ完全一致した提供先同士で一致する明示日付を使います。年月は年月のまま保存し、`releaseDateSource.precision` と出典を保持します。更新日、知識期限、firstSeen、モデルIDから推測しません。
 
-おすすめは統合後に再計算し、canonicalで提供先の重複を避けます。月精度の区間が重なる場合はバージョンで比較します。未来日・alpha・deprecated・未確認previewは自動選択しません。Gemini Pro Previewは確認済みリストに残しますが、Geminiの初期選択がGemini 4系列へ移ったため現在は選ばれません。手動選択と共有リンクの既存IDは変更しません。
+おすすめは統合後に再計算し、canonicalで提供先の重複を避けます。月精度の区間が重なる場合はバージョンで比較します。未来日・alpha・deprecated・未確認previewは自動選択しません。Gemini Pro Previewは確認済みリストに残しますが、Geminiの高性能枠がGemini 4系列へ移ったため現在は選ばれません。手動選択と共有リンクの既存IDは変更しません。
 
 既存スキーマの追加フィールドとして導入し、schemaVersionは1を維持します。旧JSONも読み込めます。UIの単価一覧は価格採用元とリリース日の出典を分けて表示します。差分は全ティアの価格と採用元変更を含みます。取得日時や未採用データだけの変化では価格コミットを作りません。
 

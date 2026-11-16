@@ -29749,7 +29749,8 @@
     ]
    },
    "reasoning": true,
-   "toolCall": true
+   "toolCall": true,
+   "featured": true
   },
   {
    "id": "gemini-3.5-flash-lite@vertex-ai:global",
@@ -31371,7 +31372,8 @@
     ]
    },
    "reasoning": true,
-   "toolCall": true
+   "toolCall": true,
+   "featured": true
   },
   {
    "id": "gemini-3.8-flash@vertex-ai:global",
