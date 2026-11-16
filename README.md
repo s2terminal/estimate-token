@@ -49,7 +49,7 @@ CI・公開・日次更新は `.node-version` を参照し、毎回最新の22�
 
 ## おすすめの初期選択
 
-`config/catalog.yaml` の `recommendations` で用途ごとの系列を定義し、各系列から1件を選びます。高性能・バランス・低コストや画像モデルの系列は分け、同じ系列の旧世代は初期選択から外します。Gemini Pro はプレビュー版も候補に含めます。
+`config/catalog.yaml` の `recommendations` で用途ごとの系列を定義し、各系列から1件を選びます。高性能・バランス・低コストや画像モデルの系列は分け、同じ系列の旧世代は初期選択から外します。Geminiの言語モデルはGemini 4以降の元素名(Argon・Carbon・Hydrogen)を系列とし、旧Pro・Flash・Flash-Liteは初期選択から外します。
 
 同一モデルの提供先違いは直販APIを優先し、直販がなければ global、提供先の固定順で1件を選びます。Gemini APIとVertex AI、OpenAI APIとAzureなどを重複選択しません。地域別料金や提供先の違いを比較したい場合は検索・絞り込みから追加できます。共有リンクの選択内容はそのまま復元します。
 

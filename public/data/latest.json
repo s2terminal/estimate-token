@@ -29303,8 +29303,7 @@
     ]
    },
    "reasoning": true,
-   "toolCall": true,
-   "featured": true
+   "toolCall": true
   },
   {
    "id": "gemini-3.1-pro-preview@vertex-ai:global",
@@ -29750,8 +29749,7 @@
     ]
    },
    "reasoning": true,
-   "toolCall": true,
-   "featured": true
+   "toolCall": true
   },
   {
    "id": "gemini-3.5-flash-lite@vertex-ai:global",
@@ -31373,8 +31371,7 @@
     ]
    },
    "reasoning": true,
-   "toolCall": true,
-   "featured": true
+   "toolCall": true
   },
   {
    "id": "gemini-3.8-flash@vertex-ai:global",
@@ -31851,7 +31848,8 @@
     ]
    },
    "reasoning": true,
-   "toolCall": true
+   "toolCall": true,
+   "featured": true
   },
   {
    "id": "gemini-4-argon@vertex-ai:global",
@@ -32301,7 +32299,8 @@
     ]
    },
    "reasoning": true,
-   "toolCall": true
+   "toolCall": true,
+   "featured": true
   },
   {
    "id": "gemini-4-carbon@vertex-ai:global",
@@ -32645,7 +32644,8 @@
     ]
    },
    "reasoning": true,
-   "toolCall": true
+   "toolCall": true,
+   "featured": true
   },
   {
    "id": "gemini-4-hydrogen@vertex-ai:global",

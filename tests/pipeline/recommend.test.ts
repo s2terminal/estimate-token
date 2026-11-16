@@ -109,7 +109,7 @@ describe("リリース日時の取り込み", () => {
       ["gemini/gemini-3.7-flash-2026-10-11", e],
     ], catalog);
     expect(models.every(m => !m.featured)).toBe(true);
-    applyRecommendations(models, catalog.recommendations, "2026-10-18");
+    applyRecommendations(models, group, "2026-10-18");
     expect(models.find(m => m.featured)?.family).toBe("gemini-3.8-flash");
     expect(models.find(m => m.family === "gemini-3.8-flash")?.releaseDate).toBe("2026-10-12");
     expect(models.find(m => m.family === "gemini-3.7-flash")?.releaseDate).toBeUndefined();
