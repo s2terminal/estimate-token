@@ -89,9 +89,12 @@ recommendations:
   - { category: llm, vendor: Anthropic, pattern: '^claude-opus-[0-9-]+$' }
   - { category: llm, vendor: Anthropic, pattern: '^claude-sonnet-[0-9-]+$' }
   - { category: llm, vendor: Anthropic, pattern: '^claude-haiku-[0-9-]+$' }
-  - { category: llm, vendor: Google, pattern: '^gemini-[0-9.]+-pro(-preview)?$' }
+  # Gemini 4以降は元素名が系列。Flash / Flash-Liteは継続提供の安定版として残し、previewのみの旧Proは外す
   - { category: llm, vendor: Google, pattern: '^gemini-[0-9.]+-flash$' }
   - { category: llm, vendor: Google, pattern: '^gemini-[0-9.]+-flash-lite$' }
+  - { category: llm, vendor: Google, pattern: '^gemini-[0-9.]+-argon$' }
+  - { category: llm, vendor: Google, pattern: '^gemini-[0-9.]+-carbon$' }
+  - { category: llm, vendor: Google, pattern: '^gemini-[0-9.]+-hydrogen$' }
   # 画像: 後継のSunburstと旧GPT Imageを同じ枠で比較。Flareなど別系列は残す
   - { category: image, vendor: OpenAI, pattern: '^gpt-image-[0-9.]+(-sunburst)?$' }
   - { category: image, vendor: OpenAI, pattern: '^gpt-image-[0-9.]+-flare$' }
