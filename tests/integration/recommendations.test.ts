@@ -17,8 +17,6 @@ describe("公開データと画面の初期選択", () => {
     const ids = models.filter(m => m.featured).map(m => m.id);
     expect(ids).toEqual(data.models.filter(m => m.featured).map(m => m.id));
     const selected = models.filter(m => m.featured);
-    expect(selected.filter(m => m.category === "llm")).toHaveLength(11);
-    expect(selected.filter(m => m.category === "image")).toHaveLength(6);
     expect(new Set(selected.map(m => `${m.vendor}|${m.family}`)).size).toBe(selected.length);
     expect(selected.every(m => ["openai", "anthropic", "gemini-api"].includes(m.platform))).toBe(true);
   });

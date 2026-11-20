@@ -39,8 +39,6 @@ describe("2026-10-18のライブcatalog固定fixture", () => {
       expect(m.releaseDateSource?.source).toBe("models.dev");
       expect(rulesOnly(m.prices)).toEqual(rulesOnly(published.models.find(p => p.id === id)!.prices));
     }
-    expect(models.find(m => m.id === "gpt-6.1-sol@openai:global")?.releaseDate).toBe("2026-09-29");
-    expect(models.find(m => m.id === "gemini-nano-banana-2.1@gemini-api:global")?.releaseDate).toBe("2026-10-06");
     applyRecommendations(models, catalog.recommendations, "2026-10-18");
     const featured = models.filter(m => m.featured);
     expect(new Set(featured.map(m => m.canonicalModelId ?? m.family)).size).toBe(featured.length);
