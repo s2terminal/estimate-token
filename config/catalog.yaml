@@ -95,6 +95,7 @@ recommendations:
   - { category: llm, vendor: Google, pattern: '^gemini-[0-9.]+-argon$' }
   - { category: llm, vendor: Google, pattern: '^gemini-[0-9.]+-carbon$' }
   - { category: llm, vendor: Google, pattern: '^gemini-[0-9.]+-hydrogen$' }
+  - { category: llm, vendor: Google, pattern: '^gemini-[0-9.]+-neon$' }
   # 画像: 後継のSunburstと旧GPT Imageを同じ枠で比較。Flareなど別系列は残す
   - { category: image, vendor: OpenAI, pattern: '^gpt-image-[0-9.]+(-sunburst)?$' }
   - { category: image, vendor: OpenAI, pattern: '^gpt-image-[0-9.]+-flare$' }

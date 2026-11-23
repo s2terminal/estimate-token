@@ -34376,7 +34376,8 @@
     ]
    },
    "reasoning": true,
-   "toolCall": true
+   "toolCall": true,
+   "featured": true
   },
   {
    "id": "gemini-4-neon@vertex-ai:global",
