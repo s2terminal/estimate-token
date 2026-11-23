@@ -89,13 +89,12 @@ recommendations:
   - { category: llm, vendor: Anthropic, pattern: '^claude-opus-[0-9-]+$' }
   - { category: llm, vendor: Anthropic, pattern: '^claude-sonnet-[0-9-]+$' }
   - { category: llm, vendor: Anthropic, pattern: '^claude-haiku-[0-9-]+$' }
-  # Gemini 4以降は元素名が系列。Flash / Flash-Liteは継続提供の安定版として残し、previewのみの旧Proは外す
+  # Flash / Flash-Liteは継続提供の安定版として残し、previewのみの旧Proは外す
   - { category: llm, vendor: Google, pattern: '^gemini-[0-9.]+-flash$' }
   - { category: llm, vendor: Google, pattern: '^gemini-[0-9.]+-flash-lite$' }
-  - { category: llm, vendor: Google, pattern: '^gemini-[0-9.]+-argon$' }
-  - { category: llm, vendor: Google, pattern: '^gemini-[0-9.]+-carbon$' }
-  - { category: llm, vendor: Google, pattern: '^gemini-[0-9.]+-hydrogen$' }
-  - { category: llm, vendor: Google, pattern: '^gemini-[0-9.]+-neon$' }
+  # Gemini 4以降は元素名(Argon・Hydrogenなど)が系列。series に一致した名前ごとに1件選ぶ。
+  # 1語の名前に限るため、cyber-permissiveなどの特化版は含めない
+  - { category: llm, vendor: Google, pattern: '^gemini-(?:[4-9]|[1-9][0-9]+)(?:\.[0-9]+)*-(?!(?:flash|pro)$)(?<series>[a-z]+)$' }
   # 画像: 後継のSunburstと旧GPT Imageを同じ枠で比較。Flareなど別系列は残す
   - { category: image, vendor: OpenAI, pattern: '^gpt-image-[0-9.]+(-sunburst)?$' }
   - { category: image, vendor: OpenAI, pattern: '^gpt-image-[0-9.]+-flare$' }

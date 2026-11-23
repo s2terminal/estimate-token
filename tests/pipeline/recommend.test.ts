@@ -94,6 +94,28 @@ describe("おすすめモデル", () => {
   });
 });
 
+describe("系列名をキャプチャするおすすめ規則", () => {
+  const element = catalog.recommendations.filter(g => g.vendor === "Google" && g.category === "llm" && g.pattern.includes("(?<series>"));
+  it("Gemini 4以降の元素名ごとに最新を1件選び、新しい元素名も自動で選ぶ", () => {
+    expect(element).toHaveLength(1);
+    expect(picks([
+      model("gemini-4-argon", "gemini-api", { releaseDate: "2026-10-13" }),
+      model("gemini-4.1-argon", "gemini-api", { releaseDate: "2026-11-15" }),
+      model("gemini-4-hydrogen", "gemini-api", { releaseDate: "2026-11-12" }),
+      model("gemini-4-xenon"),
+    ], element).sort()).toEqual(["gemini-4-hydrogen@gemini-api:global", "gemini-4-xenon@gemini-api:global", "gemini-4.1-argon@gemini-api:global"]);
+  });
+  it("特化版・Flash/Pro・Gemini 3以前は元素名の系列に含めない", () => {
+    expect(picks([
+      model("gemini-4-argon-cyber-permissive"), model("gemini-4-flash"), model("gemini-4-pro"),
+      model("gemini-3.8-flash"), model("gemini-omni-1.2-flash"),
+    ], element)).toEqual([]);
+  });
+  it("提供先違いは系列ごとに直販の1件だけ選ぶ", () => {
+    expect(picks([model("gemini-4-neon", "vertex-ai"), model("gemini-4-neon")], element)).toEqual(["gemini-4-neon@gemini-api:global"]);
+  });
+});
+
 describe("リリース日時の取り込み", () => {
   it.each(["2026-10-12", "2026-10-12T00:01:02Z", "2026-10-12T09:01:02.123+09:00"])("明示日時 %s を保持する", value => {
     expect(releaseDate(value)).toBe(value);
