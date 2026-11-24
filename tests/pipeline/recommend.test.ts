@@ -77,6 +77,15 @@ describe("おすすめモデル", () => {
       .toEqual(["gemini-3.8-flash@vertex-ai:global"]);
   });
 
+  it("直販で廃止されたモデルは他の提供先の行を繰り上げず、旧世代の直販を選ぶ", () => {
+    const deprecated = { providerStatus: "deprecated", recommendationEligible: false, canonicalModelId: "google/gemini-3.8-flash" } as const;
+    expect(picks([
+      model("gemini-3.7-flash"),
+      model("gemini-3.8-flash", "gemini-api", deprecated),
+      model("gemini-3.8-flash", "vertex-ai", { canonicalModelId: "google/gemini-3.8-flash" }),
+    ])).toEqual(["gemini-3.7-flash@gemini-api:global"]);
+  });
+
   it("廃止済み・価格不足・用途の異なる特化版を除く", () => {
     expect(picks([
       model("gemini-3.8-flash"), model("gemini-4-flash", "gemini-api", { status: "deprecated" }),
