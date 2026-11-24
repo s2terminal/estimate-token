@@ -76,22 +76,34 @@ export function applyRecommendations(models: Model[], groups: RecommendationGrou
       Number(b.platform === DIRECT[b.vendor]) - Number(a.platform === DIRECT[a.vendor]) ||
       Number(b.region === "global") - Number(a.region === "global") ||
       PLATFORMS.indexOf(a.platform) - PLATFORMS.indexOf(b.platform) || a.id.localeCompare(b.id));
-    const families = new Map<string, Model>();
+    // 名前付きグループ series があれば、取り出した系列名ごとに1件ずつ選ぶ。
+    const series = new Map<string, Model[]>();
     for (const m of candidates) {
-      const key = recommendationKey(m);
-      if (!families.has(key)) families.set(key, m);
+      const key = pattern.exec(m.family)?.groups?.series?.toLowerCase() ?? "";
+      series.set(key, [...series.get(key) ?? [], m]);
     }
-    // 日時がある候補同士は日時で選ぶ。日時不明の後継を永久に外さないよう、
-    // 不明候補の最新とはバージョンで比較する。2段階にして比較の推移律を保つ。
-    const values = [...families.values()].filter(m => !selected.has(recommendationKey(m)));
-    const datedValues = values.filter(m => releaseInterval(m.releaseDate));
-    const newestStart = Math.max(...datedValues.map(m => releaseInterval(m.releaseDate)![0]));
-    const dated = datedValues.filter(m => releaseInterval(m.releaseDate)![1] >= newestStart).sort(compareVersion)[0];
-    const undated = values.filter(m => !releaseInterval(m.releaseDate)).sort(compareVersion)[0];
-    const winner = dated && undated ? (compareVersion(dated, undated) <= 0 ? dated : undated) : dated ?? undated;
-    if (winner) {
-      winner.featured = true;
-      selected.add(recommendationKey(winner));
+    for (const key of [...series.keys()].sort()) {
+      const winner = pickNewest(series.get(key)!, recommendationKey, selected);
+      if (winner) {
+        winner.featured = true;
+        selected.add(recommendationKey(winner));
+      }
     }
   }
+}
+
+function pickNewest(candidates: Model[], recommendationKey: (m: Model) => string, selected: Set<string>): Model | undefined {
+  const families = new Map<string, Model>();
+  for (const m of candidates) {
+    const key = recommendationKey(m);
+    if (!families.has(key)) families.set(key, m);
+  }
+  // 日時がある候補同士は日時で選ぶ。日時不明の後継を永久に外さないよう、
+  // 不明候補の最新とはバージョンで比較する。2段階にして比較の推移律を保つ。
+  const values = [...families.values()].filter(m => !selected.has(recommendationKey(m)));
+  const datedValues = values.filter(m => releaseInterval(m.releaseDate));
+  const newestStart = Math.max(...datedValues.map(m => releaseInterval(m.releaseDate)![0]));
+  const dated = datedValues.filter(m => releaseInterval(m.releaseDate)![1] >= newestStart).sort(compareVersion)[0];
+  const undated = values.filter(m => !releaseInterval(m.releaseDate)).sort(compareVersion)[0];
+  return dated && undated ? (compareVersion(dated, undated) <= 0 ? dated : undated) : dated ?? undated;
 }

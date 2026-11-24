@@ -7,7 +7,10 @@ import type { ModelsDevPolicy } from "./merge-models.ts";
 export interface RecommendationGroup {
   category: Category;
   vendor: string;
-  /** 用途が同じモデル系列にだけ一致する正規表現 */
+  /**
+   * 用途が同じモデル系列にだけ一致する正規表現。
+   * 名前付きグループ `(?<series>...)` があれば、取り出した名前ごとに別の系列として1件ずつ選ぶ。
+   */
   pattern: string;
 }
 
