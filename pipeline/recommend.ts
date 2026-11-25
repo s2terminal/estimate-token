@@ -64,10 +64,13 @@ export function applyRecommendations(models: Model[], groups: RecommendationGrou
     return m.canonicalModelId ?? (ids?.size === 1 ? [...ids][0] : familyKey(m));
   };
   for (const m of models) delete m.featured;
+  const excluded = (m: Model) => m.status !== "active" || m.recommendationEligible === false || ["alpha", "deprecated"].includes(m.providerStatus ?? "");
+  // 直販で廃止・対象外になったモデルは、同じモデルの他提供先の行を繰り上げておすすめにしない。
+  const retiredAtVendor = new Set(models.filter(m => m.platform === DIRECT[m.vendor] && excluded(m)).map(recommendationKey));
   for (const group of groups) {
     const pattern = new RegExp(group.pattern);
     const candidates = models.filter((m) => m.category === group.category && m.vendor === group.vendor && pattern.test(m.family) && usable(m) &&
-      m.recommendationEligible !== false && !["alpha", "deprecated"].includes(m.providerStatus ?? "") &&
+      !excluded(m) && !retiredAtVendor.has(recommendationKey(m)) &&
       (m.providerStatus !== "beta" || group.pattern.includes("preview")) &&
       (releaseInterval(m.releaseDate)?.[1] ?? 0) <= endOfToday);
     // 同じモデルは直販 → global → 固定の提供先順で代表を決める。
