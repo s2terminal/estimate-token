@@ -55,9 +55,8 @@ function render() {
   const { ok, na } = results();
   renderResults(DATA, S, ok, na);
   renderChart(ok);
-  const link = location.href.split("#")[0] + "#" + encodeState(S);
-  $<HTMLInputElement>("permalink").value = link;
-  history.replaceState(null, "", "#" + encodeState(S));
+  // ブラウザのURLは開いたときのまま変えず、共有リンクは共有欄にだけ出す
+  $<HTMLInputElement>("permalink").value = location.href.split("#")[0] + "#" + encodeState(S);
   $("selCount").textContent = `${S.sel[S.t].length}件を選択中`;
   $("selCountJump").textContent = `(${S.sel[S.t].length}件を選択中)`;
 }
